@@ -1,0 +1,31 @@
+# Render Blueprint for Viriato
+# This file defines all services for automated deployment
+
+services:
+  # API Backend (Flask)
+  - type: web
+    name: viriato-api
+    runtime: python
+    region: frankfurt
+    plan: free  # or starter
+    branch: master
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn --bind 0.0.0.0:$PORT api.app:app
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: viriato
+          property: connectionString
+      - key: FLASK_ENV
+        value: production
+    healthCheckPath: /api/health
+
+  # Static Frontend (GitHub Pages already deployed)
+  # Frontend will call API at: https://viriato-api.onrender.com
+
+databases:
+  - name: viriato
+    region: frankfurt
+    plan: free  # or starter
+    databaseName: viriato
+    user: viriato_user

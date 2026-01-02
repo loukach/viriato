@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Viriato API - Local Test</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            background: linear-gradient(135deg, #1a5f2a 0%, #2d8f4e 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            background: rgba(255,255,255,0.2);
+            font-size: 0.9rem;
+        }
+
+        .status.connected {
+            background: #16a34a;
+        }
+
+        .status.error {
+            background: #dc2626;
+        }
+
+        .test-section {
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            color: #1a5f2a;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+
+        button {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin-right: 10px;
+            margin-bottom: 10px;
+            transition: background 0.2s;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+        }
+
+        button:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+        }
+
+        .result {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+            border-left: 4px solid #2563eb;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        pre {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            font-size: 0.85rem;
+            font-family: 'Courier New', monospace;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        input[type="text"] {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+            width: 300px;
+            margin-right: 10px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .stat-card {
+            background: #f0f9ff;
+            padding: 15px;
+            border-radius: 5px;
+            border-left: 4px solid #2563eb;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #1e40af;
+        }
+
+        .stat-label {
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+
+        .loading {
+            color: #64748b;
+            font-style: italic;
+        }
+
+        .error-message {
+            color: #dc2626;
+            background: #fee2e2;
+            padding: 10px;
+            border-radius: 4px;
+            border-left: 4px solid #dc2626;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Viriato API - Local Testing</h1>
+            <p>API running at: <strong>http://localhost:5000</strong></p>
+            <div id="connection-status" class="status">Checking...</div>
+        </header>
+
+        <!-- Health Check -->
+        <div class="test-section">
+            <h2>1. Health Check</h2>
+            <p>Verify API and database are connected</p>
+            <button onclick="testHealth()">Test /api/health</button>
+            <div id="health-result"></div>
+        </div>
+
+        <!-- Statistics -->
+        <div class="test-section">
+            <h2>2. Statistics</h2>
+            <p>Overall database statistics</p>
+            <button onclick="testStats()">Test /api/stats</button>
+            <div id="stats-result"></div>
+        </div>
+
+        <!-- Iniciativas List -->
+        <div class="test-section">
+            <h2>3. Iniciativas (Recent 10)</h2>
+            <p>Fetch recent legislative initiatives</p>
+            <button onclick="testIniciativas()">Test /api/iniciativas</button>
+            <div id="iniciativas-result"></div>
+        </div>
+
+        <!-- Single Iniciativa -->
+        <div class="test-section">
+            <h2>4. Single Iniciativa</h2>
+            <p>Get details for a specific initiative</p>
+            <div class="input-group">
+                <input type="text" id="ini-id" placeholder="Enter IniId (e.g., 315506)" value="315506">
+                <button onclick="testSingleIniciativa()">Test /api/iniciativas/:id</button>
+            </div>
+            <div id="single-result"></div>
+        </div>
+
+        <!-- Search -->
+        <div class="test-section">
+            <h2>5. Full-Text Search</h2>
+            <p>Search iniciativas by title (Portuguese full-text search)</p>
+            <div class="input-group">
+                <input type="text" id="search-query" placeholder="Search term (e.g., governo, trabalho)" value="governo">
+                <button onclick="testSearch()">Test /api/search</button>
+            </div>
+            <div id="search-result"></div>
+        </div>
+
+        <!-- Agenda -->
+        <div class="test-section">
+            <h2>6. Agenda Events</h2>
+            <p>Parliamentary calendar events</p>
+            <button onclick="testAgenda()">Test /api/agenda</button>
+            <div id="agenda-result"></div>
+        </div>
+
+        <!-- Phase Counts -->
+        <div class="test-section">
+            <h2>7. Phase Counts</h2>
+            <p>Count of initiatives by lifecycle phase</p>
+            <button onclick="testPhaseCounts()">Test /api/phase-counts</button>
+            <div id="phase-result"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:5000';
+
+        // Check connection on load
+        window.onload = function() {
+            checkConnection();
+        };
+
+        async function checkConnection() {
+            const statusEl = document.getElementById('connection-status');
+            try {
+                const response = await fetch(`${API_URL}/api/health`);
+                if (response.ok) {
+                    const data = await response.json();
+                    statusEl.textContent = `✓ Connected (${data.iniciativas_count} iniciativas)`;
+                    statusEl.className = 'status connected';
+                } else {
+                    statusEl.textContent = '✗ API Error';
+                    statusEl.className = 'status error';
+                }
+            } catch (error) {
+                statusEl.textContent = '✗ Cannot connect to API';
+                statusEl.className = 'status error';
+            }
+        }
+
+        async function testHealth() {
+            const resultEl = document.getElementById('health-result');
+            resultEl.innerHTML = '<div class="loading">Loading...</div>';
+
+            try {
+                const response = await fetch(`${API_URL}/api/health`);
+                const data = await response.json();
+                resultEl.innerHTML = `
+                    <div class="result">
+                        <strong>Status:</strong> ${data.status}<br>
+                        <strong>Database:</strong> ${data.database}<br>
+                        <strong>Iniciativas Count:</strong> ${data.iniciativas_count}<br><br>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    </div>
+                `;
+            } catch (error) {
+                resultEl.innerHTML = `<div class="error-message">Error: ${error.message}</div>`;
+            }
+        }
+
+        async function testStats() {
+            const resultEl = document.getElementById('stats-result');
+            resultEl.innerHTML = '<div class="loading">Loading...</div>';
+
+            try {
+                const response = await fetch(`${API_URL}/api/stats`);
+                const data = await response.json();
+
+                let html = '<div class="stats-grid">';
+                html += `<div class="stat-card"><div class="stat-number">${data.total}</div><div class="stat-label">Total Iniciativas</div></div>`;
+                html += `<div class="stat-card"><div class="stat-number">${data.completed}</div><div class="stat-label">Completed</div></div>`;
+                html += `<div class="stat-card"><div class="stat-number">${data.agenda_events}</div><div class="stat-label">Agenda Events</div></div>`;
+                html += '</div>';
+
+                html += '<div class="result" style="margin-top: 20px;"><pre>' + JSON.stringify(data, null, 2) + '</pre></div>';
+
+                resultEl.innerHTML = html;
+            } catch (error) {
+                resultEl.innerHTML = `<div class="error-message">Error: ${error.message}</div>`;
+            }
+        }
+
+        async function testIniciativas() {
+            const resultEl = document.getElementById('iniciativas-result');
+            resultEl.innerHTML = '<div class="loading">Loading... (this may take a moment)</div>';
+
+            try {
+                const response = await fetch(`${API_URL}/api/iniciativas`);
+                const data = await response.json();
+
+                const recent = data.slice(0, 10);
+
+                let html = '<div class="result">';
+                html += `<p><strong>Showing 10 of ${data.length} total iniciativas</strong></p><br>`;
+
+                recent.forEach((ini, idx) => {
+                    html += `<div style="margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #e5e7eb;">`;
+                    html += `<strong>${idx + 1}. ${ini.IniTitulo?.substring(0, 100)}...</strong><br>`;
+                    html += `Type: ${ini.IniDescTipo} | ID: ${ini.IniId} | Status: ${ini._currentStatus}<br>`;
+                    html += `</div>`;
+                });
+
+                html += '</div>';
+
+                resultEl.innerHTML = html;
+            } catch (error) {
+                resultEl.innerHTML = `<div class="error-message">Error: ${error.message}</div>`;
+            }
+        }
+
+        async function testSingleIniciativa() {
+            const iniId = document.getElementById('ini-id').value;
+            const resultEl = document.getElementById('single-result');
+            resultEl.innerHTML = '<div class="loading">Loading...</div>';
+
+            try {
+                const response = await fetch(`${API_URL}/api/iniciativas/${iniId}`);
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                const data = await response.json();
+
+                let html = '<div class="result">';
+                html += `<strong>Title:</strong> ${data.IniTitulo}<br>`;
+                html += `<strong>Type:</strong> ${data.IniDescTipo}<br>`;
+                html += `<strong>ID:</strong> ${data.IniId}<br>`;
+                html += `<strong>Events:</strong> ${data.IniEventos?.length || 0}<br><br>`;
+                html += `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+                html += '</div>';
+
+                resultEl.innerHTML = html;
+            } catch (error) {
+                resultEl.innerHTML = `<div class="error-message">Error: ${error.message}</div>`;
+            }
+        }
+
+        async function testSearch() {
+            const query = document.getElementById('search-query').value;
+            const resultEl = document.getElementById('search-result');
+            resultEl.innerHTML = '<div class="loading">Searching...</div>';
+
+            try {
+                const response = await fetch(`${API_URL}/api/search?q=${encodeURIComponent(query)}&limit=10`);
+                const data = await response.json();
+
+                let html = '<div class="result">';
+                html += `<p><strong>Found ${data.length} results for "${query}"</strong></p><br>`;
+
+                if (data.length === 0) {
+                    html += '<p>No results found. Try: "governo", "saude", "trabalho"</p>';
+                } else {
+                    data.forEach((result, idx) => {
+                        html += `<div style="margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #e5e7eb;">`;
+                        html += `<strong>${idx + 1}. ${result.title.substring(0, 100)}...</strong><br>`;
+                        html += `Type: ${result.type} | Status: ${result.status} | Relevance: ${result.relevance.toFixed(3)}<br>`;
+                        html += `</div>`;
+                    });
+                }
+
+                html += '</div>';
+
+                resultEl.innerHTML = html;
+            } catch (error) {
+                resultEl.innerHTML = `<div class="error-message">Error: ${error.message}</div>`;
+            }
+        }
+
+        async function testAgenda() {
+            const resultEl = document.getElementById('agenda-result');
+            resultEl.innerHTML = '<div class="loading">Loading...</div>';
+
+            try {
+                const response = await fetch(`${API_URL}/api/agenda`);
+                const data = await response.json();
+
+                let html = '<div class="result">';
+                html += `<p><strong>${data.length} agenda events</strong></p><br>`;
+
+                data.slice(0, 5).forEach((event, idx) => {
+                    html += `<div style="margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #e5e7eb;">`;
+                    html += `<strong>${event.Title}</strong><br>`;
+                    html += `Date: ${event.EventStartDate} | Location: ${event.Local || 'N/A'}<br>`;
+                    html += `</div>`;
+                });
+
+                html += `<pre>${JSON.stringify(data.slice(0, 2), null, 2)}</pre>`;
+                html += '</div>';
+
+                resultEl.innerHTML = html;
+            } catch (error) {
+                resultEl.innerHTML = `<div class="error-message">Error: ${error.message}</div>`;
+            }
+        }
+
+        async function testPhaseCounts() {
+            const resultEl = document.getElementById('phase-result');
+            resultEl.innerHTML = '<div class="loading">Loading...</div>';
+
+            try {
+                const response = await fetch(`${API_URL}/api/phase-counts`);
+                const data = await response.json();
+
+                let html = '<div class="result">';
+                html += `<p><strong>Top 10 phases by count</strong></p><br>`;
+
+                data.slice(0, 10).forEach((phase, idx) => {
+                    html += `${idx + 1}. <strong>${phase.phase}</strong>: ${phase.count}<br>`;
+                });
+
+                html += '<br><pre>' + JSON.stringify(data.slice(0, 10), null, 2) + '</pre>';
+                html += '</div>';
+
+                resultEl.innerHTML = html;
+            } catch (error) {
+                resultEl.innerHTML = `<div class="error-message">Error: ${error.message}</div>`;
+            }
+        }
+    </script>
+</body>
+</html>
