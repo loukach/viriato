@@ -1,0 +1,178 @@
+{
+  "filename": "InformacaoBaseXVII_json.txt",
+  "size_bytes": 558236,
+  "size_mb": 0.53,
+  "root_type": "object",
+  "schema": {
+    "type": "object",
+    "properties": {
+      "CirculosEleitorais": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "cpDes": {
+              "type": "string",
+              "sample": "Açores"
+            },
+            "cpId": {
+              "type": "number"
+            },
+            "legDes": {
+              "type": "string",
+              "sample": "XVII"
+            }
+          }
+        },
+        "count": 22
+      },
+      "Deputados": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "DepCadId": {
+              "type": "number"
+            },
+            "DepCargo": {
+              "type": "null"
+            },
+            "DepCPDes": {
+              "type": "string",
+              "sample": "Açores"
+            },
+            "DepCPId": {
+              "type": "number"
+            },
+            "DepGP": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "gpDtFim": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "gpDtInicio": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "gpId": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "gpSigla": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  }
+                }
+              },
+              "count": 1
+            },
+            "DepId": {
+              "type": "number"
+            },
+            "DepNomeCompleto": {
+              "type": "string",
+              "sample": "Francisco Gabriel Meneses de Lima"
+            },
+            "DepNomeParlamentar": {
+              "type": "string",
+              "sample": "Francisco Lima"
+            },
+            "DepSituacao": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "sioDes": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "sioDtFim": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "sioDtInicio": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  }
+                }
+              },
+              "count": 1
+            },
+            "LegDes": {
+              "type": "string",
+              "sample": "XVII"
+            },
+            "Videos": {
+              "type": "null"
+            }
+          }
+        },
+        "count": 1446
+      },
+      "DetalheLegislatura": {
+        "type": "object",
+        "properties": {
+          "dtfim": {
+            "type": "null"
+          },
+          "dtini": {
+            "type": "string",
+            "sample": "2025-06-03"
+          },
+          "id": {
+            "type": "string",
+            "sample": "108"
+          },
+          "sigla": {
+            "type": "string",
+            "sample": "XVII"
+          },
+          "siglaAntiga": {
+            "type": "string",
+            "sample": "XVII"
+          }
+        }
+      },
+      "GruposParlamentares": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "nome": {
+              "type": "string",
+              "sample": "Partido Social Democrata"
+            },
+            "sigla": {
+              "type": "string",
+              "sample": "PSD"
+            }
+          }
+        },
+        "count": 10
+      },
+      "SessoesLegislativas": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "dataFim": {
+              "type": "null"
+            },
+            "dataInicio": {
+              "type": "string",
+              "sample": "2025-06-03"
+            },
+            "numSessao": {
+              "type": "string",
+              "sample": "1"
+            }
+          }
+        },
+        "count": 1
+      }
+    }
+  }
+}

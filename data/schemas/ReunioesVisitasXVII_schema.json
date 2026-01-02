@@ -1,0 +1,52 @@
+{
+  "filename": "ReunioesVisitasXVII_json.txt",
+  "size_bytes": 20716,
+  "size_mb": 0.02,
+  "root_type": "array",
+  "item_count": 74,
+  "item_schema": {
+    "type": "object",
+    "properties": {
+      "DataFim": {
+        "type": "string"
+      },
+      "DataInicio": {
+        "type": "string",
+        "sample": "14/11/2025 00:00:00"
+      },
+      "Id": {
+        "type": "string",
+        "sample": "628"
+      },
+      "Legislatura": {
+        "type": "string",
+        "sample": "XVII"
+      },
+      "Local": {
+        "type": "string"
+      },
+      "Nome": {
+        "type": "string",
+        "sample": "Visita Oficial da Presidente da Assembleia Nacional Francesa, Yaël Braun-Pivet"
+      },
+      "Participantes": {
+        "type": "array",
+        "items": "empty"
+      },
+      "Promotor": {
+        "type": "string"
+      },
+      "Sessao": {
+        "type": "string",
+        "sample": "1"
+      },
+      "Tipo": {
+        "type": "string",
+        "sample": "VEE"
+      }
+    }
+  },
+  "potential_id_fields": [
+    "Id"
+  ]
+}

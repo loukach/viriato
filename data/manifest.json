@@ -1,0 +1,108 @@
+{
+  "download_date": "2026-01-02T17:46:29.488294",
+  "legislature": "XVII",
+  "datasets": [
+    {
+      "name": "IniciativasXVII",
+      "filename": "IniciativasXVII_json.txt",
+      "success": true,
+      "path": "data\\raw\\IniciativasXVII_json.txt"
+    },
+    {
+      "name": "DiplomasXVII",
+      "filename": "DiplomasXVII_json.txt",
+      "success": true,
+      "path": "data\\raw\\DiplomasXVII_json.txt"
+    },
+    {
+      "name": "AtividadeDeputadoXVII",
+      "filename": "AtividadeDeputadoXVII_json.txt",
+      "success": true,
+      "path": "data\\raw\\AtividadeDeputadoXVII_json.txt"
+    },
+    {
+      "name": "AgendaParlamentar",
+      "filename": "AgendaParlamentar_json.txt",
+      "success": true,
+      "path": "data\\raw\\AgendaParlamentar_json.txt"
+    },
+    {
+      "name": "OrgaoComposicaoXVII",
+      "filename": "OrgaoComposicaoXVII_json.txt",
+      "success": true,
+      "path": "data\\raw\\OrgaoComposicaoXVII_json.txt"
+    },
+    {
+      "name": "DelegacaoEventualXVII",
+      "filename": "DelegacaoEventualXVII_json.txt",
+      "success": true,
+      "path": "data\\raw\\DelegacaoEventualXVII_json.txt"
+    },
+    {
+      "name": "DelegacaoPermanenteXVII",
+      "filename": "DelegacaoPermanenteXVII_json.txt",
+      "success": true,
+      "path": "data\\raw\\DelegacaoPermanenteXVII_json.txt"
+    },
+    {
+      "name": "GrupoAmizadeXVII",
+      "filename": "GrupoDeAmizadeXVII_json.txt",
+      "success": true,
+      "path": "data\\raw\\GrupoDeAmizadeXVII_json.txt"
+    },
+    {
+      "name": "InformacaoBaseXVII",
+      "filename": "InformacaoBaseXVII_json.txt",
+      "success": true,
+      "path": "data\\raw\\InformacaoBaseXVII_json.txt"
+    },
+    {
+      "name": "IntervencoesXVII",
+      "filename": "IntervencoesXVII_json.txt",
+      "success": true,
+      "path": "data\\raw\\IntervencoesXVII_json.txt"
+    },
+    {
+      "name": "PeticoesXVII",
+      "filename": "PeticoesXVII_json.txt",
+      "success": true,
+      "path": "data\\raw\\PeticoesXVII_json.txt"
+    },
+    {
+      "name": "RequerimentosXVII",
+      "filename": "RequerimentosXVII_json.txt",
+      "success": true,
+      "path": "data\\raw\\RequerimentosXVII_json.txt"
+    },
+    {
+      "name": "RegistoInteressesXVII",
+      "filename": "RegistoInteressesXVII_json.txt",
+      "success": true,
+      "path": "data\\raw\\RegistoInteressesXVII_json.txt"
+    },
+    {
+      "name": "RegistoBiograficoXVII",
+      "filename": "RegistoBiograficoXVII_json.txt",
+      "success": true,
+      "path": "data\\raw\\RegistoBiograficoXVII_json.txt"
+    },
+    {
+      "name": "ReunioesVisitasXVII",
+      "filename": "ReunioesVisitasXVII_json.txt",
+      "success": true,
+      "path": "data\\raw\\ReunioesVisitasXVII_json.txt"
+    },
+    {
+      "name": "AtividadesXVII",
+      "filename": "AtividadesXVII_json.txt",
+      "success": true,
+      "path": "data\\raw\\AtividadesXVII_json.txt"
+    },
+    {
+      "name": "OrcamentoEstado2026",
+      "filename": "OE2026Or_json.txt",
+      "success": true,
+      "path": "data\\raw\\OE2026Or_json.txt"
+    }
+  ]
+}

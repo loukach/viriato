@@ -1,0 +1,65 @@
+{
+  "filename": "RegistoBiograficoXVII_json.txt",
+  "size_bytes": 668211,
+  "size_mb": 0.64,
+  "root_type": "array",
+  "item_count": 330,
+  "item_schema": {
+    "type": "object",
+    "properties": {
+      "CadActividadeOrgaos": {
+        "type": "object",
+        "properties": {
+          "actividadeCom": {
+            "type": "null"
+          },
+          "actividadeGT": {
+            "type": "null"
+          },
+          "actividadeSCom": {
+            "type": "null"
+          }
+        }
+      },
+      "CadCargosFuncoes": {
+        "type": "null"
+      },
+      "CadCondecoracoes": {
+        "type": "null"
+      },
+      "CadDeputadoLegis": {
+        "type": "null"
+      },
+      "CadDtNascimento": {
+        "type": "null"
+      },
+      "CadHabilitacoes": {
+        "type": "null"
+      },
+      "CadId": {
+        "type": "number"
+      },
+      "CadNomeCompleto": {
+        "type": "string",
+        "sample": "Rui Ladeira Pereira"
+      },
+      "CadObrasPublicadas": {
+        "type": "null"
+      },
+      "CadProfissao": {
+        "type": "null"
+      },
+      "CadSexo": {
+        "type": "string",
+        "sample": "M"
+      },
+      "CadTitulos": {
+        "type": "null"
+      }
+    }
+  },
+  "potential_id_fields": [
+    "CadActividadeOrgaos",
+    "CadId"
+  ]
+}

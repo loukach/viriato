@@ -1,0 +1,3859 @@
+{
+  "AgendaParlamentar": {
+    "filename": "AgendaParlamentar_json.txt",
+    "size_bytes": 136692,
+    "size_mb": 0.13,
+    "root_type": "array",
+    "item_count": 34,
+    "item_schema": {
+      "type": "object",
+      "properties": {
+        "AllDayEvent": {
+          "type": "boolean"
+        },
+        "AnexosComissaoPermanente": {
+          "type": "null"
+        },
+        "AnexosPlenario": {
+          "type": "null"
+        },
+        "EventEndDate": {
+          "type": "string",
+          "sample": "02/01/2026"
+        },
+        "EventEndTime": {
+          "type": "string",
+          "sample": "23:59:00"
+        },
+        "EventStartDate": {
+          "type": "string",
+          "sample": "02/01/2026"
+        },
+        "EventStartTime": {
+          "type": "string",
+          "sample": "15:00:00"
+        },
+        "Id": {
+          "type": "integer"
+        },
+        "InternetText": {
+          "type": "string",
+          "sample": "&lt;p style=&quot;text-align: justify;&quot;&gt;- Reuni&amp;atilde;o com delega&amp;ccedil;&amp;atil"
+        },
+        "LegDes": {
+          "type": "string",
+          "sample": "XVII"
+        },
+        "Link": {
+          "type": "null"
+        },
+        "Local": {
+          "type": "string",
+          "sample": "Sala 7"
+        },
+        "OrderValue": {
+          "type": "integer"
+        },
+        "OrgDes": {
+          "type": "string",
+          "sample": "Comissão de Orçamento, Finanças e Administração Pública"
+        },
+        "ParlamentGroup": {
+          "type": "integer"
+        },
+        "PostPlenary": {
+          "type": "boolean"
+        },
+        "ReuNumero": {
+          "type": "string",
+          "sample": "3"
+        },
+        "Section": {
+          "type": "string",
+          "sample": "Comissões Parlamentares"
+        },
+        "SectionId": {
+          "type": "integer"
+        },
+        "SelNumero": {
+          "type": "string",
+          "sample": "1"
+        },
+        "Subtitle": {
+          "type": "string",
+          "sample": "Reunião n.º 3"
+        },
+        "Theme": {
+          "type": "string",
+          "sample": "Comissões Parlamentares"
+        },
+        "ThemeId": {
+          "type": "integer"
+        },
+        "Title": {
+          "type": "string",
+          "sample": "Comissão de Orçamento, Finanças e Administração Pública"
+        }
+      }
+    },
+    "potential_id_fields": [
+      "Id",
+      "ReuNumero",
+      "SectionId",
+      "SelNumero",
+      "ThemeId"
+    ]
+  },
+  "AtividadeDeputadoXVII": {
+    "filename": "AtividadeDeputadoXVII_json.txt",
+    "size_bytes": 13953733,
+    "size_mb": 13.31,
+    "root_type": "array",
+    "item_count": 1446,
+    "item_schema": {
+      "type": "object",
+      "properties": {
+        "AtividadeDeputadoList": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "ActP": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "ActAs": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "ActDtdeb": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "ActDtent": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "ActId": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "ActNr": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "ActSelLg": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "ActSelNr": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "ActTp": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "ActTpdesc": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    }
+                  }
+                },
+                "count": 6
+              },
+              "Audicoes": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "AccDtaud": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "ActAs": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "ActDtdes1": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "ActDtdes2": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "ActDtent": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "ActId": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "ActLg": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "ActLoc": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "ActNr": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "ActSl": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "ActTp": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "ActTpdesc": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "CmsAb": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "CmsNo": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "NomeEntidadeExterna": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "TevTp": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    }
+                  }
+                },
+                "count": 36
+              },
+              "Audiencias": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "AccDtaud": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "ActAs": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "ActDtdes1": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "ActDtdes2": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "ActDtent": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "ActId": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "ActLg": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "ActLoc": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "ActNr": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "ActSl": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "ActTp": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "ActTpdesc": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "CmsAb": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "CmsNo": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "NomeEntidadeExterna": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "TevTp": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    }
+                  }
+                },
+                "count": 5
+              },
+              "Cms": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "CmsCargo": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "CmsCd": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "CmsLg": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "CmsNo": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "CmsSituacao": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "CmsSubCargo": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    }
+                  }
+                },
+                "count": 4
+              },
+              "DadosLegisDeputado": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "Dpl_grpar": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "Dpl_lg": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "Nome": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    }
+                  }
+                },
+                "count": 1
+              },
+              "Deslocacoes": {
+                "type": "null"
+              },
+              "DlE": {
+                "type": "null"
+              },
+              "DlP": {
+                "type": "null"
+              },
+              "Eventos": {
+                "type": "null"
+              },
+              "Gpa": {
+                "type": "null"
+              },
+              "Ini": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "IniId": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "IniNr": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "IniSelLg": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "IniSelNr": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "IniTi": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "IniTp": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "IniTpdesc": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    }
+                  }
+                },
+                "count": 10
+              },
+              "Intev": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "IntId": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "IntSu": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "IntTe": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "PubDar": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "PubDtreu": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "PubLg": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "PubNr": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "PubSl": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "PubTp": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "TinDs": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    }
+                  }
+                },
+                "count": 1
+              },
+              "ParlamentoJovens": {
+                "type": "null"
+              },
+              "Rel": {
+                "type": "object",
+                "properties": {
+                  "AutoresPareceresIncImu": {
+                    "type": "null"
+                  },
+                  "RelatoresContasPublicas": {
+                    "type": "null"
+                  },
+                  "RelatoresIniciativas": {
+                    "type": "null"
+                  },
+                  "RelatoresIniEuropeias": {
+                    "type": "null"
+                  },
+                  "RelatoresPeticoes": {
+                    "type": "null"
+                  }
+                }
+              },
+              "Req": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "ReqAs": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "ReqDt": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "ReqId": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "ReqLg": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "ReqNr": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "ReqPerTp": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "ReqSl": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "ReqTp": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    }
+                  }
+                },
+                "count": 2
+              },
+              "Scgt": {
+                "type": "null"
+              }
+            }
+          },
+          "count": 1
+        },
+        "Deputado": {
+          "type": "object",
+          "properties": {
+            "DepCadId": {
+              "type": "number"
+            },
+            "DepCargo": {
+              "type": "null"
+            },
+            "DepCPDes": {
+              "type": "string",
+              "sample": "Açores"
+            },
+            "DepCPId": {
+              "type": "number"
+            },
+            "DepGP": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "GpDtFim": {
+                    "type": "string",
+                    "sample": "2026-01-01"
+                  },
+                  "GpDtInicio": {
+                    "type": "string",
+                    "sample": "2025-06-03"
+                  },
+                  "GpId": {
+                    "type": "number"
+                  },
+                  "GpSigla": {
+                    "type": "string",
+                    "sample": "PSD"
+                  }
+                }
+              },
+              "count": 1
+            },
+            "DepId": {
+              "type": "number"
+            },
+            "DepNomeCompleto": {
+              "type": "string",
+              "sample": "Francisco José Duarte Pimentel"
+            },
+            "DepNomeParlamentar": {
+              "type": "string",
+              "sample": "Francisco Pimentel"
+            },
+            "DepSituacao": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "SioDes": {
+                    "type": "string",
+                    "sample": "Efetivo"
+                  },
+                  "SioDtFim": {
+                    "type": "null"
+                  },
+                  "SioDtInicio": {
+                    "type": "string",
+                    "sample": "2025-06-03"
+                  }
+                }
+              },
+              "count": 1
+            },
+            "LegDes": {
+              "type": "string",
+              "sample": "XVII"
+            }
+          }
+        }
+      }
+    },
+    "potential_id_fields": [
+      "AtividadeDeputadoList"
+    ]
+  },
+  "AtividadesXVII": {
+    "filename": "AtividadesXVII_json.txt",
+    "size_bytes": 559236,
+    "size_mb": 0.53,
+    "root_type": "object",
+    "schema": {
+      "type": "object",
+      "properties": {
+        "AtividadesGerais": {
+          "type": "object",
+          "properties": {
+            "Atividades": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "Assunto": {
+                    "type": "string",
+                    "sample": "Programa do XXV Governo Constitucional"
+                  },
+                  "AutoresGP": {
+                    "type": "null"
+                  },
+                  "Convidados": {
+                    "type": "null"
+                  },
+                  "DataAgendamentoDebate": {
+                    "type": "string",
+                    "sample": "2025-06-17"
+                  },
+                  "DataAnuncio": {
+                    "type": "null"
+                  },
+                  "DataEntrada": {
+                    "type": "string",
+                    "sample": "2025-06-14"
+                  },
+                  "DescTipo": {
+                    "type": "string",
+                    "sample": "Programa do Governo"
+                  },
+                  "Eleitos": {
+                    "type": "null"
+                  },
+                  "IniciativasConjuntas": {
+                    "type": "null"
+                  },
+                  "Legislatura": {
+                    "type": "string",
+                    "sample": "XVII"
+                  },
+                  "Numero": {
+                    "type": "null"
+                  },
+                  "Observacoes": {
+                    "type": "null"
+                  },
+                  "OrgaoExterior": {
+                    "type": "null"
+                  },
+                  "OutrosSubscritores": {
+                    "type": "null"
+                  },
+                  "Publicacao": {
+                    "type": "array",
+                    "items": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "count": 1
+                  },
+                  "PublicacaoDebate": {
+                    "type": "array",
+                    "items": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "count": 2
+                  },
+                  "ResultadoVotacaoPontos": {
+                    "type": "null"
+                  },
+                  "Sessao": {
+                    "type": "string",
+                    "sample": "1"
+                  },
+                  "Texto": {
+                    "type": "null"
+                  },
+                  "TextosAprovados": {
+                    "type": "null"
+                  },
+                  "Tipo": {
+                    "type": "string",
+                    "sample": "PRG"
+                  },
+                  "TipoAutor": {
+                    "type": "null"
+                  },
+                  "VotacaoDebate": {
+                    "type": "null"
+                  }
+                }
+              },
+              "count": 311
+            },
+            "Relatorios": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "Assunto": {
+                    "type": "string",
+                    "sample": "Relatório CASA 2024 - Caracterização Anual da Situação de Acolhimento das Crianças e Jovens"
+                  },
+                  "Audicoes": {
+                    "type": "null"
+                  },
+                  "Comissao": {
+                    "type": "null"
+                  },
+                  "DataAgendamentoDebate": {
+                    "type": "null"
+                  },
+                  "DataEntrada": {
+                    "type": "string",
+                    "sample": "2025-09-11"
+                  },
+                  "DataParecerUTAO": {
+                    "type": "null"
+                  },
+                  "DataPedidoParecer": {
+                    "type": "null"
+                  },
+                  "DescTipo": {
+                    "type": "string",
+                    "sample": "Relatórios Externos"
+                  },
+                  "Documentos": {
+                    "type": "array",
+                    "items": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "count": 1
+                  },
+                  "EntidadesExternas": {
+                    "type": "null"
+                  },
+                  "IniciativasConjuntas": {
+                    "type": "null"
+                  },
+                  "Legislatura": {
+                    "type": "string",
+                    "sample": "XVII"
+                  },
+                  "Links": {
+                    "type": "null"
+                  },
+                  "LinkTexto": {
+                    "type": "null"
+                  },
+                  "MembrosGoverno": {
+                    "type": "array",
+                    "items": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "count": 1
+                  },
+                  "Observacoes": {
+                    "type": "null"
+                  },
+                  "ParecerComissao": {
+                    "type": "null"
+                  },
+                  "Publicacao": {
+                    "type": "null"
+                  },
+                  "PublicacaoDebate": {
+                    "type": "null"
+                  },
+                  "Relatores": {
+                    "type": "null"
+                  },
+                  "Sessao": {
+                    "type": "string",
+                    "sample": "1"
+                  },
+                  "TextoRelatorio": {
+                    "type": "null"
+                  },
+                  "TextosAprovados": {
+                    "type": "null"
+                  },
+                  "Tipo": {
+                    "type": "string",
+                    "sample": "PRC"
+                  },
+                  "VotacaoDebate": {
+                    "type": "null"
+                  },
+                  "VotacaoRelatorio": {
+                    "type": "null"
+                  }
+                }
+              },
+              "count": 13
+            }
+          }
+        },
+        "Audicoes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "Assunto": {
+                "type": "string",
+                "sample": "No âmbito da apreciação, na especialidade, da Proposta de Lei n.º 37/XVII/1.ª (GOV) - «Aprova o Orça"
+              },
+              "Data": {
+                "type": "string",
+                "sample": "2025-11-03"
+              },
+              "Documentos": {
+                "type": "null"
+              },
+              "Entidades": {
+                "type": "string",
+                "sample": "Ministro Adjunto e da Reforma do Estado;Secretário de Estado para a Digitalização;Secretário de Esta"
+              },
+              "IDAudicao": {
+                "type": "integer"
+              },
+              "Legislatura": {
+                "type": "string",
+                "sample": "XVII"
+              },
+              "Links": {
+                "type": "null"
+              },
+              "NumeroAudicao": {
+                "type": "string",
+                "sample": "10-CREPL-XVII"
+              },
+              "SessaoLegislativa": {
+                "type": "string",
+                "sample": "1"
+              }
+            }
+          },
+          "count": 198
+        },
+        "Audiencias": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "Assunto": {
+                "type": "string",
+                "sample": "«Sobre a reforma dos Serviços Municipais de Proteção Civil e ainda a situação dos Sapadores Floresta"
+              },
+              "Concedida": {
+                "type": "string",
+                "sample": "Concedida"
+              },
+              "Data": {
+                "type": "string",
+                "sample": "2025-12-16"
+              },
+              "Documentos": {
+                "type": "null"
+              },
+              "Entidades": {
+                "type": "string",
+                "sample": "SinFAP - Sindicato Independente dos Trabalhadores da Floresta, Ambiente e Proteção Civil "
+              },
+              "IDAudiencia": {
+                "type": "integer"
+              },
+              "Legislatura": {
+                "type": "string",
+                "sample": "XVII"
+              },
+              "Links": {
+                "type": "null"
+              },
+              "NumeroAudiencia": {
+                "type": "string",
+                "sample": "1-CREPL-XVII"
+              },
+              "SessaoLegislativa": {
+                "type": "string",
+                "sample": "1"
+              }
+            }
+          },
+          "count": 89
+        },
+        "Debates": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "Artigo": {
+                "type": "null"
+              },
+              "Assunto": {
+                "type": "string",
+                "sample": "Alude ao descarrilamento no Elevador da Glória, sublinha a necessidade de uma Administração Pública "
+              },
+              "AutoresDeputados": {
+                "type": "string",
+                "sample": "Isabel Mendes Lopes (L)"
+              },
+              "AutoresGP": {
+                "type": "null"
+              },
+              "DataDebate": {
+                "type": "string",
+                "sample": "2025-09-10"
+              },
+              "DataEntrada": {
+                "type": "string",
+                "sample": "2025-09-10"
+              },
+              "DebateId": {
+                "type": "string",
+                "sample": "147416"
+              },
+              "Intervencoes": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "sample": "467933"
+                },
+                "count": 1
+              },
+              "Legislatura": {
+                "type": "string",
+                "sample": "XVII"
+              },
+              "Observacoes": {
+                "type": "null"
+              },
+              "Publicacao": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "debateDtReu": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "idAct": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "idDeb": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "idInt": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "idPag": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "obs": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "pag": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "pagFinalDiarioSupl": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "pubdt": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "pubLeg": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "pubNr": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "pubSL": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "pubTipo": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "pubTp": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "supl": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "URLDiario": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    }
+                  }
+                },
+                "count": 1
+              },
+              "Sessao": {
+                "type": "string",
+                "sample": "1"
+              },
+              "TipoAutor": {
+                "type": "string",
+                "sample": "Deputados"
+              },
+              "TipoDebate": {
+                "type": "string",
+                "sample": "10"
+              },
+              "TipoDebateDesig": {
+                "type": "string",
+                "sample": "Declarações Políticas"
+              }
+            }
+          },
+          "count": 41
+        },
+        "Deslocacoes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "DataFim": {
+                "type": "string",
+                "sample": "2025-10-31"
+              },
+              "DataIni": {
+                "type": "string",
+                "sample": "2025-10-30"
+              },
+              "Designacao": {
+                "type": "string",
+                "sample": "Participação no Congresso Internacional do Cooperativismo – Sector Agrícola\ne Banca Cooperativa"
+              },
+              "Documentos": {
+                "type": "null"
+              },
+              "IDDeslocacao": {
+                "type": "integer"
+              },
+              "Legislatura": {
+                "type": "string",
+                "sample": "XVII"
+              },
+              "Links": {
+                "type": "null"
+              },
+              "LocalEvento": {
+                "type": "string",
+                "sample": "Centro de Congressos de Lisboa"
+              },
+              "SessaoLegislativa": {
+                "type": "string",
+                "sample": "1"
+              },
+              "Tipo": {
+                "type": "string",
+                "sample": "Representação"
+              }
+            }
+          },
+          "count": 87
+        },
+        "Eventos": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "Data": {
+                "type": "string",
+                "sample": "2025-12-18"
+              },
+              "Designacao": {
+                "type": "string",
+                "sample": "Cerimónia de entrega do Prémio Direitos Humanos 2025"
+              },
+              "Documentos": {
+                "type": "null"
+              },
+              "IDEvento": {
+                "type": "integer"
+              },
+              "Legislatura": {
+                "type": "string",
+                "sample": "XVII"
+              },
+              "Links": {
+                "type": "null"
+              },
+              "LocalEvento": {
+                "type": "string",
+                "sample": "Sala do Senado"
+              },
+              "SessaoLegislativa": {
+                "type": "string",
+                "sample": "1"
+              },
+              "TipoEvento": {
+                "type": "string",
+                "sample": "Cerimónia"
+              }
+            }
+          },
+          "count": 2
+        },
+        "OrcamentoContasGerencia": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "anexos": {
+                "type": "null"
+              },
+              "ano": {
+                "type": "string",
+                "sample": "2026"
+              },
+              "dtAgendamento": {
+                "type": "null"
+              },
+              "dtAprovacaoCA": {
+                "type": "string",
+                "sample": "2025-09-26"
+              },
+              "id": {
+                "type": "string",
+                "sample": "664"
+              },
+              "leg": {
+                "type": "string",
+                "sample": "XVII"
+              },
+              "obs": {
+                "type": "null"
+              },
+              "SL": {
+                "type": "string",
+                "sample": "1"
+              },
+              "textosAprovados": {
+                "type": "null"
+              },
+              "tipo": {
+                "type": "string",
+                "sample": "Orçamento da A.R."
+              },
+              "titulo": {
+                "type": "string",
+                "sample": "Orçamento da Assembleia da República para 2026"
+              },
+              "tp": {
+                "type": "string",
+                "sample": "OAR"
+              },
+              "votacao": {
+                "type": "null"
+              }
+            }
+          },
+          "count": 1
+        }
+      }
+    }
+  },
+  "DelegacaoEventualXVII": {
+    "filename": "DelegacaoEventualXVII_json.txt",
+    "size_bytes": 18551,
+    "size_mb": 0.02,
+    "root_type": "array",
+    "item_count": 35,
+    "item_schema": {
+      "type": "object",
+      "properties": {
+        "DataFim": {
+          "type": "string",
+          "sample": "11/12/2025 00:00:00"
+        },
+        "DataInicio": {
+          "type": "string",
+          "sample": "09/12/2025 00:00:00"
+        },
+        "Id": {
+          "type": "string",
+          "sample": "12742"
+        },
+        "Legislatura": {
+          "type": "string",
+          "sample": "XVII"
+        },
+        "Local": {
+          "type": "string",
+          "sample": "EUA"
+        },
+        "Nome": {
+          "type": "string",
+          "sample": "Israel Allies Foundation (AIL)"
+        },
+        "Participantes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "Gp": {
+                "type": "string",
+                "sample": "CH"
+              },
+              "Id": {
+                "type": "string",
+                "sample": "15789"
+              },
+              "Leg": {
+                "type": "string",
+                "sample": "XVII"
+              },
+              "Nome": {
+                "type": "string",
+                "sample": "Pedro dos Santos Frazão"
+              },
+              "Tipo": {
+                "type": "string",
+                "sample": "D"
+              }
+            }
+          },
+          "count": 1
+        },
+        "Sessao": {
+          "type": "string",
+          "sample": "1"
+        }
+      }
+    },
+    "potential_id_fields": [
+      "Id"
+    ]
+  },
+  "DelegacaoPermanenteXVII": {
+    "filename": "DelegacaoPermanenteXVII_json.txt",
+    "size_bytes": 14378,
+    "size_mb": 0.01,
+    "root_type": "array",
+    "item_count": 77,
+    "item_schema": {
+      "type": "object",
+      "properties": {
+        "Comissoes": {
+          "type": "array",
+          "items": "empty"
+        },
+        "Composicao": {
+          "type": "array",
+          "items": "empty"
+        },
+        "DataEleicao": {
+          "type": "string",
+          "sample": "03/06/2025 00:00:00"
+        },
+        "Id": {
+          "type": "string",
+          "sample": "130"
+        },
+        "Legislatura": {
+          "type": "string",
+          "sample": "XVII"
+        },
+        "Nome": {
+          "type": "string",
+          "sample": "União Interparlamentar"
+        },
+        "Reunioes": {
+          "type": "array",
+          "items": "empty"
+        },
+        "Sessao": {
+          "type": "string",
+          "sample": "1"
+        }
+      }
+    },
+    "potential_id_fields": [
+      "Id"
+    ]
+  },
+  "DiplomasXVII": {
+    "filename": "DiplomasXVII_json.txt",
+    "size_bytes": 466771,
+    "size_mb": 0.45,
+    "root_type": "array",
+    "item_count": 236,
+    "item_schema": {
+      "type": "object",
+      "properties": {
+        "Actividades": {
+          "type": "null"
+        },
+        "Anexos": {
+          "type": "null"
+        },
+        "AnoCivil": {
+          "type": "string",
+          "sample": "2025"
+        },
+        "Id": {
+          "type": "string",
+          "sample": "105111"
+        },
+        "Iniciativas": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "DataFimleg": {
+                "type": "null"
+              },
+              "DataInicioleg": {
+                "type": "null"
+              },
+              "IniAnexos": {
+                "type": "null"
+              },
+              "IniAutorDeputados": {
+                "type": "null"
+              },
+              "IniAutorGruposParlamentares": {
+                "type": "null"
+              },
+              "IniAutorOutros": {
+                "type": "null"
+              },
+              "IniciativasEuropeias": {
+                "type": "null"
+              },
+              "IniciativasOrigem": {
+                "type": "null"
+              },
+              "IniciativasOriginadas": {
+                "type": "null"
+              },
+              "IniDescTipo": {
+                "type": "null"
+              },
+              "IniEpigrafe": {
+                "type": "null"
+              },
+              "IniEventos": {
+                "type": "null"
+              },
+              "IniId": {
+                "type": "string",
+                "sample": "315345"
+              },
+              "IniLeg": {
+                "type": "null"
+              },
+              "IniLinkTexto": {
+                "type": "string",
+                "sample": "http://app.parlamento.pt/webutils/docs/doc.pdf?path=6148523063484d364c793968636d356c6443397a6158526c"
+              },
+              "IniNr": {
+                "type": "string",
+                "sample": "176"
+              },
+              "IniObs": {
+                "type": "null"
+              },
+              "IniSel": {
+                "type": "null"
+              },
+              "IniTestaFicheiro": {
+                "type": "null"
+              },
+              "IniTextoSubst": {
+                "type": "null"
+              },
+              "IniTextoSubstCampo": {
+                "type": "null"
+              },
+              "IniTipo": {
+                "type": "string",
+                "sample": "R"
+              },
+              "IniTitulo": {
+                "type": "null"
+              },
+              "Links": {
+                "type": "null"
+              },
+              "Peticoes": {
+                "type": "null"
+              },
+              "PropostasAlteracao": {
+                "type": "null"
+              }
+            }
+          },
+          "count": 1
+        },
+        "Legislatura": {
+          "type": "string",
+          "sample": "XVII"
+        },
+        "LinkTexto": {
+          "type": "string",
+          "sample": "http://app.parlamento.pt/webutils/docs/doc.pdf?path=6148523063484d364c793968636d356c6443397a6158526c"
+        },
+        "Numero": {
+          "type": "string",
+          "sample": "154"
+        },
+        "Numero2": {
+          "type": "null"
+        },
+        "Observacoes": {
+          "type": "null"
+        },
+        "OrcamContasGerencia": {
+          "type": "null"
+        },
+        "Publicacao": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "debateDtReu": {
+                "type": "null"
+              },
+              "idAct": {
+                "type": "null"
+              },
+              "idDeb": {
+                "type": "null"
+              },
+              "idInt": {
+                "type": "null"
+              },
+              "idPag": {
+                "type": "string",
+                "sample": "1008488"
+              },
+              "obs": {
+                "type": "null"
+              },
+              "pag": {
+                "type": "null"
+              },
+              "pagFinalDiarioSupl": {
+                "type": "null"
+              },
+              "pubdt": {
+                "type": "string",
+                "sample": "2025-10-13"
+              },
+              "pubLeg": {
+                "type": "string",
+                "sample": "XVII"
+              },
+              "pubNr": {
+                "type": "string",
+                "sample": "197"
+              },
+              "pubSL": {
+                "type": "string",
+                "sample": "1"
+              },
+              "pubTipo": {
+                "type": "string",
+                "sample": "DR I série"
+              },
+              "pubTp": {
+                "type": "string",
+                "sample": "M"
+              },
+              "supl": {
+                "type": "null"
+              },
+              "URLDiario": {
+                "type": "string",
+                "sample": "http://data.dre.pt/eli/diario/1/197/2025/0/pt/html"
+              }
+            }
+          },
+          "count": 1
+        },
+        "Sessao": {
+          "type": "string",
+          "sample": "1"
+        },
+        "Tipo": {
+          "type": "string",
+          "sample": "Resolução da Assembleia da República"
+        },
+        "Titulo": {
+          "type": "string",
+          "sample": "Recomenda ao Governo a adoção de um plano de ação que promova a sustentabilidade, a valorização da p"
+        },
+        "Tp": {
+          "type": "string",
+          "sample": "A"
+        },
+        "Versao": {
+          "type": "null"
+        }
+      }
+    },
+    "potential_id_fields": [
+      "Actividades",
+      "Id",
+      "Numero"
+    ]
+  },
+  "GrupoDeAmizadeXVII": {
+    "filename": "GrupoDeAmizadeXVII_json.txt",
+    "size_bytes": 12546,
+    "size_mb": 0.01,
+    "root_type": "array",
+    "item_count": 67,
+    "item_schema": {
+      "type": "object",
+      "properties": {
+        "Composicao": {
+          "type": "array",
+          "items": "empty"
+        },
+        "DataCriacao": {
+          "type": "string",
+          "sample": "17/07/2025 00:00:00"
+        },
+        "Id": {
+          "type": "string",
+          "sample": "613"
+        },
+        "Legislatura": {
+          "type": "string",
+          "sample": "XVII"
+        },
+        "Nome": {
+          "type": "string",
+          "sample": "Portugal - Guiné-Bissau"
+        },
+        "Reunioes": {
+          "type": "array",
+          "items": "empty"
+        },
+        "Sessao": {
+          "type": "string",
+          "sample": "1"
+        },
+        "Visitas": {
+          "type": "array",
+          "items": "empty"
+        }
+      }
+    },
+    "potential_id_fields": [
+      "Id"
+    ]
+  },
+  "InformacaoBaseXVII": {
+    "filename": "InformacaoBaseXVII_json.txt",
+    "size_bytes": 558236,
+    "size_mb": 0.53,
+    "root_type": "object",
+    "schema": {
+      "type": "object",
+      "properties": {
+        "CirculosEleitorais": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "cpDes": {
+                "type": "string",
+                "sample": "Açores"
+              },
+              "cpId": {
+                "type": "number"
+              },
+              "legDes": {
+                "type": "string",
+                "sample": "XVII"
+              }
+            }
+          },
+          "count": 22
+        },
+        "Deputados": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "DepCadId": {
+                "type": "number"
+              },
+              "DepCargo": {
+                "type": "null"
+              },
+              "DepCPDes": {
+                "type": "string",
+                "sample": "Açores"
+              },
+              "DepCPId": {
+                "type": "number"
+              },
+              "DepGP": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "gpDtFim": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "gpDtInicio": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "gpId": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "gpSigla": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    }
+                  }
+                },
+                "count": 1
+              },
+              "DepId": {
+                "type": "number"
+              },
+              "DepNomeCompleto": {
+                "type": "string",
+                "sample": "Francisco Gabriel Meneses de Lima"
+              },
+              "DepNomeParlamentar": {
+                "type": "string",
+                "sample": "Francisco Lima"
+              },
+              "DepSituacao": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "sioDes": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "sioDtFim": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "sioDtInicio": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    }
+                  }
+                },
+                "count": 1
+              },
+              "LegDes": {
+                "type": "string",
+                "sample": "XVII"
+              },
+              "Videos": {
+                "type": "null"
+              }
+            }
+          },
+          "count": 1446
+        },
+        "DetalheLegislatura": {
+          "type": "object",
+          "properties": {
+            "dtfim": {
+              "type": "null"
+            },
+            "dtini": {
+              "type": "string",
+              "sample": "2025-06-03"
+            },
+            "id": {
+              "type": "string",
+              "sample": "108"
+            },
+            "sigla": {
+              "type": "string",
+              "sample": "XVII"
+            },
+            "siglaAntiga": {
+              "type": "string",
+              "sample": "XVII"
+            }
+          }
+        },
+        "GruposParlamentares": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "nome": {
+                "type": "string",
+                "sample": "Partido Social Democrata"
+              },
+              "sigla": {
+                "type": "string",
+                "sample": "PSD"
+              }
+            }
+          },
+          "count": 10
+        },
+        "SessoesLegislativas": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "dataFim": {
+                "type": "null"
+              },
+              "dataInicio": {
+                "type": "string",
+                "sample": "2025-06-03"
+              },
+              "numSessao": {
+                "type": "string",
+                "sample": "1"
+              }
+            }
+          },
+          "count": 1
+        }
+      }
+    }
+  },
+  "IniciativasXVII": {
+    "filename": "IniciativasXVII_json.txt",
+    "size_bytes": 18686260,
+    "size_mb": 17.82,
+    "root_type": "array",
+    "item_count": 808,
+    "item_schema": {
+      "type": "object",
+      "properties": {
+        "DataFimleg": {
+          "type": "null"
+        },
+        "DataInicioleg": {
+          "type": "string",
+          "sample": "2025-06-03"
+        },
+        "IniAnexos": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "anexoFich": {
+                "type": "string",
+                "sample": "http://app.parlamento.pt/webutils/docs/doc.pdf?path=6148523063484d364c793968636d356c6443397a6158526c"
+              },
+              "anexoNome": {
+                "type": "string",
+                "sample": "A.I.G"
+              }
+            }
+          },
+          "count": 2
+        },
+        "IniAutorDeputados": {
+          "type": "null"
+        },
+        "IniAutorGruposParlamentares": {
+          "type": "null"
+        },
+        "IniAutorOutros": {
+          "type": "object",
+          "properties": {
+            "iniAutorComissao": {
+              "type": "null"
+            },
+            "nome": {
+              "type": "string",
+              "sample": "Governo"
+            },
+            "sigla": {
+              "type": "string",
+              "sample": "V"
+            }
+          }
+        },
+        "IniciativasEuropeias": {
+          "type": "null"
+        },
+        "IniciativasOrigem": {
+          "type": "null"
+        },
+        "IniciativasOriginadas": {
+          "type": "null"
+        },
+        "IniDescTipo": {
+          "type": "string",
+          "sample": "Proposta de Lei"
+        },
+        "IniEpigrafe": {
+          "type": "null"
+        },
+        "IniEventos": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "ActId": {
+                "type": "null"
+              },
+              "ActividadesConjuntas": {
+                "type": "null"
+              },
+              "AnexosFase": {
+                "type": "null"
+              },
+              "CodigoFase": {
+                "type": "string",
+                "sample": "10"
+              },
+              "Comissao": {
+                "type": "null"
+              },
+              "DataFase": {
+                "type": "string",
+                "sample": "2025-08-29"
+              },
+              "EvtId": {
+                "type": "string",
+                "sample": "1"
+              },
+              "Fase": {
+                "type": "string",
+                "sample": "Entrada"
+              },
+              "IniciativasConjuntas": {
+                "type": "null"
+              },
+              "Intervencoesdebates": {
+                "type": "null"
+              },
+              "Links": {
+                "type": "null"
+              },
+              "ObsFase": {
+                "type": "null"
+              },
+              "OevId": {
+                "type": "string",
+                "sample": "1629788"
+              },
+              "OevTextId": {
+                "type": "null"
+              },
+              "PcpublicasConjuntas": {
+                "type": "null"
+              },
+              "PeticoesConjuntas": {
+                "type": "null"
+              },
+              "PublicacaoFase": {
+                "type": "null"
+              },
+              "RecursoDeputados": {
+                "type": "null"
+              },
+              "RecursoGP": {
+                "type": "null"
+              },
+              "TextosAprovados": {
+                "type": "null"
+              },
+              "Votacao": {
+                "type": "null"
+              }
+            }
+          },
+          "count": 15
+        },
+        "IniId": {
+          "type": "string",
+          "sample": "315506"
+        },
+        "IniLeg": {
+          "type": "string",
+          "sample": "XVII"
+        },
+        "IniLinkTexto": {
+          "type": "string",
+          "sample": "http://app.parlamento.pt/webutils/docs/doc.pdf?path=6148523063484d364c793968636d356c6443397a6158526c"
+        },
+        "IniNr": {
+          "type": "string",
+          "sample": "28"
+        },
+        "IniObs": {
+          "type": "null"
+        },
+        "IniSel": {
+          "type": "string",
+          "sample": "1"
+        },
+        "IniTextoSubst": {
+          "type": "string",
+          "sample": "NAO"
+        },
+        "IniTextoSubstCampo": {
+          "type": "null"
+        },
+        "IniTipo": {
+          "type": "string",
+          "sample": "P"
+        },
+        "IniTitulo": {
+          "type": "string",
+          "sample": "Introduz o regime de grupos de IVA, que consiste na consolidação dos saldos do IVA a pagar ou recupe"
+        },
+        "Links": {
+          "type": "null"
+        },
+        "Peticoes": {
+          "type": "null"
+        },
+        "PropostasAlteracao": {
+          "type": "null"
+        }
+      }
+    },
+    "potential_id_fields": [
+      "IniDescTipo",
+      "IniId"
+    ]
+  },
+  "IntervencoesXVII": {
+    "filename": "IntervencoesXVII_json.txt",
+    "size_bytes": 4613192,
+    "size_mb": 4.4,
+    "root_type": "array",
+    "item_count": 2133,
+    "item_schema": {
+      "type": "object",
+      "properties": {
+        "ActividadeId": {
+          "type": "string",
+          "sample": "1641723"
+        },
+        "ActividadesRelacionadas": {
+          "type": "object",
+          "properties": {
+            "autoresDeputados": {
+              "type": "null"
+            },
+            "autoresGP": {
+              "type": "null"
+            },
+            "id": {
+              "type": "string",
+              "sample": "1641723"
+            },
+            "tipo": {
+              "type": "string",
+              "sample": "Iniciativa"
+            }
+          }
+        },
+        "Convidados": {
+          "type": "object",
+          "properties": {
+            "cargo": {
+              "type": "null"
+            },
+            "honra": {
+              "type": "null"
+            },
+            "nome": {
+              "type": "null"
+            },
+            "pais": {
+              "type": "null"
+            }
+          }
+        },
+        "DadosAudiovisual": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "assunto": {
+                "type": "string",
+                "sample": "Em Interpelação à Mesa, esclarece o momento da inscrição de Paulo Moniz (PSD) no debate.\n"
+              },
+              "duracao": {
+                "type": "string",
+                "sample": "00:00:52.510"
+              },
+              "tipoIntervencao": {
+                "type": "string",
+                "sample": "Interpelação à mesa"
+              },
+              "url": {
+                "type": "string",
+                "sample": "https://av.parlamento.pt/videos/Plenary/17/1/31/76"
+              }
+            }
+          },
+          "count": 1
+        },
+        "DataReuniaoPlenaria": {
+          "type": "string",
+          "sample": "2025-11-21"
+        },
+        "Debate": {
+          "type": "null"
+        },
+        "Deputados": {
+          "type": "object",
+          "properties": {
+            "GP": {
+              "type": "string",
+              "sample": "PSD"
+            },
+            "idCadastro": {
+              "type": "string",
+              "sample": "7274"
+            },
+            "nome": {
+              "type": "string",
+              "sample": "Hugo Carneiro"
+            }
+          }
+        },
+        "FaseDebate": {
+          "type": "null"
+        },
+        "FaseSessao": {
+          "type": "string",
+          "sample": "POD"
+        },
+        "Id": {
+          "type": "string",
+          "sample": "469253"
+        },
+        "IdDebate": {
+          "type": "string",
+          "sample": "61514"
+        },
+        "Iniciativas": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "fase": {
+                "type": "string",
+                "sample": "Discussão especialidade"
+              },
+              "id": {
+                "type": "string",
+                "sample": "315671"
+              },
+              "tipo": {
+                "type": "string",
+                "sample": "Proposta de Lei"
+              }
+            }
+          },
+          "count": 1
+        },
+        "IntervencoesRelacionadas": {
+          "type": "null"
+        },
+        "Legislatura": {
+          "type": "string",
+          "sample": "XVII"
+        },
+        "MembrosGoverno": {
+          "type": "object",
+          "properties": {
+            "cargo": {
+              "type": "null"
+            },
+            "governo": {
+              "type": "null"
+            },
+            "nome": {
+              "type": "null"
+            }
+          }
+        },
+        "Publicacao": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "debateDtReu": {
+                "type": "null"
+              },
+              "idAct": {
+                "type": "null"
+              },
+              "idDeb": {
+                "type": "null"
+              },
+              "idInt": {
+                "type": "string",
+                "sample": "469253"
+              },
+              "idPag": {
+                "type": "null"
+              },
+              "obs": {
+                "type": "null"
+              },
+              "pag": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "sample": "56-57"
+                },
+                "count": 1
+              },
+              "pagFinalDiarioSupl": {
+                "type": "null"
+              },
+              "pubdt": {
+                "type": "string",
+                "sample": "2025-11-22"
+              },
+              "pubLeg": {
+                "type": "string",
+                "sample": "XVII"
+              },
+              "pubNr": {
+                "type": "string",
+                "sample": "31"
+              },
+              "pubSL": {
+                "type": "string",
+                "sample": "1"
+              },
+              "pubTipo": {
+                "type": "string",
+                "sample": "DAR I série"
+              },
+              "pubTp": {
+                "type": "string",
+                "sample": "D"
+              },
+              "supl": {
+                "type": "null"
+              },
+              "URLDiario": {
+                "type": "string",
+                "sample": "https://debates.parlamento.pt/catalogo/r3/dar/01/17/01/031/2025-11-22/56?pgs=56-57&org=PLC"
+              }
+            }
+          },
+          "count": 1
+        },
+        "Qualidade": {
+          "type": "string",
+          "sample": "Deputado"
+        },
+        "Resumo": {
+          "type": "string",
+          "sample": "Esclarece o momento da inscrição de Paulo Moniz (PSD) no debate"
+        },
+        "Sessao": {
+          "type": "string",
+          "sample": "1"
+        },
+        "Sumario": {
+          "type": "string",
+          "sample": "Orçamento do Estado para 2026\n"
+        },
+        "Sumario2": {
+          "type": "null"
+        },
+        "TipoDebate": {
+          "type": "null"
+        },
+        "TipoIntervencao": {
+          "type": "string",
+          "sample": "Interpelação à mesa"
+        }
+      }
+    },
+    "potential_id_fields": [
+      "ActividadeId",
+      "ActividadesRelacionadas",
+      "Convidados",
+      "Id",
+      "IdDebate",
+      "Qualidade"
+    ]
+  },
+  "OE2026Or": {
+    "filename": "OE2026Or_json.txt",
+    "size_bytes": 2685438,
+    "size_mb": 2.56,
+    "root_type": "object",
+    "schema": {
+      "type": "object",
+      "properties": {
+        "#comment": {
+          "type": "array",
+          "items": "empty"
+        },
+        "Item": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "ID": {
+                "type": "string",
+                "sample": "78356"
+              },
+              "ID_Pai": {
+                "type": "string",
+                "sample": "-1"
+              },
+              "Tipo": {
+                "type": "string",
+                "sample": "Diplomas a Modificar"
+              },
+              "Numero": {
+                "type": "string",
+                "sample": "Decreto-Lei n.º 498/72, de 9 de dezembro"
+              },
+              "Titulo": {
+                "type": "string",
+                "sample": "Estatuto da Aposentação"
+              },
+              "Texto": {
+                "type": "null"
+              },
+              "Estado": {
+                "type": "string",
+                "sample": "Entrada"
+              },
+              "Artigos": {
+                "type": "object",
+                "properties": {
+                  "Artigo": {
+                    "type": "array",
+                    "items": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "count": 2
+                  }
+                }
+              },
+              "PropostasDeAlteracao": {
+                "type": "null"
+              },
+              "DiplomasaModificar": {
+                "type": "null"
+              },
+              "IniciativasMapas": {
+                "type": "null"
+              },
+              "RequerimentosDeAvocacao": {
+                "type": "null"
+              }
+            }
+          },
+          "count": 467
+        }
+      }
+    }
+  },
+  "OrgaoComposicaoXVII": {
+    "filename": "OrgaoComposicaoXVII_json.txt",
+    "size_bytes": 2261129,
+    "size_mb": 2.16,
+    "root_type": "object",
+    "schema": {
+      "type": "object",
+      "properties": {
+        "ComissaoPermanente": {
+          "type": "object",
+          "properties": {
+            "DetalheOrgao": {
+              "type": "object",
+              "properties": {
+                "idOrgao": {
+                  "type": "number"
+                },
+                "nomeSigla": {
+                  "type": "string",
+                  "sample": "Comissão Permanente"
+                },
+                "numeroOrgao": {
+                  "type": "number"
+                },
+                "siglaLegislatura": {
+                  "type": "string",
+                  "sample": "XVII"
+                },
+                "siglaOrgao": {
+                  "type": "string",
+                  "sample": "CP"
+                }
+              }
+            },
+            "HistoricoComposicao": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "depCadId": {
+                    "type": "number"
+                  },
+                  "depCargo": {
+                    "type": "null"
+                  },
+                  "depGP": {
+                    "type": "array",
+                    "items": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "count": 1
+                  },
+                  "depId": {
+                    "type": "number"
+                  },
+                  "depNomeParlamentar": {
+                    "type": "string",
+                    "sample": "Alexandre Poço"
+                  },
+                  "depSituacao": {
+                    "type": "array",
+                    "items": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "count": 1
+                  },
+                  "legDes": {
+                    "type": "string",
+                    "sample": "XVII"
+                  },
+                  "orgId": {
+                    "type": "number"
+                  }
+                }
+              },
+              "count": 51
+            },
+            "Reunioes": {
+              "type": "null"
+            }
+          }
+        },
+        "Comissoes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "DetalheOrgao": {
+                "type": "object",
+                "properties": {
+                  "idOrgao": {
+                    "type": "number"
+                  },
+                  "nomeSigla": {
+                    "type": "string",
+                    "sample": "Comissão da Reforma do Estado e Poder Local"
+                  },
+                  "numeroOrgao": {
+                    "type": "number"
+                  },
+                  "siglaLegislatura": {
+                    "type": "string",
+                    "sample": "XVII"
+                  },
+                  "siglaOrgao": {
+                    "type": "string",
+                    "sample": "CO"
+                  }
+                }
+              },
+              "HistoricoComposicao": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "depCadId": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "depCargo": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "depGP": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "depId": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "depNomeParlamentar": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "depSituacao": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "legDes": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "orgId": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    }
+                  }
+                },
+                "count": 45
+              },
+              "Reunioes": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "reuActa": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "reuDataHora": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "reuFinalPlenario": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "reuId": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "reuLink": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "reuLocal": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "reuNumero": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "reuTarDes": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "reuTarId": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "reuTarSigla": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "reuTirDes": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    }
+                  }
+                },
+                "count": 21
+              }
+            }
+          },
+          "count": 18
+        },
+        "ConferenciaLideres": {
+          "type": "object",
+          "properties": {
+            "DetalheOrgao": {
+              "type": "object",
+              "properties": {
+                "idOrgao": {
+                  "type": "number"
+                },
+                "nomeSigla": {
+                  "type": "string",
+                  "sample": "Conferência de Líderes"
+                },
+                "numeroOrgao": {
+                  "type": "number"
+                },
+                "siglaLegislatura": {
+                  "type": "string",
+                  "sample": "XVII"
+                },
+                "siglaOrgao": {
+                  "type": "string",
+                  "sample": "CL"
+                }
+              }
+            },
+            "HistoricoComposicao": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "depCadId": {
+                    "type": "number"
+                  },
+                  "depCargo": {
+                    "type": "array",
+                    "items": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "count": 1
+                  },
+                  "depGP": {
+                    "type": "array",
+                    "items": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "count": 1
+                  },
+                  "depId": {
+                    "type": "number"
+                  },
+                  "depNomeParlamentar": {
+                    "type": "string",
+                    "sample": "José Pedro Aguiar-Branco"
+                  },
+                  "depSituacao": {
+                    "type": "array",
+                    "items": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "count": 1
+                  },
+                  "legDes": {
+                    "type": "string",
+                    "sample": "XVII"
+                  },
+                  "orgId": {
+                    "type": "number"
+                  }
+                }
+              },
+              "count": 13
+            },
+            "Reunioes": {
+              "type": "null"
+            }
+          }
+        },
+        "ConferenciaPresidentesComissoes": {
+          "type": "object",
+          "properties": {
+            "DetalheOrgao": {
+              "type": "object",
+              "properties": {
+                "idOrgao": {
+                  "type": "number"
+                },
+                "nomeSigla": {
+                  "type": "string",
+                  "sample": "Conferência dos Presidentes das Comissões Parlamentares"
+                },
+                "numeroOrgao": {
+                  "type": "number"
+                },
+                "siglaLegislatura": {
+                  "type": "string",
+                  "sample": "XVII"
+                },
+                "siglaOrgao": {
+                  "type": "string",
+                  "sample": "PC"
+                }
+              }
+            },
+            "HistoricoComposicao": {
+              "type": "null"
+            },
+            "HistoricoComposicaoCPC": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "depCadId": {
+                    "type": "number"
+                  },
+                  "depCargo": {
+                    "type": "null"
+                  },
+                  "depGP": {
+                    "type": "array",
+                    "items": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "count": 1
+                  },
+                  "depId": {
+                    "type": "number"
+                  },
+                  "depNomeParlamentar": {
+                    "type": "string",
+                    "sample": "Almiro Moreira"
+                  },
+                  "depSituacao": {
+                    "type": "array",
+                    "items": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "count": 1
+                  },
+                  "legDes": {
+                    "type": "string",
+                    "sample": "XVII"
+                  },
+                  "presOrgao": {
+                    "type": "array",
+                    "items": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "count": 1
+                  }
+                }
+              },
+              "count": 15
+            },
+            "Reunioes": {
+              "type": "null"
+            }
+          }
+        },
+        "ConselhoAdministracao": {
+          "type": "object",
+          "properties": {
+            "DetalheOrgao": {
+              "type": "object",
+              "properties": {
+                "idOrgao": {
+                  "type": "number"
+                },
+                "nomeSigla": {
+                  "type": "string",
+                  "sample": "Conselho de Administração"
+                },
+                "numeroOrgao": {
+                  "type": "number"
+                },
+                "siglaLegislatura": {
+                  "type": "string",
+                  "sample": "XVII"
+                },
+                "siglaOrgao": {
+                  "type": "string",
+                  "sample": "CA"
+                }
+              }
+            },
+            "HistoricoComposicao": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "depCadId": {
+                    "type": "number"
+                  },
+                  "depCargo": {
+                    "type": "null"
+                  },
+                  "depGP": {
+                    "type": "array",
+                    "items": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "count": 1
+                  },
+                  "depId": {
+                    "type": "number"
+                  },
+                  "depNomeParlamentar": {
+                    "type": "string",
+                    "sample": "Alfredo Maia"
+                  },
+                  "depSituacao": {
+                    "type": "array",
+                    "items": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "count": 1
+                  },
+                  "legDes": {
+                    "type": "string",
+                    "sample": "XVII"
+                  },
+                  "orgId": {
+                    "type": "number"
+                  }
+                }
+              },
+              "count": 17
+            },
+            "Reunioes": {
+              "type": "null"
+            }
+          }
+        },
+        "GruposTrabalho": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "DetalheOrgao": {
+                "type": "object",
+                "properties": {
+                  "idOrgao": {
+                    "type": "number"
+                  },
+                  "nomeSigla": {
+                    "type": "string",
+                    "sample": "Grupo de Trabalho - Apagão 28 de abril 2025"
+                  },
+                  "numeroOrgao": {
+                    "type": "number"
+                  },
+                  "siglaLegislatura": {
+                    "type": "string",
+                    "sample": "XVII"
+                  },
+                  "siglaOrgao": {
+                    "type": "string",
+                    "sample": "GT"
+                  }
+                }
+              },
+              "HistoricoComposicao": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "depCadId": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "depCargo": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "depGP": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "depId": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "depNomeParlamentar": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "depSituacao": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "legDes": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "orgId": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    }
+                  }
+                },
+                "count": 12
+              },
+              "Reunioes": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "reuActa": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "reuDataHora": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "reuFinalPlenario": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "reuId": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "reuLink": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "reuLocal": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "reuNumero": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "reuTarDes": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "reuTarId": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "reuTarSigla": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "reuTirDes": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    }
+                  }
+                },
+                "count": 3
+              }
+            }
+          },
+          "count": 15
+        },
+        "MesaAR": {
+          "type": "object",
+          "properties": {
+            "DetalheOrgao": {
+              "type": "object",
+              "properties": {
+                "idOrgao": {
+                  "type": "number"
+                },
+                "nomeSigla": {
+                  "type": "null"
+                },
+                "numeroOrgao": {
+                  "type": "number"
+                },
+                "siglaLegislatura": {
+                  "type": "string",
+                  "sample": "XVII"
+                },
+                "siglaOrgao": {
+                  "type": "string",
+                  "sample": "Composição da Mesa da AR"
+                }
+              }
+            },
+            "HistoricoComposicao": {
+              "type": "null"
+            },
+            "HistoricoComposicaoMesa": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "depCadId": {
+                    "type": "number"
+                  },
+                  "depCargo": {
+                    "type": "array",
+                    "items": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "count": 1
+                  },
+                  "depGP": {
+                    "type": "array",
+                    "items": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "count": 1
+                  },
+                  "depId": {
+                    "type": "number"
+                  },
+                  "depNomeParlamentar": {
+                    "type": "string",
+                    "sample": "Diogo Pacheco de Amorim"
+                  },
+                  "legDes": {
+                    "type": "string",
+                    "sample": "XVII"
+                  }
+                }
+              },
+              "count": 13
+            },
+            "Reunioes": {
+              "type": "null"
+            }
+          }
+        },
+        "Plenario": {
+          "type": "object",
+          "properties": {
+            "Composicao": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "DepCadId": {
+                    "type": "number"
+                  },
+                  "DepCargo": {
+                    "type": "null"
+                  },
+                  "DepCPDes": {
+                    "type": "string",
+                    "sample": "Açores"
+                  },
+                  "DepCPId": {
+                    "type": "number"
+                  },
+                  "DepGP": {
+                    "type": "array",
+                    "items": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "count": 1
+                  },
+                  "DepId": {
+                    "type": "number"
+                  },
+                  "DepNomeCompleto": {
+                    "type": "string",
+                    "sample": "Francisco Gabriel Meneses de Lima"
+                  },
+                  "DepNomeParlamentar": {
+                    "type": "string",
+                    "sample": "Francisco Lima"
+                  },
+                  "DepSituacao": {
+                    "type": "array",
+                    "items": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "count": 1
+                  },
+                  "LegDes": {
+                    "type": "string",
+                    "sample": "XVII"
+                  },
+                  "Videos": {
+                    "type": "null"
+                  }
+                }
+              },
+              "count": 1446
+            },
+            "DetalheOrgao": {
+              "type": "object",
+              "properties": {
+                "idOrgao": {
+                  "type": "number"
+                },
+                "nomeSigla": {
+                  "type": "string",
+                  "sample": "Plenário"
+                },
+                "numeroOrgao": {
+                  "type": "number"
+                },
+                "siglaLegislatura": {
+                  "type": "string",
+                  "sample": "XVII"
+                },
+                "siglaOrgao": {
+                  "type": "string",
+                  "sample": "PL"
+                }
+              }
+            },
+            "Reunioes": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "Presencas": {
+                    "type": "object",
+                    "properties": {
+                      "dtReuniao": {
+                        "type": "...",
+                        "note": "max_depth_reached"
+                      },
+                      "presencas": {
+                        "type": "...",
+                        "note": "max_depth_reached"
+                      },
+                      "tipoReuniao": {
+                        "type": "...",
+                        "note": "max_depth_reached"
+                      }
+                    }
+                  },
+                  "Reuniao": {
+                    "type": "object",
+                    "properties": {
+                      "legDes": {
+                        "type": "...",
+                        "note": "max_depth_reached"
+                      },
+                      "reuActa": {
+                        "type": "...",
+                        "note": "max_depth_reached"
+                      },
+                      "reuDataHora": {
+                        "type": "...",
+                        "note": "max_depth_reached"
+                      },
+                      "reuId": {
+                        "type": "...",
+                        "note": "max_depth_reached"
+                      },
+                      "reuLink": {
+                        "type": "...",
+                        "note": "max_depth_reached"
+                      },
+                      "reuLocal": {
+                        "type": "...",
+                        "note": "max_depth_reached"
+                      },
+                      "reuNumero": {
+                        "type": "...",
+                        "note": "max_depth_reached"
+                      },
+                      "reuTirDes": {
+                        "type": "...",
+                        "note": "max_depth_reached"
+                      },
+                      "selNumero": {
+                        "type": "...",
+                        "note": "max_depth_reached"
+                      }
+                    }
+                  }
+                }
+              },
+              "count": 41
+            }
+          }
+        },
+        "SubComissoes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "DetalheOrgao": {
+                "type": "object",
+                "properties": {
+                  "idOrgao": {
+                    "type": "number"
+                  },
+                  "nomeSigla": {
+                    "type": "string",
+                    "sample": "Subcomissão para a Igualdade e Não Discriminação"
+                  },
+                  "numeroOrgao": {
+                    "type": "number"
+                  },
+                  "siglaLegislatura": {
+                    "type": "string",
+                    "sample": "XVII"
+                  },
+                  "siglaOrgao": {
+                    "type": "string",
+                    "sample": "SC"
+                  }
+                }
+              },
+              "HistoricoComposicao": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "depCadId": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "depCargo": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "depGP": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "depId": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "depNomeParlamentar": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "depSituacao": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "legDes": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "orgId": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    }
+                  }
+                },
+                "count": 21
+              },
+              "Reunioes": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "reuActa": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "reuDataHora": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "reuFinalPlenario": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "reuId": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "reuLink": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "reuLocal": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "reuNumero": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "reuTarDes": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "reuTarId": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "reuTarSigla": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "reuTirDes": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    }
+                  }
+                },
+                "count": 4
+              }
+            }
+          },
+          "count": 2
+        }
+      }
+    }
+  },
+  "PeticoesXVII": {
+    "filename": "PeticoesXVII_json.txt",
+    "size_bytes": 244548,
+    "size_mb": 0.23,
+    "root_type": "array",
+    "item_count": 85,
+    "item_schema": {
+      "type": "object",
+      "properties": {
+        "DadosComissao": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "Admissibilidade": {
+                "type": "string",
+                "sample": "Admitida"
+              },
+              "Audicoes": {
+                "type": "null"
+              },
+              "Audiencias": {
+                "type": "null"
+              },
+              "AudienciasOutros": {
+                "type": "null"
+              },
+              "Codigo": {
+                "type": "null"
+              },
+              "DadosPedidosInformacao": {
+                "type": "null"
+              },
+              "DadosRelatorioFinal": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "publicacao": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "votacao": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    }
+                  }
+                },
+                "count": 1
+              },
+              "DataAdmissibilidade": {
+                "type": "string",
+                "sample": "2025-07-09"
+              },
+              "DataArquivo": {
+                "type": "string",
+                "sample": "2025-12-17"
+              },
+              "DataBaixaComissao": {
+                "type": "string",
+                "sample": "2025-07-01"
+              },
+              "DataEnvioPAR": {
+                "type": "string",
+                "sample": "2025-12-17"
+              },
+              "DataReaberta": {
+                "type": "string",
+                "sample": "2025-07-09"
+              },
+              "DocumentosPeticao": {
+                "type": "object",
+                "properties": {
+                  "DocsOutros": {
+                    "type": "array",
+                    "items": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "count": 1
+                  },
+                  "DocsPedidoInformacoes": {
+                    "type": "null"
+                  },
+                  "DocsRelatorioFinal": {
+                    "type": "array",
+                    "items": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "count": 1
+                  },
+                  "DocsRespostaPedidoInformacoes": {
+                    "type": "null"
+                  }
+                }
+              },
+              "IdComissao": {
+                "type": "string",
+                "sample": "8456"
+              },
+              "Legislatura": {
+                "type": "string",
+                "sample": "XVII"
+              },
+              "Nome": {
+                "type": "string",
+                "sample": "Comissão de Trabalho, Segurança Social e Inclusão "
+              },
+              "NotasAdmissibilidade": {
+                "type": "null"
+              },
+              "Numero": {
+                "type": "string",
+                "sample": "10"
+              },
+              "Publicacao": {
+                "type": "null"
+              },
+              "Relatores": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "dataCessacao": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "dataNomeacao": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "gp": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "id": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "motivoCessacao": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "nome": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    }
+                  }
+                },
+                "count": 1
+              },
+              "RelatorioFinal": {
+                "type": "null"
+              },
+              "Sessao": {
+                "type": "null"
+              },
+              "Situacao": {
+                "type": "string",
+                "sample": "Em apreciação"
+              },
+              "Transitada": {
+                "type": "null"
+              }
+            }
+          },
+          "count": 1
+        },
+        "DataDebate": {
+          "type": "null"
+        },
+        "Documentos": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "DataDocumento": {
+                "type": "string",
+                "sample": "2025-07-03"
+              },
+              "Descricao": {
+                "type": "null"
+              },
+              "TipoDocumento": {
+                "type": "string",
+                "sample": "Texto final"
+              },
+              "TituloDocumento": {
+                "type": "string",
+                "sample": "Texto original da Petição"
+              },
+              "URL": {
+                "type": "string",
+                "sample": "http://app.parlamento.pt/webutils/docs/doc.pdf?path=6148523063484d364c793968636d356c6443397a6158526c"
+              }
+            }
+          },
+          "count": 1
+        },
+        "IniciativasConjuntas": {
+          "type": "null"
+        },
+        "Iniciativasoriginadas": {
+          "type": "null"
+        },
+        "Intervencoes": {
+          "type": "null"
+        },
+        "Links": {
+          "type": "null"
+        },
+        "PedidosEsclarecimento": {
+          "type": "null"
+        },
+        "PetActividadeId": {
+          "type": "string",
+          "sample": "34221"
+        },
+        "PetAssunto": {
+          "type": "string",
+          "sample": "Petição para a criação do Estatuto do Membro Voluntário do Órgão de Administração de IPSS"
+        },
+        "PetAutor": {
+          "type": "string",
+          "sample": "Maria José da Costa Miranda Menezes"
+        },
+        "PetDataEntrada": {
+          "type": "string",
+          "sample": "2025-06-06"
+        },
+        "PeticoesAssociadas": {
+          "type": "null"
+        },
+        "PetId": {
+          "type": "string",
+          "sample": "34221"
+        },
+        "PetLeg": {
+          "type": "string",
+          "sample": "XVII"
+        },
+        "PetNr": {
+          "type": "string",
+          "sample": "2"
+        },
+        "PetNrAssinaturas": {
+          "type": "string",
+          "sample": "13301"
+        },
+        "PetNrAssinaturasInicial": {
+          "type": "null"
+        },
+        "PetObs": {
+          "type": "null"
+        },
+        "PetSel": {
+          "type": "string",
+          "sample": "1"
+        },
+        "PetSituacao": {
+          "type": "string",
+          "sample": "Proposta para apreciação em plenário"
+        },
+        "PetUrlTexto": {
+          "type": "null"
+        },
+        "PublicacaoDebate": {
+          "type": "null"
+        },
+        "PublicacaoPeticao": {
+          "type": "null"
+        }
+      }
+    },
+    "potential_id_fields": [
+      "PedidosEsclarecimento",
+      "PetActividadeId",
+      "PetId"
+    ]
+  },
+  "RegistoBiograficoXVII": {
+    "filename": "RegistoBiograficoXVII_json.txt",
+    "size_bytes": 668211,
+    "size_mb": 0.64,
+    "root_type": "array",
+    "item_count": 330,
+    "item_schema": {
+      "type": "object",
+      "properties": {
+        "CadActividadeOrgaos": {
+          "type": "object",
+          "properties": {
+            "actividadeCom": {
+              "type": "null"
+            },
+            "actividadeGT": {
+              "type": "null"
+            },
+            "actividadeSCom": {
+              "type": "null"
+            }
+          }
+        },
+        "CadCargosFuncoes": {
+          "type": "null"
+        },
+        "CadCondecoracoes": {
+          "type": "null"
+        },
+        "CadDeputadoLegis": {
+          "type": "null"
+        },
+        "CadDtNascimento": {
+          "type": "null"
+        },
+        "CadHabilitacoes": {
+          "type": "null"
+        },
+        "CadId": {
+          "type": "number"
+        },
+        "CadNomeCompleto": {
+          "type": "string",
+          "sample": "Rui Ladeira Pereira"
+        },
+        "CadObrasPublicadas": {
+          "type": "null"
+        },
+        "CadProfissao": {
+          "type": "null"
+        },
+        "CadSexo": {
+          "type": "string",
+          "sample": "M"
+        },
+        "CadTitulos": {
+          "type": "null"
+        }
+      }
+    },
+    "potential_id_fields": [
+      "CadActividadeOrgaos",
+      "CadId"
+    ]
+  },
+  "RegistoInteressesXVII": {
+    "filename": "RegistoInteressesXVII_json.txt",
+    "size_bytes": 425627,
+    "size_mb": 0.41,
+    "root_type": "array",
+    "item_count": 1446,
+    "item_schema": {
+      "type": "object",
+      "properties": {
+        "RegistoInteressesV1": {
+          "type": "null"
+        },
+        "RegistoInteressesV2": {
+          "type": "null"
+        },
+        "RegistoInteressesV3": {
+          "type": "object",
+          "properties": {
+            "DGFNumber": {
+              "type": "null"
+            },
+            "Exclusivity": {
+              "type": "string",
+              "sample": "N"
+            },
+            "FullName": {
+              "type": "string",
+              "sample": "Daniela Filipa Alves Gonçalinho"
+            },
+            "MaritalStatus": {
+              "type": "null"
+            },
+            "MatrimonialRegime": {
+              "type": "null"
+            },
+            "RecordId": {
+              "type": "integer"
+            },
+            "RecordInterests": {
+              "type": "null"
+            },
+            "SpouseName": {
+              "type": "null"
+            }
+          }
+        },
+        "RegistoInteressesV5": {
+          "type": "null"
+        }
+      }
+    }
+  },
+  "RequerimentosXVII": {
+    "filename": "RequerimentosXVII_json.txt",
+    "size_bytes": 2527886,
+    "size_mb": 2.41,
+    "root_type": "array",
+    "item_count": 1072,
+    "item_schema": {
+      "type": "object",
+      "properties": {
+        "Assunto": {
+          "type": "string",
+          "sample": "Solicitação de relatórios e registos relativamente ao Centro de Recolha Oficial de animais de compan"
+        },
+        "Autores": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "GP": {
+                "type": "string",
+                "sample": "CH"
+              },
+              "idCadastro": {
+                "type": "string",
+                "sample": "8196"
+              },
+              "nome": {
+                "type": "string",
+                "sample": "Ana Martins"
+              }
+            }
+          },
+          "count": 60
+        },
+        "DataEnvio": {
+          "type": "string",
+          "sample": "2025-10-01"
+        },
+        "Destinatarios": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "dataEnvio": {
+                "type": "string",
+                "sample": "2025-10-01"
+              },
+              "dataProrrogacao": {
+                "type": "null"
+              },
+              "dataReenvio": {
+                "type": "null"
+              },
+              "devolvido": {
+                "type": "null"
+              },
+              "nomeEntidade": {
+                "type": "string",
+                "sample": "Câmara Municipal de Anadia"
+              },
+              "prazoProrrogacao": {
+                "type": "null"
+              },
+              "prorrogado": {
+                "type": "null"
+              },
+              "reenviado": {
+                "type": "null"
+              },
+              "respostas": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "dataResposta": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "docRemetida": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "entidade": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "ficheiro": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "ficheiroComTipo": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "publicacao": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    }
+                  }
+                },
+                "count": 1
+              },
+              "retirado": {
+                "type": "null"
+              }
+            }
+          },
+          "count": 1
+        },
+        "DtEntrada": {
+          "type": "string",
+          "sample": "2025-10-01"
+        },
+        "Ficheiro": {
+          "type": "string",
+          "sample": "http://app.parlamento.pt/webutils/docs/doc.pdf?path=6148523063484d364c793968636d356c6443397a6158526c"
+        },
+        "Fundamentacao": {
+          "type": "null"
+        },
+        "Id": {
+          "type": "string",
+          "sample": "188248"
+        },
+        "Legislatura": {
+          "type": "string",
+          "sample": "XVII"
+        },
+        "Nr": {
+          "type": "string",
+          "sample": "2"
+        },
+        "Observacoes": {
+          "type": "null"
+        },
+        "Publicacao": {
+          "type": "null"
+        },
+        "ReqTipo": {
+          "type": "string",
+          "sample": "AL"
+        },
+        "RespostasSPerguntas": {
+          "type": "null"
+        },
+        "Sessao": {
+          "type": "string",
+          "sample": "1"
+        },
+        "Tipo": {
+          "type": "string",
+          "sample": "Requerimento"
+        }
+      }
+    },
+    "potential_id_fields": [
+      "Id"
+    ]
+  },
+  "ReunioesVisitasXVII": {
+    "filename": "ReunioesVisitasXVII_json.txt",
+    "size_bytes": 20716,
+    "size_mb": 0.02,
+    "root_type": "array",
+    "item_count": 74,
+    "item_schema": {
+      "type": "object",
+      "properties": {
+        "DataFim": {
+          "type": "string"
+        },
+        "DataInicio": {
+          "type": "string",
+          "sample": "14/11/2025 00:00:00"
+        },
+        "Id": {
+          "type": "string",
+          "sample": "628"
+        },
+        "Legislatura": {
+          "type": "string",
+          "sample": "XVII"
+        },
+        "Local": {
+          "type": "string"
+        },
+        "Nome": {
+          "type": "string",
+          "sample": "Visita Oficial da Presidente da Assembleia Nacional Francesa, Yaël Braun-Pivet"
+        },
+        "Participantes": {
+          "type": "array",
+          "items": "empty"
+        },
+        "Promotor": {
+          "type": "string"
+        },
+        "Sessao": {
+          "type": "string",
+          "sample": "1"
+        },
+        "Tipo": {
+          "type": "string",
+          "sample": "VEE"
+        }
+      }
+    },
+    "potential_id_fields": [
+      "Id"
+    ]
+  }
+}

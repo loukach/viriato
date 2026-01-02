@@ -1,0 +1,159 @@
+{
+  "filename": "RequerimentosXVII_json.txt",
+  "size_bytes": 2527886,
+  "size_mb": 2.41,
+  "root_type": "array",
+  "item_count": 1072,
+  "item_schema": {
+    "type": "object",
+    "properties": {
+      "Assunto": {
+        "type": "string",
+        "sample": "Solicitação de relatórios e registos relativamente ao Centro de Recolha Oficial de animais de compan"
+      },
+      "Autores": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "GP": {
+              "type": "string",
+              "sample": "CH"
+            },
+            "idCadastro": {
+              "type": "string",
+              "sample": "8196"
+            },
+            "nome": {
+              "type": "string",
+              "sample": "Ana Martins"
+            }
+          }
+        },
+        "count": 60
+      },
+      "DataEnvio": {
+        "type": "string",
+        "sample": "2025-10-01"
+      },
+      "Destinatarios": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "dataEnvio": {
+              "type": "string",
+              "sample": "2025-10-01"
+            },
+            "dataProrrogacao": {
+              "type": "null"
+            },
+            "dataReenvio": {
+              "type": "null"
+            },
+            "devolvido": {
+              "type": "null"
+            },
+            "nomeEntidade": {
+              "type": "string",
+              "sample": "Câmara Municipal de Anadia"
+            },
+            "prazoProrrogacao": {
+              "type": "null"
+            },
+            "prorrogado": {
+              "type": "null"
+            },
+            "reenviado": {
+              "type": "null"
+            },
+            "respostas": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "dataResposta": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "docRemetida": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "entidade": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "ficheiro": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "ficheiroComTipo": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "publicacao": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  }
+                }
+              },
+              "count": 1
+            },
+            "retirado": {
+              "type": "null"
+            }
+          }
+        },
+        "count": 1
+      },
+      "DtEntrada": {
+        "type": "string",
+        "sample": "2025-10-01"
+      },
+      "Ficheiro": {
+        "type": "string",
+        "sample": "http://app.parlamento.pt/webutils/docs/doc.pdf?path=6148523063484d364c793968636d356c6443397a6158526c"
+      },
+      "Fundamentacao": {
+        "type": "null"
+      },
+      "Id": {
+        "type": "string",
+        "sample": "188248"
+      },
+      "Legislatura": {
+        "type": "string",
+        "sample": "XVII"
+      },
+      "Nr": {
+        "type": "string",
+        "sample": "2"
+      },
+      "Observacoes": {
+        "type": "null"
+      },
+      "Publicacao": {
+        "type": "null"
+      },
+      "ReqTipo": {
+        "type": "string",
+        "sample": "AL"
+      },
+      "RespostasSPerguntas": {
+        "type": "null"
+      },
+      "Sessao": {
+        "type": "string",
+        "sample": "1"
+      },
+      "Tipo": {
+        "type": "string",
+        "sample": "Requerimento"
+      }
+    }
+  },
+  "potential_id_fields": [
+    "Id"
+  ]
+}

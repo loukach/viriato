@@ -1,0 +1,262 @@
+{
+  "filename": "IntervencoesXVII_json.txt",
+  "size_bytes": 4613192,
+  "size_mb": 4.4,
+  "root_type": "array",
+  "item_count": 2133,
+  "item_schema": {
+    "type": "object",
+    "properties": {
+      "ActividadeId": {
+        "type": "string",
+        "sample": "1641723"
+      },
+      "ActividadesRelacionadas": {
+        "type": "object",
+        "properties": {
+          "autoresDeputados": {
+            "type": "null"
+          },
+          "autoresGP": {
+            "type": "null"
+          },
+          "id": {
+            "type": "string",
+            "sample": "1641723"
+          },
+          "tipo": {
+            "type": "string",
+            "sample": "Iniciativa"
+          }
+        }
+      },
+      "Convidados": {
+        "type": "object",
+        "properties": {
+          "cargo": {
+            "type": "null"
+          },
+          "honra": {
+            "type": "null"
+          },
+          "nome": {
+            "type": "null"
+          },
+          "pais": {
+            "type": "null"
+          }
+        }
+      },
+      "DadosAudiovisual": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "assunto": {
+              "type": "string",
+              "sample": "Em Interpelação à Mesa, esclarece o momento da inscrição de Paulo Moniz (PSD) no debate.\n"
+            },
+            "duracao": {
+              "type": "string",
+              "sample": "00:00:52.510"
+            },
+            "tipoIntervencao": {
+              "type": "string",
+              "sample": "Interpelação à mesa"
+            },
+            "url": {
+              "type": "string",
+              "sample": "https://av.parlamento.pt/videos/Plenary/17/1/31/76"
+            }
+          }
+        },
+        "count": 1
+      },
+      "DataReuniaoPlenaria": {
+        "type": "string",
+        "sample": "2025-11-21"
+      },
+      "Debate": {
+        "type": "null"
+      },
+      "Deputados": {
+        "type": "object",
+        "properties": {
+          "GP": {
+            "type": "string",
+            "sample": "PSD"
+          },
+          "idCadastro": {
+            "type": "string",
+            "sample": "7274"
+          },
+          "nome": {
+            "type": "string",
+            "sample": "Hugo Carneiro"
+          }
+        }
+      },
+      "FaseDebate": {
+        "type": "null"
+      },
+      "FaseSessao": {
+        "type": "string",
+        "sample": "POD"
+      },
+      "Id": {
+        "type": "string",
+        "sample": "469253"
+      },
+      "IdDebate": {
+        "type": "string",
+        "sample": "61514"
+      },
+      "Iniciativas": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "fase": {
+              "type": "string",
+              "sample": "Discussão especialidade"
+            },
+            "id": {
+              "type": "string",
+              "sample": "315671"
+            },
+            "tipo": {
+              "type": "string",
+              "sample": "Proposta de Lei"
+            }
+          }
+        },
+        "count": 1
+      },
+      "IntervencoesRelacionadas": {
+        "type": "null"
+      },
+      "Legislatura": {
+        "type": "string",
+        "sample": "XVII"
+      },
+      "MembrosGoverno": {
+        "type": "object",
+        "properties": {
+          "cargo": {
+            "type": "null"
+          },
+          "governo": {
+            "type": "null"
+          },
+          "nome": {
+            "type": "null"
+          }
+        }
+      },
+      "Publicacao": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "debateDtReu": {
+              "type": "null"
+            },
+            "idAct": {
+              "type": "null"
+            },
+            "idDeb": {
+              "type": "null"
+            },
+            "idInt": {
+              "type": "string",
+              "sample": "469253"
+            },
+            "idPag": {
+              "type": "null"
+            },
+            "obs": {
+              "type": "null"
+            },
+            "pag": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "sample": "56-57"
+              },
+              "count": 1
+            },
+            "pagFinalDiarioSupl": {
+              "type": "null"
+            },
+            "pubdt": {
+              "type": "string",
+              "sample": "2025-11-22"
+            },
+            "pubLeg": {
+              "type": "string",
+              "sample": "XVII"
+            },
+            "pubNr": {
+              "type": "string",
+              "sample": "31"
+            },
+            "pubSL": {
+              "type": "string",
+              "sample": "1"
+            },
+            "pubTipo": {
+              "type": "string",
+              "sample": "DAR I série"
+            },
+            "pubTp": {
+              "type": "string",
+              "sample": "D"
+            },
+            "supl": {
+              "type": "null"
+            },
+            "URLDiario": {
+              "type": "string",
+              "sample": "https://debates.parlamento.pt/catalogo/r3/dar/01/17/01/031/2025-11-22/56?pgs=56-57&org=PLC"
+            }
+          }
+        },
+        "count": 1
+      },
+      "Qualidade": {
+        "type": "string",
+        "sample": "Deputado"
+      },
+      "Resumo": {
+        "type": "string",
+        "sample": "Esclarece o momento da inscrição de Paulo Moniz (PSD) no debate"
+      },
+      "Sessao": {
+        "type": "string",
+        "sample": "1"
+      },
+      "Sumario": {
+        "type": "string",
+        "sample": "Orçamento do Estado para 2026\n"
+      },
+      "Sumario2": {
+        "type": "null"
+      },
+      "TipoDebate": {
+        "type": "null"
+      },
+      "TipoIntervencao": {
+        "type": "string",
+        "sample": "Interpelação à mesa"
+      }
+    }
+  },
+  "potential_id_fields": [
+    "ActividadeId",
+    "ActividadesRelacionadas",
+    "Convidados",
+    "Id",
+    "IdDebate",
+    "Qualidade"
+  ]
+}

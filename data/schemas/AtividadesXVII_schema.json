@@ -1,0 +1,585 @@
+{
+  "filename": "AtividadesXVII_json.txt",
+  "size_bytes": 559236,
+  "size_mb": 0.53,
+  "root_type": "object",
+  "schema": {
+    "type": "object",
+    "properties": {
+      "AtividadesGerais": {
+        "type": "object",
+        "properties": {
+          "Atividades": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "Assunto": {
+                  "type": "string",
+                  "sample": "Programa do XXV Governo Constitucional"
+                },
+                "AutoresGP": {
+                  "type": "null"
+                },
+                "Convidados": {
+                  "type": "null"
+                },
+                "DataAgendamentoDebate": {
+                  "type": "string",
+                  "sample": "2025-06-17"
+                },
+                "DataAnuncio": {
+                  "type": "null"
+                },
+                "DataEntrada": {
+                  "type": "string",
+                  "sample": "2025-06-14"
+                },
+                "DescTipo": {
+                  "type": "string",
+                  "sample": "Programa do Governo"
+                },
+                "Eleitos": {
+                  "type": "null"
+                },
+                "IniciativasConjuntas": {
+                  "type": "null"
+                },
+                "Legislatura": {
+                  "type": "string",
+                  "sample": "XVII"
+                },
+                "Numero": {
+                  "type": "null"
+                },
+                "Observacoes": {
+                  "type": "null"
+                },
+                "OrgaoExterior": {
+                  "type": "null"
+                },
+                "OutrosSubscritores": {
+                  "type": "null"
+                },
+                "Publicacao": {
+                  "type": "array",
+                  "items": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "count": 1
+                },
+                "PublicacaoDebate": {
+                  "type": "array",
+                  "items": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "count": 2
+                },
+                "ResultadoVotacaoPontos": {
+                  "type": "null"
+                },
+                "Sessao": {
+                  "type": "string",
+                  "sample": "1"
+                },
+                "Texto": {
+                  "type": "null"
+                },
+                "TextosAprovados": {
+                  "type": "null"
+                },
+                "Tipo": {
+                  "type": "string",
+                  "sample": "PRG"
+                },
+                "TipoAutor": {
+                  "type": "null"
+                },
+                "VotacaoDebate": {
+                  "type": "null"
+                }
+              }
+            },
+            "count": 311
+          },
+          "Relatorios": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "Assunto": {
+                  "type": "string",
+                  "sample": "Relatório CASA 2024 - Caracterização Anual da Situação de Acolhimento das Crianças e Jovens"
+                },
+                "Audicoes": {
+                  "type": "null"
+                },
+                "Comissao": {
+                  "type": "null"
+                },
+                "DataAgendamentoDebate": {
+                  "type": "null"
+                },
+                "DataEntrada": {
+                  "type": "string",
+                  "sample": "2025-09-11"
+                },
+                "DataParecerUTAO": {
+                  "type": "null"
+                },
+                "DataPedidoParecer": {
+                  "type": "null"
+                },
+                "DescTipo": {
+                  "type": "string",
+                  "sample": "Relatórios Externos"
+                },
+                "Documentos": {
+                  "type": "array",
+                  "items": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "count": 1
+                },
+                "EntidadesExternas": {
+                  "type": "null"
+                },
+                "IniciativasConjuntas": {
+                  "type": "null"
+                },
+                "Legislatura": {
+                  "type": "string",
+                  "sample": "XVII"
+                },
+                "Links": {
+                  "type": "null"
+                },
+                "LinkTexto": {
+                  "type": "null"
+                },
+                "MembrosGoverno": {
+                  "type": "array",
+                  "items": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "count": 1
+                },
+                "Observacoes": {
+                  "type": "null"
+                },
+                "ParecerComissao": {
+                  "type": "null"
+                },
+                "Publicacao": {
+                  "type": "null"
+                },
+                "PublicacaoDebate": {
+                  "type": "null"
+                },
+                "Relatores": {
+                  "type": "null"
+                },
+                "Sessao": {
+                  "type": "string",
+                  "sample": "1"
+                },
+                "TextoRelatorio": {
+                  "type": "null"
+                },
+                "TextosAprovados": {
+                  "type": "null"
+                },
+                "Tipo": {
+                  "type": "string",
+                  "sample": "PRC"
+                },
+                "VotacaoDebate": {
+                  "type": "null"
+                },
+                "VotacaoRelatorio": {
+                  "type": "null"
+                }
+              }
+            },
+            "count": 13
+          }
+        }
+      },
+      "Audicoes": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "Assunto": {
+              "type": "string",
+              "sample": "No âmbito da apreciação, na especialidade, da Proposta de Lei n.º 37/XVII/1.ª (GOV) - «Aprova o Orça"
+            },
+            "Data": {
+              "type": "string",
+              "sample": "2025-11-03"
+            },
+            "Documentos": {
+              "type": "null"
+            },
+            "Entidades": {
+              "type": "string",
+              "sample": "Ministro Adjunto e da Reforma do Estado;Secretário de Estado para a Digitalização;Secretário de Esta"
+            },
+            "IDAudicao": {
+              "type": "integer"
+            },
+            "Legislatura": {
+              "type": "string",
+              "sample": "XVII"
+            },
+            "Links": {
+              "type": "null"
+            },
+            "NumeroAudicao": {
+              "type": "string",
+              "sample": "10-CREPL-XVII"
+            },
+            "SessaoLegislativa": {
+              "type": "string",
+              "sample": "1"
+            }
+          }
+        },
+        "count": 198
+      },
+      "Audiencias": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "Assunto": {
+              "type": "string",
+              "sample": "«Sobre a reforma dos Serviços Municipais de Proteção Civil e ainda a situação dos Sapadores Floresta"
+            },
+            "Concedida": {
+              "type": "string",
+              "sample": "Concedida"
+            },
+            "Data": {
+              "type": "string",
+              "sample": "2025-12-16"
+            },
+            "Documentos": {
+              "type": "null"
+            },
+            "Entidades": {
+              "type": "string",
+              "sample": "SinFAP - Sindicato Independente dos Trabalhadores da Floresta, Ambiente e Proteção Civil "
+            },
+            "IDAudiencia": {
+              "type": "integer"
+            },
+            "Legislatura": {
+              "type": "string",
+              "sample": "XVII"
+            },
+            "Links": {
+              "type": "null"
+            },
+            "NumeroAudiencia": {
+              "type": "string",
+              "sample": "1-CREPL-XVII"
+            },
+            "SessaoLegislativa": {
+              "type": "string",
+              "sample": "1"
+            }
+          }
+        },
+        "count": 89
+      },
+      "Debates": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "Artigo": {
+              "type": "null"
+            },
+            "Assunto": {
+              "type": "string",
+              "sample": "Alude ao descarrilamento no Elevador da Glória, sublinha a necessidade de uma Administração Pública "
+            },
+            "AutoresDeputados": {
+              "type": "string",
+              "sample": "Isabel Mendes Lopes (L)"
+            },
+            "AutoresGP": {
+              "type": "null"
+            },
+            "DataDebate": {
+              "type": "string",
+              "sample": "2025-09-10"
+            },
+            "DataEntrada": {
+              "type": "string",
+              "sample": "2025-09-10"
+            },
+            "DebateId": {
+              "type": "string",
+              "sample": "147416"
+            },
+            "Intervencoes": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "sample": "467933"
+              },
+              "count": 1
+            },
+            "Legislatura": {
+              "type": "string",
+              "sample": "XVII"
+            },
+            "Observacoes": {
+              "type": "null"
+            },
+            "Publicacao": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "debateDtReu": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "idAct": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "idDeb": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "idInt": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "idPag": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "obs": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "pag": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "pagFinalDiarioSupl": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "pubdt": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "pubLeg": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "pubNr": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "pubSL": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "pubTipo": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "pubTp": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "supl": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "URLDiario": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  }
+                }
+              },
+              "count": 1
+            },
+            "Sessao": {
+              "type": "string",
+              "sample": "1"
+            },
+            "TipoAutor": {
+              "type": "string",
+              "sample": "Deputados"
+            },
+            "TipoDebate": {
+              "type": "string",
+              "sample": "10"
+            },
+            "TipoDebateDesig": {
+              "type": "string",
+              "sample": "Declarações Políticas"
+            }
+          }
+        },
+        "count": 41
+      },
+      "Deslocacoes": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "DataFim": {
+              "type": "string",
+              "sample": "2025-10-31"
+            },
+            "DataIni": {
+              "type": "string",
+              "sample": "2025-10-30"
+            },
+            "Designacao": {
+              "type": "string",
+              "sample": "Participação no Congresso Internacional do Cooperativismo – Sector Agrícola\ne Banca Cooperativa"
+            },
+            "Documentos": {
+              "type": "null"
+            },
+            "IDDeslocacao": {
+              "type": "integer"
+            },
+            "Legislatura": {
+              "type": "string",
+              "sample": "XVII"
+            },
+            "Links": {
+              "type": "null"
+            },
+            "LocalEvento": {
+              "type": "string",
+              "sample": "Centro de Congressos de Lisboa"
+            },
+            "SessaoLegislativa": {
+              "type": "string",
+              "sample": "1"
+            },
+            "Tipo": {
+              "type": "string",
+              "sample": "Representação"
+            }
+          }
+        },
+        "count": 87
+      },
+      "Eventos": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "Data": {
+              "type": "string",
+              "sample": "2025-12-18"
+            },
+            "Designacao": {
+              "type": "string",
+              "sample": "Cerimónia de entrega do Prémio Direitos Humanos 2025"
+            },
+            "Documentos": {
+              "type": "null"
+            },
+            "IDEvento": {
+              "type": "integer"
+            },
+            "Legislatura": {
+              "type": "string",
+              "sample": "XVII"
+            },
+            "Links": {
+              "type": "null"
+            },
+            "LocalEvento": {
+              "type": "string",
+              "sample": "Sala do Senado"
+            },
+            "SessaoLegislativa": {
+              "type": "string",
+              "sample": "1"
+            },
+            "TipoEvento": {
+              "type": "string",
+              "sample": "Cerimónia"
+            }
+          }
+        },
+        "count": 2
+      },
+      "OrcamentoContasGerencia": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "anexos": {
+              "type": "null"
+            },
+            "ano": {
+              "type": "string",
+              "sample": "2026"
+            },
+            "dtAgendamento": {
+              "type": "null"
+            },
+            "dtAprovacaoCA": {
+              "type": "string",
+              "sample": "2025-09-26"
+            },
+            "id": {
+              "type": "string",
+              "sample": "664"
+            },
+            "leg": {
+              "type": "string",
+              "sample": "XVII"
+            },
+            "obs": {
+              "type": "null"
+            },
+            "SL": {
+              "type": "string",
+              "sample": "1"
+            },
+            "textosAprovados": {
+              "type": "null"
+            },
+            "tipo": {
+              "type": "string",
+              "sample": "Orçamento da A.R."
+            },
+            "titulo": {
+              "type": "string",
+              "sample": "Orçamento da Assembleia da República para 2026"
+            },
+            "tp": {
+              "type": "string",
+              "sample": "OAR"
+            },
+            "votacao": {
+              "type": "null"
+            }
+          }
+        },
+        "count": 1
+      }
+    }
+  }
+}

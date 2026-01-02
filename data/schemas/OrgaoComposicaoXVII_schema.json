@@ -1,0 +1,929 @@
+{
+  "filename": "OrgaoComposicaoXVII_json.txt",
+  "size_bytes": 2261129,
+  "size_mb": 2.16,
+  "root_type": "object",
+  "schema": {
+    "type": "object",
+    "properties": {
+      "ComissaoPermanente": {
+        "type": "object",
+        "properties": {
+          "DetalheOrgao": {
+            "type": "object",
+            "properties": {
+              "idOrgao": {
+                "type": "number"
+              },
+              "nomeSigla": {
+                "type": "string",
+                "sample": "Comissão Permanente"
+              },
+              "numeroOrgao": {
+                "type": "number"
+              },
+              "siglaLegislatura": {
+                "type": "string",
+                "sample": "XVII"
+              },
+              "siglaOrgao": {
+                "type": "string",
+                "sample": "CP"
+              }
+            }
+          },
+          "HistoricoComposicao": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "depCadId": {
+                  "type": "number"
+                },
+                "depCargo": {
+                  "type": "null"
+                },
+                "depGP": {
+                  "type": "array",
+                  "items": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "count": 1
+                },
+                "depId": {
+                  "type": "number"
+                },
+                "depNomeParlamentar": {
+                  "type": "string",
+                  "sample": "Alexandre Poço"
+                },
+                "depSituacao": {
+                  "type": "array",
+                  "items": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "count": 1
+                },
+                "legDes": {
+                  "type": "string",
+                  "sample": "XVII"
+                },
+                "orgId": {
+                  "type": "number"
+                }
+              }
+            },
+            "count": 51
+          },
+          "Reunioes": {
+            "type": "null"
+          }
+        }
+      },
+      "Comissoes": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "DetalheOrgao": {
+              "type": "object",
+              "properties": {
+                "idOrgao": {
+                  "type": "number"
+                },
+                "nomeSigla": {
+                  "type": "string",
+                  "sample": "Comissão da Reforma do Estado e Poder Local"
+                },
+                "numeroOrgao": {
+                  "type": "number"
+                },
+                "siglaLegislatura": {
+                  "type": "string",
+                  "sample": "XVII"
+                },
+                "siglaOrgao": {
+                  "type": "string",
+                  "sample": "CO"
+                }
+              }
+            },
+            "HistoricoComposicao": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "depCadId": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "depCargo": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "depGP": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "depId": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "depNomeParlamentar": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "depSituacao": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "legDes": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "orgId": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  }
+                }
+              },
+              "count": 45
+            },
+            "Reunioes": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "reuActa": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "reuDataHora": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "reuFinalPlenario": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "reuId": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "reuLink": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "reuLocal": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "reuNumero": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "reuTarDes": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "reuTarId": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "reuTarSigla": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "reuTirDes": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  }
+                }
+              },
+              "count": 21
+            }
+          }
+        },
+        "count": 18
+      },
+      "ConferenciaLideres": {
+        "type": "object",
+        "properties": {
+          "DetalheOrgao": {
+            "type": "object",
+            "properties": {
+              "idOrgao": {
+                "type": "number"
+              },
+              "nomeSigla": {
+                "type": "string",
+                "sample": "Conferência de Líderes"
+              },
+              "numeroOrgao": {
+                "type": "number"
+              },
+              "siglaLegislatura": {
+                "type": "string",
+                "sample": "XVII"
+              },
+              "siglaOrgao": {
+                "type": "string",
+                "sample": "CL"
+              }
+            }
+          },
+          "HistoricoComposicao": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "depCadId": {
+                  "type": "number"
+                },
+                "depCargo": {
+                  "type": "array",
+                  "items": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "count": 1
+                },
+                "depGP": {
+                  "type": "array",
+                  "items": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "count": 1
+                },
+                "depId": {
+                  "type": "number"
+                },
+                "depNomeParlamentar": {
+                  "type": "string",
+                  "sample": "José Pedro Aguiar-Branco"
+                },
+                "depSituacao": {
+                  "type": "array",
+                  "items": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "count": 1
+                },
+                "legDes": {
+                  "type": "string",
+                  "sample": "XVII"
+                },
+                "orgId": {
+                  "type": "number"
+                }
+              }
+            },
+            "count": 13
+          },
+          "Reunioes": {
+            "type": "null"
+          }
+        }
+      },
+      "ConferenciaPresidentesComissoes": {
+        "type": "object",
+        "properties": {
+          "DetalheOrgao": {
+            "type": "object",
+            "properties": {
+              "idOrgao": {
+                "type": "number"
+              },
+              "nomeSigla": {
+                "type": "string",
+                "sample": "Conferência dos Presidentes das Comissões Parlamentares"
+              },
+              "numeroOrgao": {
+                "type": "number"
+              },
+              "siglaLegislatura": {
+                "type": "string",
+                "sample": "XVII"
+              },
+              "siglaOrgao": {
+                "type": "string",
+                "sample": "PC"
+              }
+            }
+          },
+          "HistoricoComposicao": {
+            "type": "null"
+          },
+          "HistoricoComposicaoCPC": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "depCadId": {
+                  "type": "number"
+                },
+                "depCargo": {
+                  "type": "null"
+                },
+                "depGP": {
+                  "type": "array",
+                  "items": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "count": 1
+                },
+                "depId": {
+                  "type": "number"
+                },
+                "depNomeParlamentar": {
+                  "type": "string",
+                  "sample": "Almiro Moreira"
+                },
+                "depSituacao": {
+                  "type": "array",
+                  "items": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "count": 1
+                },
+                "legDes": {
+                  "type": "string",
+                  "sample": "XVII"
+                },
+                "presOrgao": {
+                  "type": "array",
+                  "items": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "count": 1
+                }
+              }
+            },
+            "count": 15
+          },
+          "Reunioes": {
+            "type": "null"
+          }
+        }
+      },
+      "ConselhoAdministracao": {
+        "type": "object",
+        "properties": {
+          "DetalheOrgao": {
+            "type": "object",
+            "properties": {
+              "idOrgao": {
+                "type": "number"
+              },
+              "nomeSigla": {
+                "type": "string",
+                "sample": "Conselho de Administração"
+              },
+              "numeroOrgao": {
+                "type": "number"
+              },
+              "siglaLegislatura": {
+                "type": "string",
+                "sample": "XVII"
+              },
+              "siglaOrgao": {
+                "type": "string",
+                "sample": "CA"
+              }
+            }
+          },
+          "HistoricoComposicao": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "depCadId": {
+                  "type": "number"
+                },
+                "depCargo": {
+                  "type": "null"
+                },
+                "depGP": {
+                  "type": "array",
+                  "items": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "count": 1
+                },
+                "depId": {
+                  "type": "number"
+                },
+                "depNomeParlamentar": {
+                  "type": "string",
+                  "sample": "Alfredo Maia"
+                },
+                "depSituacao": {
+                  "type": "array",
+                  "items": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "count": 1
+                },
+                "legDes": {
+                  "type": "string",
+                  "sample": "XVII"
+                },
+                "orgId": {
+                  "type": "number"
+                }
+              }
+            },
+            "count": 17
+          },
+          "Reunioes": {
+            "type": "null"
+          }
+        }
+      },
+      "GruposTrabalho": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "DetalheOrgao": {
+              "type": "object",
+              "properties": {
+                "idOrgao": {
+                  "type": "number"
+                },
+                "nomeSigla": {
+                  "type": "string",
+                  "sample": "Grupo de Trabalho - Apagão 28 de abril 2025"
+                },
+                "numeroOrgao": {
+                  "type": "number"
+                },
+                "siglaLegislatura": {
+                  "type": "string",
+                  "sample": "XVII"
+                },
+                "siglaOrgao": {
+                  "type": "string",
+                  "sample": "GT"
+                }
+              }
+            },
+            "HistoricoComposicao": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "depCadId": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "depCargo": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "depGP": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "depId": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "depNomeParlamentar": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "depSituacao": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "legDes": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "orgId": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  }
+                }
+              },
+              "count": 12
+            },
+            "Reunioes": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "reuActa": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "reuDataHora": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "reuFinalPlenario": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "reuId": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "reuLink": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "reuLocal": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "reuNumero": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "reuTarDes": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "reuTarId": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "reuTarSigla": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "reuTirDes": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  }
+                }
+              },
+              "count": 3
+            }
+          }
+        },
+        "count": 15
+      },
+      "MesaAR": {
+        "type": "object",
+        "properties": {
+          "DetalheOrgao": {
+            "type": "object",
+            "properties": {
+              "idOrgao": {
+                "type": "number"
+              },
+              "nomeSigla": {
+                "type": "null"
+              },
+              "numeroOrgao": {
+                "type": "number"
+              },
+              "siglaLegislatura": {
+                "type": "string",
+                "sample": "XVII"
+              },
+              "siglaOrgao": {
+                "type": "string",
+                "sample": "Composição da Mesa da AR"
+              }
+            }
+          },
+          "HistoricoComposicao": {
+            "type": "null"
+          },
+          "HistoricoComposicaoMesa": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "depCadId": {
+                  "type": "number"
+                },
+                "depCargo": {
+                  "type": "array",
+                  "items": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "count": 1
+                },
+                "depGP": {
+                  "type": "array",
+                  "items": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "count": 1
+                },
+                "depId": {
+                  "type": "number"
+                },
+                "depNomeParlamentar": {
+                  "type": "string",
+                  "sample": "Diogo Pacheco de Amorim"
+                },
+                "legDes": {
+                  "type": "string",
+                  "sample": "XVII"
+                }
+              }
+            },
+            "count": 13
+          },
+          "Reunioes": {
+            "type": "null"
+          }
+        }
+      },
+      "Plenario": {
+        "type": "object",
+        "properties": {
+          "Composicao": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "DepCadId": {
+                  "type": "number"
+                },
+                "DepCargo": {
+                  "type": "null"
+                },
+                "DepCPDes": {
+                  "type": "string",
+                  "sample": "Açores"
+                },
+                "DepCPId": {
+                  "type": "number"
+                },
+                "DepGP": {
+                  "type": "array",
+                  "items": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "count": 1
+                },
+                "DepId": {
+                  "type": "number"
+                },
+                "DepNomeCompleto": {
+                  "type": "string",
+                  "sample": "Francisco Gabriel Meneses de Lima"
+                },
+                "DepNomeParlamentar": {
+                  "type": "string",
+                  "sample": "Francisco Lima"
+                },
+                "DepSituacao": {
+                  "type": "array",
+                  "items": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "count": 1
+                },
+                "LegDes": {
+                  "type": "string",
+                  "sample": "XVII"
+                },
+                "Videos": {
+                  "type": "null"
+                }
+              }
+            },
+            "count": 1446
+          },
+          "DetalheOrgao": {
+            "type": "object",
+            "properties": {
+              "idOrgao": {
+                "type": "number"
+              },
+              "nomeSigla": {
+                "type": "string",
+                "sample": "Plenário"
+              },
+              "numeroOrgao": {
+                "type": "number"
+              },
+              "siglaLegislatura": {
+                "type": "string",
+                "sample": "XVII"
+              },
+              "siglaOrgao": {
+                "type": "string",
+                "sample": "PL"
+              }
+            }
+          },
+          "Reunioes": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "Presencas": {
+                  "type": "object",
+                  "properties": {
+                    "dtReuniao": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "presencas": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "tipoReuniao": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    }
+                  }
+                },
+                "Reuniao": {
+                  "type": "object",
+                  "properties": {
+                    "legDes": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "reuActa": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "reuDataHora": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "reuId": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "reuLink": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "reuLocal": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "reuNumero": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "reuTirDes": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    },
+                    "selNumero": {
+                      "type": "...",
+                      "note": "max_depth_reached"
+                    }
+                  }
+                }
+              }
+            },
+            "count": 41
+          }
+        }
+      },
+      "SubComissoes": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "DetalheOrgao": {
+              "type": "object",
+              "properties": {
+                "idOrgao": {
+                  "type": "number"
+                },
+                "nomeSigla": {
+                  "type": "string",
+                  "sample": "Subcomissão para a Igualdade e Não Discriminação"
+                },
+                "numeroOrgao": {
+                  "type": "number"
+                },
+                "siglaLegislatura": {
+                  "type": "string",
+                  "sample": "XVII"
+                },
+                "siglaOrgao": {
+                  "type": "string",
+                  "sample": "SC"
+                }
+              }
+            },
+            "HistoricoComposicao": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "depCadId": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "depCargo": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "depGP": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "depId": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "depNomeParlamentar": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "depSituacao": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "legDes": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "orgId": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  }
+                }
+              },
+              "count": 21
+            },
+            "Reunioes": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "reuActa": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "reuDataHora": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "reuFinalPlenario": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "reuId": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "reuLink": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "reuLocal": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "reuNumero": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "reuTarDes": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "reuTarId": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "reuTarSigla": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "reuTirDes": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  }
+                }
+              },
+              "count": 4
+            }
+          }
+        },
+        "count": 2
+      }
+    }
+  }
+}

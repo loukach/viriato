@@ -1,0 +1,227 @@
+{
+  "filename": "DiplomasXVII_json.txt",
+  "size_bytes": 466771,
+  "size_mb": 0.45,
+  "root_type": "array",
+  "item_count": 236,
+  "item_schema": {
+    "type": "object",
+    "properties": {
+      "Actividades": {
+        "type": "null"
+      },
+      "Anexos": {
+        "type": "null"
+      },
+      "AnoCivil": {
+        "type": "string",
+        "sample": "2025"
+      },
+      "Id": {
+        "type": "string",
+        "sample": "105111"
+      },
+      "Iniciativas": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "DataFimleg": {
+              "type": "null"
+            },
+            "DataInicioleg": {
+              "type": "null"
+            },
+            "IniAnexos": {
+              "type": "null"
+            },
+            "IniAutorDeputados": {
+              "type": "null"
+            },
+            "IniAutorGruposParlamentares": {
+              "type": "null"
+            },
+            "IniAutorOutros": {
+              "type": "null"
+            },
+            "IniciativasEuropeias": {
+              "type": "null"
+            },
+            "IniciativasOrigem": {
+              "type": "null"
+            },
+            "IniciativasOriginadas": {
+              "type": "null"
+            },
+            "IniDescTipo": {
+              "type": "null"
+            },
+            "IniEpigrafe": {
+              "type": "null"
+            },
+            "IniEventos": {
+              "type": "null"
+            },
+            "IniId": {
+              "type": "string",
+              "sample": "315345"
+            },
+            "IniLeg": {
+              "type": "null"
+            },
+            "IniLinkTexto": {
+              "type": "string",
+              "sample": "http://app.parlamento.pt/webutils/docs/doc.pdf?path=6148523063484d364c793968636d356c6443397a6158526c"
+            },
+            "IniNr": {
+              "type": "string",
+              "sample": "176"
+            },
+            "IniObs": {
+              "type": "null"
+            },
+            "IniSel": {
+              "type": "null"
+            },
+            "IniTestaFicheiro": {
+              "type": "null"
+            },
+            "IniTextoSubst": {
+              "type": "null"
+            },
+            "IniTextoSubstCampo": {
+              "type": "null"
+            },
+            "IniTipo": {
+              "type": "string",
+              "sample": "R"
+            },
+            "IniTitulo": {
+              "type": "null"
+            },
+            "Links": {
+              "type": "null"
+            },
+            "Peticoes": {
+              "type": "null"
+            },
+            "PropostasAlteracao": {
+              "type": "null"
+            }
+          }
+        },
+        "count": 1
+      },
+      "Legislatura": {
+        "type": "string",
+        "sample": "XVII"
+      },
+      "LinkTexto": {
+        "type": "string",
+        "sample": "http://app.parlamento.pt/webutils/docs/doc.pdf?path=6148523063484d364c793968636d356c6443397a6158526c"
+      },
+      "Numero": {
+        "type": "string",
+        "sample": "154"
+      },
+      "Numero2": {
+        "type": "null"
+      },
+      "Observacoes": {
+        "type": "null"
+      },
+      "OrcamContasGerencia": {
+        "type": "null"
+      },
+      "Publicacao": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "debateDtReu": {
+              "type": "null"
+            },
+            "idAct": {
+              "type": "null"
+            },
+            "idDeb": {
+              "type": "null"
+            },
+            "idInt": {
+              "type": "null"
+            },
+            "idPag": {
+              "type": "string",
+              "sample": "1008488"
+            },
+            "obs": {
+              "type": "null"
+            },
+            "pag": {
+              "type": "null"
+            },
+            "pagFinalDiarioSupl": {
+              "type": "null"
+            },
+            "pubdt": {
+              "type": "string",
+              "sample": "2025-10-13"
+            },
+            "pubLeg": {
+              "type": "string",
+              "sample": "XVII"
+            },
+            "pubNr": {
+              "type": "string",
+              "sample": "197"
+            },
+            "pubSL": {
+              "type": "string",
+              "sample": "1"
+            },
+            "pubTipo": {
+              "type": "string",
+              "sample": "DR I série"
+            },
+            "pubTp": {
+              "type": "string",
+              "sample": "M"
+            },
+            "supl": {
+              "type": "null"
+            },
+            "URLDiario": {
+              "type": "string",
+              "sample": "http://data.dre.pt/eli/diario/1/197/2025/0/pt/html"
+            }
+          }
+        },
+        "count": 1
+      },
+      "Sessao": {
+        "type": "string",
+        "sample": "1"
+      },
+      "Tipo": {
+        "type": "string",
+        "sample": "Resolução da Assembleia da República"
+      },
+      "Titulo": {
+        "type": "string",
+        "sample": "Recomenda ao Governo a adoção de um plano de ação que promova a sustentabilidade, a valorização da p"
+      },
+      "Tp": {
+        "type": "string",
+        "sample": "A"
+      },
+      "Versao": {
+        "type": "null"
+      }
+    }
+  },
+  "potential_id_fields": [
+    "Actividades",
+    "Id",
+    "Numero"
+  ]
+}

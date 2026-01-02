@@ -1,0 +1,76 @@
+{
+  "filename": "OE2026Or_json.txt",
+  "size_bytes": 2685438,
+  "size_mb": 2.56,
+  "root_type": "object",
+  "schema": {
+    "type": "object",
+    "properties": {
+      "#comment": {
+        "type": "array",
+        "items": "empty"
+      },
+      "Item": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "ID": {
+              "type": "string",
+              "sample": "78356"
+            },
+            "ID_Pai": {
+              "type": "string",
+              "sample": "-1"
+            },
+            "Tipo": {
+              "type": "string",
+              "sample": "Diplomas a Modificar"
+            },
+            "Numero": {
+              "type": "string",
+              "sample": "Decreto-Lei n.º 498/72, de 9 de dezembro"
+            },
+            "Titulo": {
+              "type": "string",
+              "sample": "Estatuto da Aposentação"
+            },
+            "Texto": {
+              "type": "null"
+            },
+            "Estado": {
+              "type": "string",
+              "sample": "Entrada"
+            },
+            "Artigos": {
+              "type": "object",
+              "properties": {
+                "Artigo": {
+                  "type": "array",
+                  "items": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "count": 2
+                }
+              }
+            },
+            "PropostasDeAlteracao": {
+              "type": "null"
+            },
+            "DiplomasaModificar": {
+              "type": "null"
+            },
+            "IniciativasMapas": {
+              "type": "null"
+            },
+            "RequerimentosDeAvocacao": {
+              "type": "null"
+            }
+          }
+        },
+        "count": 467
+      }
+    }
+  }
+}

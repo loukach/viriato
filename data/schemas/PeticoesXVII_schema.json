@@ -1,0 +1,285 @@
+{
+  "filename": "PeticoesXVII_json.txt",
+  "size_bytes": 244548,
+  "size_mb": 0.23,
+  "root_type": "array",
+  "item_count": 85,
+  "item_schema": {
+    "type": "object",
+    "properties": {
+      "DadosComissao": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "Admissibilidade": {
+              "type": "string",
+              "sample": "Admitida"
+            },
+            "Audicoes": {
+              "type": "null"
+            },
+            "Audiencias": {
+              "type": "null"
+            },
+            "AudienciasOutros": {
+              "type": "null"
+            },
+            "Codigo": {
+              "type": "null"
+            },
+            "DadosPedidosInformacao": {
+              "type": "null"
+            },
+            "DadosRelatorioFinal": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "data": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "publicacao": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "votacao": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  }
+                }
+              },
+              "count": 1
+            },
+            "DataAdmissibilidade": {
+              "type": "string",
+              "sample": "2025-07-09"
+            },
+            "DataArquivo": {
+              "type": "string",
+              "sample": "2025-12-17"
+            },
+            "DataBaixaComissao": {
+              "type": "string",
+              "sample": "2025-07-01"
+            },
+            "DataEnvioPAR": {
+              "type": "string",
+              "sample": "2025-12-17"
+            },
+            "DataReaberta": {
+              "type": "string",
+              "sample": "2025-07-09"
+            },
+            "DocumentosPeticao": {
+              "type": "object",
+              "properties": {
+                "DocsOutros": {
+                  "type": "array",
+                  "items": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "count": 1
+                },
+                "DocsPedidoInformacoes": {
+                  "type": "null"
+                },
+                "DocsRelatorioFinal": {
+                  "type": "array",
+                  "items": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "count": 1
+                },
+                "DocsRespostaPedidoInformacoes": {
+                  "type": "null"
+                }
+              }
+            },
+            "IdComissao": {
+              "type": "string",
+              "sample": "8456"
+            },
+            "Legislatura": {
+              "type": "string",
+              "sample": "XVII"
+            },
+            "Nome": {
+              "type": "string",
+              "sample": "Comissão de Trabalho, Segurança Social e Inclusão "
+            },
+            "NotasAdmissibilidade": {
+              "type": "null"
+            },
+            "Numero": {
+              "type": "string",
+              "sample": "10"
+            },
+            "Publicacao": {
+              "type": "null"
+            },
+            "Relatores": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "dataCessacao": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "dataNomeacao": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "gp": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "id": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "motivoCessacao": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "nome": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  }
+                }
+              },
+              "count": 1
+            },
+            "RelatorioFinal": {
+              "type": "null"
+            },
+            "Sessao": {
+              "type": "null"
+            },
+            "Situacao": {
+              "type": "string",
+              "sample": "Em apreciação"
+            },
+            "Transitada": {
+              "type": "null"
+            }
+          }
+        },
+        "count": 1
+      },
+      "DataDebate": {
+        "type": "null"
+      },
+      "Documentos": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "DataDocumento": {
+              "type": "string",
+              "sample": "2025-07-03"
+            },
+            "Descricao": {
+              "type": "null"
+            },
+            "TipoDocumento": {
+              "type": "string",
+              "sample": "Texto final"
+            },
+            "TituloDocumento": {
+              "type": "string",
+              "sample": "Texto original da Petição"
+            },
+            "URL": {
+              "type": "string",
+              "sample": "http://app.parlamento.pt/webutils/docs/doc.pdf?path=6148523063484d364c793968636d356c6443397a6158526c"
+            }
+          }
+        },
+        "count": 1
+      },
+      "IniciativasConjuntas": {
+        "type": "null"
+      },
+      "Iniciativasoriginadas": {
+        "type": "null"
+      },
+      "Intervencoes": {
+        "type": "null"
+      },
+      "Links": {
+        "type": "null"
+      },
+      "PedidosEsclarecimento": {
+        "type": "null"
+      },
+      "PetActividadeId": {
+        "type": "string",
+        "sample": "34221"
+      },
+      "PetAssunto": {
+        "type": "string",
+        "sample": "Petição para a criação do Estatuto do Membro Voluntário do Órgão de Administração de IPSS"
+      },
+      "PetAutor": {
+        "type": "string",
+        "sample": "Maria José da Costa Miranda Menezes"
+      },
+      "PetDataEntrada": {
+        "type": "string",
+        "sample": "2025-06-06"
+      },
+      "PeticoesAssociadas": {
+        "type": "null"
+      },
+      "PetId": {
+        "type": "string",
+        "sample": "34221"
+      },
+      "PetLeg": {
+        "type": "string",
+        "sample": "XVII"
+      },
+      "PetNr": {
+        "type": "string",
+        "sample": "2"
+      },
+      "PetNrAssinaturas": {
+        "type": "string",
+        "sample": "13301"
+      },
+      "PetNrAssinaturasInicial": {
+        "type": "null"
+      },
+      "PetObs": {
+        "type": "null"
+      },
+      "PetSel": {
+        "type": "string",
+        "sample": "1"
+      },
+      "PetSituacao": {
+        "type": "string",
+        "sample": "Proposta para apreciação em plenário"
+      },
+      "PetUrlTexto": {
+        "type": "null"
+      },
+      "PublicacaoDebate": {
+        "type": "null"
+      },
+      "PublicacaoPeticao": {
+        "type": "null"
+      }
+    }
+  },
+  "potential_id_fields": [
+    "PedidosEsclarecimento",
+    "PetActividadeId",
+    "PetId"
+  ]
+}

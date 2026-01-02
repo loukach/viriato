@@ -1,0 +1,52 @@
+{
+  "filename": "RegistoInteressesXVII_json.txt",
+  "size_bytes": 425627,
+  "size_mb": 0.41,
+  "root_type": "array",
+  "item_count": 1446,
+  "item_schema": {
+    "type": "object",
+    "properties": {
+      "RegistoInteressesV1": {
+        "type": "null"
+      },
+      "RegistoInteressesV2": {
+        "type": "null"
+      },
+      "RegistoInteressesV3": {
+        "type": "object",
+        "properties": {
+          "DGFNumber": {
+            "type": "null"
+          },
+          "Exclusivity": {
+            "type": "string",
+            "sample": "N"
+          },
+          "FullName": {
+            "type": "string",
+            "sample": "Daniela Filipa Alves Gonçalinho"
+          },
+          "MaritalStatus": {
+            "type": "null"
+          },
+          "MatrimonialRegime": {
+            "type": "null"
+          },
+          "RecordId": {
+            "type": "integer"
+          },
+          "RecordInterests": {
+            "type": "null"
+          },
+          "SpouseName": {
+            "type": "null"
+          }
+        }
+      },
+      "RegistoInteressesV5": {
+        "type": "null"
+      }
+    }
+  }
+}

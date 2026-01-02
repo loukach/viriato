@@ -1,0 +1,514 @@
+{
+  "filename": "AtividadeDeputadoXVII_json.txt",
+  "size_bytes": 13953733,
+  "size_mb": 13.31,
+  "root_type": "array",
+  "item_count": 1446,
+  "item_schema": {
+    "type": "object",
+    "properties": {
+      "AtividadeDeputadoList": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "ActP": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "ActAs": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "ActDtdeb": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "ActDtent": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "ActId": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "ActNr": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "ActSelLg": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "ActSelNr": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "ActTp": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "ActTpdesc": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  }
+                }
+              },
+              "count": 6
+            },
+            "Audicoes": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "AccDtaud": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "ActAs": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "ActDtdes1": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "ActDtdes2": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "ActDtent": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "ActId": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "ActLg": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "ActLoc": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "ActNr": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "ActSl": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "ActTp": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "ActTpdesc": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "CmsAb": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "CmsNo": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "NomeEntidadeExterna": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "TevTp": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  }
+                }
+              },
+              "count": 36
+            },
+            "Audiencias": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "AccDtaud": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "ActAs": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "ActDtdes1": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "ActDtdes2": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "ActDtent": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "ActId": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "ActLg": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "ActLoc": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "ActNr": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "ActSl": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "ActTp": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "ActTpdesc": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "CmsAb": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "CmsNo": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "NomeEntidadeExterna": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "TevTp": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  }
+                }
+              },
+              "count": 5
+            },
+            "Cms": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "CmsCargo": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "CmsCd": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "CmsLg": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "CmsNo": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "CmsSituacao": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "CmsSubCargo": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  }
+                }
+              },
+              "count": 4
+            },
+            "DadosLegisDeputado": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "Dpl_grpar": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "Dpl_lg": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "Nome": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  }
+                }
+              },
+              "count": 1
+            },
+            "Deslocacoes": {
+              "type": "null"
+            },
+            "DlE": {
+              "type": "null"
+            },
+            "DlP": {
+              "type": "null"
+            },
+            "Eventos": {
+              "type": "null"
+            },
+            "Gpa": {
+              "type": "null"
+            },
+            "Ini": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "IniId": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "IniNr": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "IniSelLg": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "IniSelNr": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "IniTi": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "IniTp": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "IniTpdesc": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  }
+                }
+              },
+              "count": 10
+            },
+            "Intev": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "IntId": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "IntSu": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "IntTe": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "PubDar": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "PubDtreu": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "PubLg": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "PubNr": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "PubSl": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "PubTp": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "TinDs": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  }
+                }
+              },
+              "count": 1
+            },
+            "ParlamentoJovens": {
+              "type": "null"
+            },
+            "Rel": {
+              "type": "object",
+              "properties": {
+                "AutoresPareceresIncImu": {
+                  "type": "null"
+                },
+                "RelatoresContasPublicas": {
+                  "type": "null"
+                },
+                "RelatoresIniciativas": {
+                  "type": "null"
+                },
+                "RelatoresIniEuropeias": {
+                  "type": "null"
+                },
+                "RelatoresPeticoes": {
+                  "type": "null"
+                }
+              }
+            },
+            "Req": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "ReqAs": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "ReqDt": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "ReqId": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "ReqLg": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "ReqNr": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "ReqPerTp": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "ReqSl": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  },
+                  "ReqTp": {
+                    "type": "...",
+                    "note": "max_depth_reached"
+                  }
+                }
+              },
+              "count": 2
+            },
+            "Scgt": {
+              "type": "null"
+            }
+          }
+        },
+        "count": 1
+      },
+      "Deputado": {
+        "type": "object",
+        "properties": {
+          "DepCadId": {
+            "type": "number"
+          },
+          "DepCargo": {
+            "type": "null"
+          },
+          "DepCPDes": {
+            "type": "string",
+            "sample": "Açores"
+          },
+          "DepCPId": {
+            "type": "number"
+          },
+          "DepGP": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "GpDtFim": {
+                  "type": "string",
+                  "sample": "2026-01-01"
+                },
+                "GpDtInicio": {
+                  "type": "string",
+                  "sample": "2025-06-03"
+                },
+                "GpId": {
+                  "type": "number"
+                },
+                "GpSigla": {
+                  "type": "string",
+                  "sample": "PSD"
+                }
+              }
+            },
+            "count": 1
+          },
+          "DepId": {
+            "type": "number"
+          },
+          "DepNomeCompleto": {
+            "type": "string",
+            "sample": "Francisco José Duarte Pimentel"
+          },
+          "DepNomeParlamentar": {
+            "type": "string",
+            "sample": "Francisco Pimentel"
+          },
+          "DepSituacao": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "SioDes": {
+                  "type": "string",
+                  "sample": "Efetivo"
+                },
+                "SioDtFim": {
+                  "type": "null"
+                },
+                "SioDtInicio": {
+                  "type": "string",
+                  "sample": "2025-06-03"
+                }
+              }
+            },
+            "count": 1
+          },
+          "LegDes": {
+            "type": "string",
+            "sample": "XVII"
+          }
+        }
+      }
+    }
+  },
+  "potential_id_fields": [
+    "AtividadeDeputadoList"
+  ]
+}

@@ -23,10 +23,22 @@ Based on ideas from [adamastor](https://github.com/bcamarneiro/adamastor).
 
 ```
 viriato/
-├── docs/              # Documentation of available datasets
+├── .mcp.json                 # MCP server configuration (Playwright)
 ├── data/
-│   └── samples/       # Sample data files for reference
-└── README.md
+│   ├── raw/                  # Downloaded JSON datasets (45.6 MB, 17 files)
+│   ├── schemas/              # Extracted dataset schemas (18 files)
+│   ├── samples/              # Sample XML files for reference
+│   ├── manifest.json         # Download metadata
+│   └── Definicao da estrutura dos ficheiros.pdf
+├── docs/                     # Documentation (5 markdown files)
+│   ├── discovery-notes.md
+│   ├── dataset-relationships.md
+│   ├── schema-analysis.md
+│   ├── agenda-parlamentar.md
+│   └── using-playwright-to-find-dataset-urls.md
+└── scripts/                  # Data utilities
+    ├── download_datasets.py  # Automated dataset downloader
+    └── extract_schemas.py    # Schema extraction tool
 ```
 
 ## Approach

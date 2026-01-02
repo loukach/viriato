@@ -1,0 +1,47 @@
+{
+  "filename": "GrupoDeAmizadeXVII_json.txt",
+  "size_bytes": 12546,
+  "size_mb": 0.01,
+  "root_type": "array",
+  "item_count": 67,
+  "item_schema": {
+    "type": "object",
+    "properties": {
+      "Composicao": {
+        "type": "array",
+        "items": "empty"
+      },
+      "DataCriacao": {
+        "type": "string",
+        "sample": "17/07/2025 00:00:00"
+      },
+      "Id": {
+        "type": "string",
+        "sample": "613"
+      },
+      "Legislatura": {
+        "type": "string",
+        "sample": "XVII"
+      },
+      "Nome": {
+        "type": "string",
+        "sample": "Portugal - Guiné-Bissau"
+      },
+      "Reunioes": {
+        "type": "array",
+        "items": "empty"
+      },
+      "Sessao": {
+        "type": "string",
+        "sample": "1"
+      },
+      "Visitas": {
+        "type": "array",
+        "items": "empty"
+      }
+    }
+  },
+  "potential_id_fields": [
+    "Id"
+  ]
+}

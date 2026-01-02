@@ -1,0 +1,47 @@
+{
+  "filename": "DelegacaoPermanenteXVII_json.txt",
+  "size_bytes": 14378,
+  "size_mb": 0.01,
+  "root_type": "array",
+  "item_count": 77,
+  "item_schema": {
+    "type": "object",
+    "properties": {
+      "Comissoes": {
+        "type": "array",
+        "items": "empty"
+      },
+      "Composicao": {
+        "type": "array",
+        "items": "empty"
+      },
+      "DataEleicao": {
+        "type": "string",
+        "sample": "03/06/2025 00:00:00"
+      },
+      "Id": {
+        "type": "string",
+        "sample": "130"
+      },
+      "Legislatura": {
+        "type": "string",
+        "sample": "XVII"
+      },
+      "Nome": {
+        "type": "string",
+        "sample": "União Interparlamentar"
+      },
+      "Reunioes": {
+        "type": "array",
+        "items": "empty"
+      },
+      "Sessao": {
+        "type": "string",
+        "sample": "1"
+      }
+    }
+  },
+  "potential_id_fields": [
+    "Id"
+  ]
+}

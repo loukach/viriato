@@ -1,0 +1,72 @@
+{
+  "filename": "DelegacaoEventualXVII_json.txt",
+  "size_bytes": 18551,
+  "size_mb": 0.02,
+  "root_type": "array",
+  "item_count": 35,
+  "item_schema": {
+    "type": "object",
+    "properties": {
+      "DataFim": {
+        "type": "string",
+        "sample": "11/12/2025 00:00:00"
+      },
+      "DataInicio": {
+        "type": "string",
+        "sample": "09/12/2025 00:00:00"
+      },
+      "Id": {
+        "type": "string",
+        "sample": "12742"
+      },
+      "Legislatura": {
+        "type": "string",
+        "sample": "XVII"
+      },
+      "Local": {
+        "type": "string",
+        "sample": "EUA"
+      },
+      "Nome": {
+        "type": "string",
+        "sample": "Israel Allies Foundation (AIL)"
+      },
+      "Participantes": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "Gp": {
+              "type": "string",
+              "sample": "CH"
+            },
+            "Id": {
+              "type": "string",
+              "sample": "15789"
+            },
+            "Leg": {
+              "type": "string",
+              "sample": "XVII"
+            },
+            "Nome": {
+              "type": "string",
+              "sample": "Pedro dos Santos Frazão"
+            },
+            "Tipo": {
+              "type": "string",
+              "sample": "D"
+            }
+          }
+        },
+        "count": 1
+      },
+      "Sessao": {
+        "type": "string",
+        "sample": "1"
+      }
+    }
+  },
+  "potential_id_fields": [
+    "Id"
+  ]
+}

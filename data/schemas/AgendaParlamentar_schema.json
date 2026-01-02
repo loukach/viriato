@@ -1,0 +1,105 @@
+{
+  "filename": "AgendaParlamentar_json.txt",
+  "size_bytes": 136692,
+  "size_mb": 0.13,
+  "root_type": "array",
+  "item_count": 34,
+  "item_schema": {
+    "type": "object",
+    "properties": {
+      "AllDayEvent": {
+        "type": "boolean"
+      },
+      "AnexosComissaoPermanente": {
+        "type": "null"
+      },
+      "AnexosPlenario": {
+        "type": "null"
+      },
+      "EventEndDate": {
+        "type": "string",
+        "sample": "02/01/2026"
+      },
+      "EventEndTime": {
+        "type": "string",
+        "sample": "23:59:00"
+      },
+      "EventStartDate": {
+        "type": "string",
+        "sample": "02/01/2026"
+      },
+      "EventStartTime": {
+        "type": "string",
+        "sample": "15:00:00"
+      },
+      "Id": {
+        "type": "integer"
+      },
+      "InternetText": {
+        "type": "string",
+        "sample": "&lt;p style=&quot;text-align: justify;&quot;&gt;- Reuni&amp;atilde;o com delega&amp;ccedil;&amp;atil"
+      },
+      "LegDes": {
+        "type": "string",
+        "sample": "XVII"
+      },
+      "Link": {
+        "type": "null"
+      },
+      "Local": {
+        "type": "string",
+        "sample": "Sala 7"
+      },
+      "OrderValue": {
+        "type": "integer"
+      },
+      "OrgDes": {
+        "type": "string",
+        "sample": "Comissão de Orçamento, Finanças e Administração Pública"
+      },
+      "ParlamentGroup": {
+        "type": "integer"
+      },
+      "PostPlenary": {
+        "type": "boolean"
+      },
+      "ReuNumero": {
+        "type": "string",
+        "sample": "3"
+      },
+      "Section": {
+        "type": "string",
+        "sample": "Comissões Parlamentares"
+      },
+      "SectionId": {
+        "type": "integer"
+      },
+      "SelNumero": {
+        "type": "string",
+        "sample": "1"
+      },
+      "Subtitle": {
+        "type": "string",
+        "sample": "Reunião n.º 3"
+      },
+      "Theme": {
+        "type": "string",
+        "sample": "Comissões Parlamentares"
+      },
+      "ThemeId": {
+        "type": "integer"
+      },
+      "Title": {
+        "type": "string",
+        "sample": "Comissão de Orçamento, Finanças e Administração Pública"
+      }
+    }
+  },
+  "potential_id_fields": [
+    "Id",
+    "ReuNumero",
+    "SectionId",
+    "SelNumero",
+    "ThemeId"
+  ]
+}

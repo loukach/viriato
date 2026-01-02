@@ -1,0 +1,202 @@
+{
+  "filename": "IniciativasXVII_json.txt",
+  "size_bytes": 18686260,
+  "size_mb": 17.82,
+  "root_type": "array",
+  "item_count": 808,
+  "item_schema": {
+    "type": "object",
+    "properties": {
+      "DataFimleg": {
+        "type": "null"
+      },
+      "DataInicioleg": {
+        "type": "string",
+        "sample": "2025-06-03"
+      },
+      "IniAnexos": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "anexoFich": {
+              "type": "string",
+              "sample": "http://app.parlamento.pt/webutils/docs/doc.pdf?path=6148523063484d364c793968636d356c6443397a6158526c"
+            },
+            "anexoNome": {
+              "type": "string",
+              "sample": "A.I.G"
+            }
+          }
+        },
+        "count": 2
+      },
+      "IniAutorDeputados": {
+        "type": "null"
+      },
+      "IniAutorGruposParlamentares": {
+        "type": "null"
+      },
+      "IniAutorOutros": {
+        "type": "object",
+        "properties": {
+          "iniAutorComissao": {
+            "type": "null"
+          },
+          "nome": {
+            "type": "string",
+            "sample": "Governo"
+          },
+          "sigla": {
+            "type": "string",
+            "sample": "V"
+          }
+        }
+      },
+      "IniciativasEuropeias": {
+        "type": "null"
+      },
+      "IniciativasOrigem": {
+        "type": "null"
+      },
+      "IniciativasOriginadas": {
+        "type": "null"
+      },
+      "IniDescTipo": {
+        "type": "string",
+        "sample": "Proposta de Lei"
+      },
+      "IniEpigrafe": {
+        "type": "null"
+      },
+      "IniEventos": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "ActId": {
+              "type": "null"
+            },
+            "ActividadesConjuntas": {
+              "type": "null"
+            },
+            "AnexosFase": {
+              "type": "null"
+            },
+            "CodigoFase": {
+              "type": "string",
+              "sample": "10"
+            },
+            "Comissao": {
+              "type": "null"
+            },
+            "DataFase": {
+              "type": "string",
+              "sample": "2025-08-29"
+            },
+            "EvtId": {
+              "type": "string",
+              "sample": "1"
+            },
+            "Fase": {
+              "type": "string",
+              "sample": "Entrada"
+            },
+            "IniciativasConjuntas": {
+              "type": "null"
+            },
+            "Intervencoesdebates": {
+              "type": "null"
+            },
+            "Links": {
+              "type": "null"
+            },
+            "ObsFase": {
+              "type": "null"
+            },
+            "OevId": {
+              "type": "string",
+              "sample": "1629788"
+            },
+            "OevTextId": {
+              "type": "null"
+            },
+            "PcpublicasConjuntas": {
+              "type": "null"
+            },
+            "PeticoesConjuntas": {
+              "type": "null"
+            },
+            "PublicacaoFase": {
+              "type": "null"
+            },
+            "RecursoDeputados": {
+              "type": "null"
+            },
+            "RecursoGP": {
+              "type": "null"
+            },
+            "TextosAprovados": {
+              "type": "null"
+            },
+            "Votacao": {
+              "type": "null"
+            }
+          }
+        },
+        "count": 15
+      },
+      "IniId": {
+        "type": "string",
+        "sample": "315506"
+      },
+      "IniLeg": {
+        "type": "string",
+        "sample": "XVII"
+      },
+      "IniLinkTexto": {
+        "type": "string",
+        "sample": "http://app.parlamento.pt/webutils/docs/doc.pdf?path=6148523063484d364c793968636d356c6443397a6158526c"
+      },
+      "IniNr": {
+        "type": "string",
+        "sample": "28"
+      },
+      "IniObs": {
+        "type": "null"
+      },
+      "IniSel": {
+        "type": "string",
+        "sample": "1"
+      },
+      "IniTextoSubst": {
+        "type": "string",
+        "sample": "NAO"
+      },
+      "IniTextoSubstCampo": {
+        "type": "null"
+      },
+      "IniTipo": {
+        "type": "string",
+        "sample": "P"
+      },
+      "IniTitulo": {
+        "type": "string",
+        "sample": "Introduz o regime de grupos de IVA, que consiste na consolidação dos saldos do IVA a pagar ou recupe"
+      },
+      "Links": {
+        "type": "null"
+      },
+      "Peticoes": {
+        "type": "null"
+      },
+      "PropostasAlteracao": {
+        "type": "null"
+      }
+    }
+  },
+  "potential_id_fields": [
+    "IniDescTipo",
+    "IniId"
+  ]
+}
