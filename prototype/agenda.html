@@ -82,6 +82,28 @@
             overflow: hidden;
         }
 
+        .day-card.empty-day {
+            background: #fafafa;
+            opacity: 0.7;
+        }
+
+        .day-card.weekend {
+            background: #f0f4f8;
+            border-left: 3px solid #b0c4de;
+        }
+
+        .day-card.empty-day .day-header {
+            background: #f5f5f5;
+        }
+
+        .no-events {
+            padding: 15px;
+            text-align: center;
+            color: #999;
+            font-style: italic;
+            font-size: 0.9rem;
+        }
+
         .day-header {
             display: flex;
             align-items: center;
@@ -339,22 +361,40 @@
         });
     }
 
+    function getAllDatesInRange(startDate, endDate) {
+        const dates = [];
+        const current = new Date(startDate);
+        while (current <= endDate) {
+            const day = String(current.getDate()).padStart(2, '0');
+            const month = String(current.getMonth() + 1).padStart(2, '0');
+            const year = current.getFullYear();
+            dates.push(`${day}/${month}/${year}`);
+            current.setDate(current.getDate() + 1);
+        }
+        return dates;
+    }
+
     function renderAgenda() {
         const container = document.getElementById('agenda');
         const grouped = groupByDate(AGENDA_DATA);
 
-        // Sort dates
-        const sortedDates = Object.keys(grouped).sort((a, b) => {
-            return parseDate(a) - parseDate(b);
-        });
+        // Find date range from data
+        const allEventDates = AGENDA_DATA.map(e => parseDate(e.EventStartDate));
+        const minDate = new Date(Math.min(...allEventDates));
+        const maxDate = new Date(Math.max(...allEventDates));
+
+        // Generate all dates in range
+        const allDates = getAllDatesInRange(minDate, maxDate);
 
         let html = '';
 
-        sortedDates.forEach(dateStr => {
-            const events = sortEventsByTime(grouped[dateStr]);
+        allDates.forEach(dateStr => {
+            const events = grouped[dateStr] ? sortEventsByTime(grouped[dateStr]) : [];
             const date = parseDate(dateStr);
             const weekday = WEEKDAYS_SHORT[date.getDay()];
             const weekdayFull = WEEKDAYS[date.getDay()];
+            const isWeekend = date.getDay() === 0 || date.getDay() === 6;
+            const hasEvents = events.length > 0;
 
             // Generate shapes
             const shapes = events.map(e => {
@@ -383,17 +423,19 @@
                 `;
             }).join('');
 
+            const emptyMessage = isWeekend
+                ? '<div class="no-events">Fim de semana</div>'
+                : '<div class="no-events">Sem atividade parlamentar</div>';
+
             html += `
-                <div class="day-card">
-                    <div class="day-header" onclick="toggleDay(this)">
+                <div class="day-card ${!hasEvents ? 'empty-day' : ''} ${isWeekend ? 'weekend' : ''}">
+                    <div class="day-header" ${hasEvents ? 'onclick="toggleDay(this)"' : ''} ${!hasEvents ? 'style="cursor: default;"' : ''}>
                         <span class="day-date">${dateStr}</span>
                         <span class="day-weekday">${weekday}</span>
-                        <div class="day-shapes">${shapes}</div>
-                        <span class="event-count">${events.length}</span>
+                        <div class="day-shapes">${shapes || ''}</div>
+                        <span class="event-count">${hasEvents ? events.length : ''}</span>
                     </div>
-                    <div class="day-events">
-                        ${eventsList}
-                    </div>
+                    ${hasEvents ? `<div class="day-events">${eventsList}</div>` : `<div class="day-events" style="display: block;">${emptyMessage}</div>`}
                 </div>
             `;
         });
