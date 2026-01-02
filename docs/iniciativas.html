@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciativas Legislativas - Viriato</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: #f5f5f5;
+            color: #333;
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #1a5f2a 0%, #2d8f4e 100%);
+            color: white;
+            border-radius: 8px;
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            opacity: 0.9;
+            font-size: 0.95rem;
+        }
+
+        .stats {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .stat-box {
+            background: rgba(255,255,255,0.2);
+            padding: 10px 20px;
+            border-radius: 5px;
+        }
+
+        .stat-number {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            opacity: 0.9;
+        }
+
+        nav {
+            background: white;
+            padding: 12px 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: #667eea;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        nav a:hover {
+            color: #764ba2;
+        }
+
+        nav .separator {
+            color: #ccc;
+        }
+
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 25px;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+        }
+
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+        }
+
+        /* Initiative Type Colors */
+        .type-J { background: #2563eb; color: white; }  /* Blue - Projeto de Lei */
+        .type-R { background: #16a34a; color: white; }  /* Green - Projeto de Resolução */
+        .type-P { background: #1e3a8a; color: white; }  /* Dark Blue - Proposta de Lei */
+        .type-S { background: #15803d; color: white; }  /* Dark Green - Proposta de Resolução */
+        .type-D { background: #7c3aed; color: white; }  /* Purple - Deliberação */
+        .type-I { background: #ea580c; color: white; }  /* Orange - Inquérito */
+        .type-A { background: #6b7280; color: white; }  /* Gray - Apreciação */
+
+        .funnel-section {
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .funnel-section h2 {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            color: #1a5f2a;
+        }
+
+        .funnel-container {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        .funnel-phase {
+            display: flex;
+            align-items: center;
+            padding: 8px 15px;
+            background: #f8f9fa;
+            border-left: 4px solid #2d8f4e;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+
+        .funnel-phase:hover {
+            background: #e9ecef;
+            border-left-width: 6px;
+        }
+
+        .funnel-phase-name {
+            flex: 1;
+            font-size: 0.9rem;
+        }
+
+        .funnel-phase-count {
+            font-weight: 600;
+            color: #1a5f2a;
+            min-width: 60px;
+            text-align: right;
+        }
+
+        .funnel-phase-bar {
+            height: 20px;
+            background: linear-gradient(90deg, #2d8f4e, #1a5f2a);
+            border-radius: 3px;
+            margin-left: 15px;
+            min-width: 100px;
+            max-width: 400px;
+        }
+
+        .initiatives-section {
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .initiatives-section h2 {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            color: #1a5f2a;
+        }
+
+        .filters {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 8px 15px;
+            border: 2px solid #e5e7eb;
+            background: white;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .filter-btn:hover {
+            border-color: #2d8f4e;
+        }
+
+        .filter-btn.active {
+            background: #2d8f4e;
+            color: white;
+            border-color: #2d8f4e;
+        }
+
+        .initiatives-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: 15px;
+        }
+
+        .initiative-card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .initiative-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+
+        .initiative-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .initiative-badge {
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .initiative-number {
+            font-size: 0.85rem;
+            color: #6b7280;
+            font-weight: 600;
+        }
+
+        .initiative-title {
+            font-size: 0.95rem;
+            font-weight: 500;
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+
+        .initiative-meta {
+            display: flex;
+            gap: 15px;
+            font-size: 0.8rem;
+            color: #6b7280;
+            margin-bottom: 8px;
+        }
+
+        .initiative-status {
+            padding: 3px 8px;
+            background: #f3f4f6;
+            border-radius: 3px;
+            font-size: 0.75rem;
+            display: inline-block;
+        }
+
+        .initiative-authors {
+            font-size: 0.8rem;
+            color: #6b7280;
+            margin-top: 5px;
+        }
+
+        .initiative-details {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #e5e7eb;
+            display: none;
+        }
+
+        .initiative-card.expanded .initiative-details {
+            display: block;
+        }
+
+        .timeline {
+            margin-top: 10px;
+        }
+
+        .timeline-item {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 8px;
+            font-size: 0.85rem;
+        }
+
+        .timeline-date {
+            min-width: 90px;
+            color: #6b7280;
+            font-weight: 500;
+        }
+
+        .timeline-phase {
+            color: #333;
+        }
+
+        .expand-indicator {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 0.8rem;
+            color: #6b7280;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #6b7280;
+            font-size: 0.9rem;
+        }
+
+        footer a {
+            color: #2d8f4e;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Iniciativas Legislativas</h1>
+            <p>Assembleia da República - XVII Legislatura</p>
+            <div class="stats">
+                <div class="stat-box">
+                    <div class="stat-number">808</div>
+                    <div class="stat-label">Total Iniciativas</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number">60</div>
+                    <div class="stat-label">Fases do Processo</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number">94</div>
+                    <div class="stat-label">Concluídas</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number">7</div>
+                    <div class="stat-label">Tipos</div>
+                </div>
+            </div>
+        </header>
+
+        <nav>
+            <a href="index.html">← Home</a>
+            <span class="separator">|</span>
+            <a href="agenda.html">Parliamentary Agenda →</a>
+        </nav>
+
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color type-J"></div>
+                <span>Projeto de Lei (289)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color type-R"></div>
+                <span>Projeto de Resolução (452)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color type-P"></div>
+                <span>Proposta de Lei (33)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color type-S"></div>
+                <span>Proposta de Resolução (5)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color type-D"></div>
+                <span>Projeto de Deliberação (20)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color type-I"></div>
+                <span>Inquérito Parlamentar (6)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color type-A"></div>
+                <span>Apreciação Parlamentar (3)</span>
+            </div>
+        </div>
+
+        <div class="funnel-section">
+            <h2>Fluxo Legislativo - Todas as 60 Fases</h2>
+            <p style="margin-bottom: 15px; color: #6b7280; font-size: 0.9rem;">
+                Número de iniciativas que passaram por cada fase do processo legislativo
+            </p>
+            <div id="funnel" class="funnel-container"></div>
+        </div>
+
+        <div class="initiatives-section">
+            <h2>Lista de Iniciativas</h2>
+            <div class="filters" id="filters">
+                <button class="filter-btn active" data-type="all">Todas (100)</button>
+                <button class="filter-btn" data-type="J">Projeto de Lei (40)</button>
+                <button class="filter-btn" data-type="R">Projeto de Resolução (40)</button>
+                <button class="filter-btn" data-type="P">Proposta de Lei (8)</button>
+                <button class="filter-btn" data-type="D">Deliberação (5)</button>
+                <button class="filter-btn" data-type="I">Inquérito (3)</button>
+                <button class="filter-btn" data-type="S">Proposta Resolução (2)</button>
+                <button class="filter-btn" data-type="A">Apreciação (2)</button>
+            </div>
+            <div id="initiatives" class="initiatives-grid"></div>
+        </div>
+
+        <footer>
+            <p>
+                Dados: <a href="https://www.parlamento.pt" target="_blank">parlamento.pt</a> |
+                Projeto: <a href="https://github.com/loukach/viriato" target="_blank">Viriato</a>
+            </p>
+            <p style="margin-top: 5px; font-size: 0.8rem;">
+                Protótipo - Amostra de 100 iniciativas de 808 total
+            </p>
+        </footer>
+    </div>
+
+    <script src="data.js"></script>
+    <script>
+    // Data loaded from temp_data.js
+
+    function init() {
+        renderFunnel();
+        renderInitiatives('all');
+        setupFilters();
+    }
+
+    function renderFunnel() {
+        const container = document.getElementById('funnel');
+        const maxCount = Math.max(...PHASE_DATA.map(p => p.count));
+
+        let html = '';
+        PHASE_DATA.forEach(phase => {
+            const widthPercent = (phase.count / maxCount) * 100;
+            html += `
+                <div class="funnel-phase">
+                    <span class="funnel-phase-name">${phase.phase}</span>
+                    <span class="funnel-phase-count">${phase.count}</span>
+                    <div class="funnel-phase-bar" style="width: ${widthPercent}%"></div>
+                </div>
+            `;
+        });
+
+        container.innerHTML = html;
+    }
+
+    function getCurrentStatus(initiative) {
+        const events = initiative.IniEventos || [];
+        if (events.length === 0) return 'Sem eventos';
+
+        // Sort by date
+        const sorted = events.slice().sort((a, b) => {
+            const dateA = a.DataFase || '';
+            const dateB = b.DataFase || '';
+            return dateB.localeCompare(dateA);
+        });
+
+        return sorted[0].Fase || 'Desconhecido';
+    }
+
+    function getAuthors(initiative) {
+        const authors = [];
+
+        if (initiative.IniAutorGruposParlamentares) {
+            const groups = Array.isArray(initiative.IniAutorGruposParlamentares)
+                ? initiative.IniAutorGruposParlamentares
+                : [initiative.IniAutorGruposParlamentares];
+            groups.forEach(g => {
+                if (g.GP) authors.push(g.GP);
+            });
+        }
+
+        if (initiative.IniAutorOutros && initiative.IniAutorOutros.nome) {
+            authors.push(initiative.IniAutorOutros.nome);
+        }
+
+        return authors.length > 0 ? authors.join(', ') : 'N/A';
+    }
+
+    function formatDate(dateStr) {
+        if (!dateStr) return '';
+        // Convert YYYY-MM-DD to DD/MM/YYYY
+        const [year, month, day] = dateStr.split('-');
+        return `${day}/${month}/${year}`;
+    }
+
+    function renderInitiatives(filterType) {
+        const container = document.getElementById('initiatives');
+        let filtered = filterType === 'all'
+            ? INITIATIVES_DATA
+            : INITIATIVES_DATA.filter(ini => ini.IniTipo === filterType);
+
+        let html = '';
+        filtered.forEach(ini => {
+            const status = getCurrentStatus(ini);
+            const authors = getAuthors(ini);
+            const typeClass = `type-${ini.IniTipo}`;
+            const events = ini.IniEventos || [];
+            const sortedEvents = events.slice().sort((a, b) =>
+                (a.DataFase || '').localeCompare(b.DataFase || '')
+            );
+
+            const timeline = sortedEvents.map(evt => `
+                <div class="timeline-item">
+                    <span class="timeline-date">${formatDate(evt.DataFase)}</span>
+                    <span class="timeline-phase">${evt.Fase || 'N/A'}</span>
+                </div>
+            `).join('');
+
+            html += `
+                <div class="initiative-card" onclick="toggleCard(this)">
+                    <div class="initiative-header">
+                        <span class="initiative-badge ${typeClass}">${ini.IniTipo}</span>
+                        <span class="initiative-number">${ini.IniNr}/${ini.IniTipo}</span>
+                    </div>
+                    <div class="initiative-title">${ini.IniTitulo}</div>
+                    <div class="initiative-meta">
+                        <span>📅 ${formatDate(ini.DataInicioleg)}</span>
+                        <span>📊 ${events.length} fases</span>
+                    </div>
+                    <div class="initiative-status">
+                        ${status}
+                    </div>
+                    <div class="initiative-authors">
+                        ${authors}
+                    </div>
+                    <div class="initiative-details">
+                        <strong>Tipo:</strong> ${ini.IniDescTipo}<br>
+                        <strong>Legislatura:</strong> ${ini.IniLeg}<br>
+                        ${ini.IniLinkTexto ? `<strong>Texto:</strong> <a href="${ini.IniLinkTexto}" target="_blank">PDF</a><br>` : ''}
+                        <div class="timeline">
+                            <strong>Ciclo de vida (${events.length} eventos):</strong>
+                            ${timeline}
+                        </div>
+                    </div>
+                    <div class="expand-indicator">
+                        ▼ Clique para ver ciclo de vida completo
+                    </div>
+                </div>
+            `;
+        });
+
+        container.innerHTML = html || '<p style="text-align: center; color: #6b7280;">Nenhuma iniciativa encontrada</p>';
+    }
+
+    function toggleCard(card) {
+        card.classList.toggle('expanded');
+        const indicator = card.querySelector('.expand-indicator');
+        if (card.classList.contains('expanded')) {
+            indicator.textContent = '▲ Clique para ocultar';
+        } else {
+            indicator.textContent = '▼ Clique para ver ciclo de vida completo';
+        }
+    }
+
+    function setupFilters() {
+        const buttons = document.querySelectorAll('.filter-btn');
+        buttons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                buttons.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                const type = btn.dataset.type;
+                renderInitiatives(type);
+            });
+        });
+    }
+
+    // Initialize when page loads
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
+    </script>
+</body>
+</html>

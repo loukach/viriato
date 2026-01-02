@@ -1,0 +1,242 @@
+[
+  {
+    "phase": "Entrada",
+    "count": 808
+  },
+  {
+    "phase": "Admissão",
+    "count": 778
+  },
+  {
+    "phase": "Anúncio",
+    "count": 766
+  },
+  {
+    "phase": "Votação na generalidade",
+    "count": 383
+  },
+  {
+    "phase": "Baixa comissão distribuição inicial generalidade",
+    "count": 329
+  },
+  {
+    "phase": "Baixa comissão para discussão",
+    "count": 255
+  },
+  {
+    "phase": "Apreciação",
+    "count": 205
+  },
+  {
+    "phase": "Discussão generalidade",
+    "count": 182
+  },
+  {
+    "phase": "Baixa comissão especialidade",
+    "count": 146
+  },
+  {
+    "phase": "Publicação",
+    "count": 98
+  },
+  {
+    "phase": "Envio INCM",
+    "count": 95
+  },
+  {
+    "phase": "Votação Deliberação",
+    "count": 95
+  },
+  {
+    "phase": "Resolução (Publicação DAR)",
+    "count": 83
+  },
+  {
+    "phase": "Resolução da AR (Publicação DR)",
+    "count": 81
+  },
+  {
+    "phase": "Envio à Comissão para fixação da Redação final",
+    "count": 79
+  },
+  {
+    "phase": "Votação final global",
+    "count": 74
+  },
+  {
+    "phase": "Publicação em Separata",
+    "count": 39
+  },
+  {
+    "phase": "Audição promovida pelo PAR para o Governo da RAM",
+    "count": 27
+  },
+  {
+    "phase": "Audição promovida pelo PAR para a ALRAA",
+    "count": 26
+  },
+  {
+    "phase": "Audição promovida pelo PAR para o Governo da RAA",
+    "count": 26
+  },
+  {
+    "phase": "Parecer da ALRAA",
+    "count": 26
+  },
+  {
+    "phase": "Parecer do Governo da RAA",
+    "count": 25
+  },
+  {
+    "phase": "Decreto (Publicação)",
+    "count": 21
+  },
+  {
+    "phase": "Envio para promulgação",
+    "count": 20
+  },
+  {
+    "phase": "Audição promovida pelo PAR para a ALRAM",
+    "count": 19
+  },
+  {
+    "phase": "Deliberação (Publicação DAR)",
+    "count": 18
+  },
+  {
+    "phase": "Parecer da ALRAM",
+    "count": 16
+  },
+  {
+    "phase": "Parecer do Governo da RAM",
+    "count": 15
+  },
+  {
+    "phase": "Promulgação",
+    "count": 14
+  },
+  {
+    "phase": "Referenda",
+    "count": 14
+  },
+  {
+    "phase": "Lei (Publicação DR)",
+    "count": 14
+  },
+  {
+    "phase": "Requerimento Baixa Comissão sem Votação (Generalidade)",
+    "count": 14
+  },
+  {
+    "phase": "Nova apreciação comissão generalidade",
+    "count": 14
+  },
+  {
+    "phase": "Retirada da iniciativa",
+    "count": 12
+  },
+  {
+    "phase": "Requerimento",
+    "count": 10
+  },
+  {
+    "phase": "Votação na especialidade",
+    "count": 10
+  },
+  {
+    "phase": "Requerimento dispensa do prazo previsto Artº 157 RAR",
+    "count": 6
+  },
+  {
+    "phase": "Votação global",
+    "count": 5
+  },
+  {
+    "phase": "Requerimento dispensa redação final",
+    "count": 4
+  },
+  {
+    "phase": "Admissão Proposta de Alteração",
+    "count": 4
+  },
+  {
+    "phase": "Discussão especialidade",
+    "count": 4
+  },
+  {
+    "phase": "Envio INCM para preparação do autógrafo",
+    "count": 4
+  },
+  {
+    "phase": "Envio para Ratificação / Assinatura",
+    "count": 4
+  },
+  {
+    "phase": "Processo de urgência",
+    "count": 3
+  },
+  {
+    "phase": "Admissão Proposta de Alteração decreto",
+    "count": 2
+  },
+  {
+    "phase": "Requerimento de adiamento de Votação (Generalidade)",
+    "count": 1
+  },
+  {
+    "phase": "Constituição de uma Comissão de Inquérito",
+    "count": 1
+  },
+  {
+    "phase": "Veto (Receção)",
+    "count": 1
+  },
+  {
+    "phase": "Veto (Leitura)",
+    "count": 1
+  },
+  {
+    "phase": "Veto (Publicação)",
+    "count": 1
+  },
+  {
+    "phase": "Reapreciação do decreto",
+    "count": 1
+  },
+  {
+    "phase": "Votação novo decreto",
+    "count": 1
+  },
+  {
+    "phase": "Decreto (2ª versão) (Publicação)",
+    "count": 1
+  },
+  {
+    "phase": "Envio para promulgação (2ª versão)",
+    "count": 1
+  },
+  {
+    "phase": "Promulgação (2ª versão)",
+    "count": 1
+  },
+  {
+    "phase": "Referenda (2ª versão)",
+    "count": 1
+  },
+  {
+    "phase": "Envio INCM (2ª versão)",
+    "count": 1
+  },
+  {
+    "phase": "Apreciação de Decreto-Lei",
+    "count": 1
+  },
+  {
+    "phase": "Nova audição promovida pelo PAR para o Governo da RAA\n",
+    "count": 1
+  },
+  {
+    "phase": "Requerimento avocação plenário",
+    "count": 1
+  }
+]
