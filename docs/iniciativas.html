@@ -500,11 +500,30 @@
         </footer>
     </div>
 
-    <script src="data.js"></script>
     <script>
-    // Data loaded from temp_data.js
+    // API Configuration
+    const API_URL = 'https://viriato-api.onrender.com';
 
-    function init() {
+    // Global data variable
+    let INITIATIVES_DATA = [];
+
+    async function loadData() {
+        try {
+            const response = await fetch(`${API_URL}/api/iniciativas`);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            INITIATIVES_DATA = await response.json();
+            console.log(`Loaded ${INITIATIVES_DATA.length} initiatives from API`);
+        } catch (error) {
+            console.error('Error loading initiatives:', error);
+            document.getElementById('initiatives').innerHTML =
+                '<p style="text-align: center; color: #dc2626;">Erro ao carregar dados. Por favor, recarregue a página.</p>';
+        }
+    }
+
+    async function init() {
+        await loadData();
         renderLifecycleFunnels();
         renderInitiatives('all');
         setupFilters();
