@@ -376,10 +376,14 @@
 
     function renderAgenda() {
         const container = document.getElementById('agenda');
-        const grouped = groupByDate(AGENDA_DATA);
+
+        // Filter out metadata events that aren't real parliamentary activities
+        const realEvents = AGENDA_DATA.filter(e => !e.Title.includes('Calendarização'));
+
+        const grouped = groupByDate(realEvents);
 
         // Find date range from data
-        const allEventDates = AGENDA_DATA.map(e => parseDate(e.EventStartDate));
+        const allEventDates = realEvents.map(e => parseDate(e.EventStartDate));
         const minDate = new Date(Math.min(...allEventDates));
         const maxDate = new Date(Math.max(...allEventDates));
 
@@ -423,10 +427,6 @@
                 `;
             }).join('');
 
-            const emptyMessage = isWeekend
-                ? '<div class="no-events">Fim de semana</div>'
-                : '<div class="no-events">Sem atividade parlamentar</div>';
-
             html += `
                 <div class="day-card ${!hasEvents ? 'empty-day' : ''} ${isWeekend ? 'weekend' : ''}">
                     <div class="day-header" ${hasEvents ? 'onclick="toggleDay(this)"' : ''} ${!hasEvents ? 'style="cursor: default;"' : ''}>
@@ -435,7 +435,7 @@
                         <div class="day-shapes">${shapes || ''}</div>
                         <span class="event-count">${hasEvents ? events.length : ''}</span>
                     </div>
-                    ${hasEvents ? `<div class="day-events">${eventsList}</div>` : `<div class="day-events" style="display: block;">${emptyMessage}</div>`}
+                    ${hasEvents ? `<div class="day-events">${eventsList}</div>` : ''}
                 </div>
             `;
         });
