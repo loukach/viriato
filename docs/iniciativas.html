@@ -141,46 +141,87 @@
             color: #1a5f2a;
         }
 
-        .funnel-container {
+        .lifecycle-funnel {
+            margin-bottom: 40px;
+        }
+
+        .funnel-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 5px;
+        }
+
+        .funnel-subtitle {
+            font-size: 0.85rem;
+            color: #6b7280;
+            margin-bottom: 20px;
+        }
+
+        .horizontal-funnel {
+            display: flex;
+            gap: 0;
+            overflow-x: auto;
+            padding: 20px 0;
+            align-items: flex-end;
+        }
+
+        .phase-step {
+            flex: 1;
+            min-width: 80px;
             display: flex;
             flex-direction: column;
-            gap: 3px;
-        }
-
-        .funnel-phase {
-            display: flex;
             align-items: center;
-            padding: 8px 15px;
-            background: #f8f9fa;
-            border-left: 4px solid #2d8f4e;
-            border-radius: 4px;
-            transition: all 0.2s;
+            position: relative;
         }
 
-        .funnel-phase:hover {
-            background: #e9ecef;
-            border-left-width: 6px;
+        .phase-bar {
+            width: 100%;
+            background: linear-gradient(180deg, #2d8f4e, #1a5f2a);
+            border-radius: 4px 4px 0 0;
+            transition: all 0.3s;
+            cursor: pointer;
+            position: relative;
         }
 
-        .funnel-phase-name {
-            flex: 1;
+        .phase-bar:hover {
+            opacity: 0.8;
+            transform: translateY(-3px);
+        }
+
+        .phase-count {
+            position: absolute;
+            top: 8px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-weight: 700;
             font-size: 0.9rem;
+            color: white;
         }
 
-        .funnel-phase-count {
-            font-weight: 600;
-            color: #1a5f2a;
-            min-width: 60px;
-            text-align: right;
+        .phase-name {
+            margin-top: 8px;
+            font-size: 0.7rem;
+            text-align: center;
+            color: #4b5563;
+            writing-mode: horizontal-tb;
+            max-width: 100px;
+            line-height: 1.2;
         }
 
-        .funnel-phase-bar {
-            height: 20px;
-            background: linear-gradient(90deg, #2d8f4e, #1a5f2a);
-            border-radius: 3px;
-            margin-left: 15px;
-            min-width: 100px;
-            max-width: 400px;
+        .phase-step::after {
+            content: '→';
+            position: absolute;
+            right: -12px;
+            top: 40%;
+            color: #9ca3af;
+            font-size: 1.2rem;
+            z-index: 1;
+        }
+
+        .phase-step:last-child::after {
+            display: none;
         }
 
         .initiatives-section {
@@ -413,11 +454,24 @@
         </div>
 
         <div class="funnel-section">
-            <h2>Fluxo Legislativo - Todas as 60 Fases</h2>
-            <p style="margin-bottom: 15px; color: #6b7280; font-size: 0.9rem;">
-                Número de iniciativas que passaram por cada fase do processo legislativo
+            <h2>Fluxo Legislativo por Tipo</h2>
+            <p style="margin-bottom: 25px; color: #6b7280; font-size: 0.9rem;">
+                Progressão das iniciativas através das fases do processo legislativo
             </p>
-            <div id="funnel" class="funnel-container"></div>
+
+            <!-- Laws Funnel -->
+            <div class="lifecycle-funnel">
+                <h3 class="funnel-title">📜 Leis (Projetos e Propostas de Lei)</h3>
+                <p class="funnel-subtitle">322 iniciativas · Do Parlamento ao Diário da República</p>
+                <div id="laws-funnel" class="horizontal-funnel"></div>
+            </div>
+
+            <!-- Resolutions Funnel -->
+            <div class="lifecycle-funnel">
+                <h3 class="funnel-title">📋 Resoluções (Projetos e Propostas de Resolução)</h3>
+                <p class="funnel-subtitle">457 iniciativas · Recomendações ao Governo</p>
+                <div id="resolutions-funnel" class="horizontal-funnel"></div>
+            </div>
         </div>
 
         <div class="initiatives-section">
@@ -451,23 +505,59 @@
     // Data loaded from temp_data.js
 
     function init() {
-        renderFunnel();
+        renderLifecycleFunnels();
         renderInitiatives('all');
         setupFilters();
     }
 
-    function renderFunnel() {
-        const container = document.getElementById('funnel');
-        const maxCount = Math.max(...PHASE_DATA.map(p => p.count));
+    function renderLifecycleFunnels() {
+        // Laws lifecycle (simplified key phases)
+        const lawsPhases = [
+            { name: 'Entrada', count: 322 },
+            { name: 'Admissão', count: 309 },
+            { name: 'Anúncio', count: 304 },
+            { name: 'Discussão', count: 95 },
+            { name: 'Votação generalidade', count: 180 },
+            { name: 'Comissão especialidade', count: 146 },
+            { name: 'Votação final', count: 74 },
+            { name: 'Envio promulgação', count: 20 },
+            { name: 'Promulgação', count: 14 },
+            { name: 'Referenda', count: 14 },
+            { name: 'Lei (DR)', count: 14 }
+        ];
+
+        // Resolutions lifecycle (simplified key phases)
+        const resolutionsPhases = [
+            { name: 'Entrada', count: 457 },
+            { name: 'Admissão', count: 440 },
+            { name: 'Anúncio', count: 433 },
+            { name: 'Discussão', count: 120 },
+            { name: 'Votação generalidade', count: 203 },
+            { name: 'Votação deliberação', count: 95 },
+            { name: 'Redação final', count: 79 },
+            { name: 'Resolução (DAR)', count: 83 },
+            { name: 'Resolução (DR)', count: 81 }
+        ];
+
+        renderFunnelChart('laws-funnel', lawsPhases, '#2563eb');
+        renderFunnelChart('resolutions-funnel', resolutionsPhases, '#16a34a');
+    }
+
+    function renderFunnelChart(containerId, phases, color) {
+        const container = document.getElementById(containerId);
+        const maxCount = Math.max(...phases.map(p => p.count));
 
         let html = '';
-        PHASE_DATA.forEach(phase => {
-            const widthPercent = (phase.count / maxCount) * 100;
+        phases.forEach(phase => {
+            const heightPercent = (phase.count / maxCount) * 100;
+            const height = Math.max(heightPercent * 2, 40); // Min 40px height
+
             html += `
-                <div class="funnel-phase">
-                    <span class="funnel-phase-name">${phase.phase}</span>
-                    <span class="funnel-phase-count">${phase.count}</span>
-                    <div class="funnel-phase-bar" style="width: ${widthPercent}%"></div>
+                <div class="phase-step">
+                    <div class="phase-bar" style="height: ${height}px; background: ${color};">
+                        <div class="phase-count">${phase.count}</div>
+                    </div>
+                    <div class="phase-name">${phase.name}</div>
                 </div>
             `;
         });
