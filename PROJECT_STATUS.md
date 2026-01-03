@@ -133,7 +133,20 @@ None currently. All features working as designed.
 
 ## Testing
 
-All pages tested with Playwright:
+**Start of Session Testing Checklist:**
+Use Playwright MCP to test the live site (https://loukach.github.io/viriato/):
+
+1. **Navigation** - Click through Home → Iniciativas → Agenda tabs
+2. **Search functionality** - On Iniciativas page:
+   - Type "saúde" in search box and click Search
+   - Verify results appear with matching initiatives
+   - Click Clear to reset
+3. **Type filters** - Click each filter button (All, Laws, Resolutions, Government Bills, Deliberations)
+4. **Funnels** - Verify both Laws and Resolutions funnels render with bars
+5. **Initiative cards** - Click a card to expand and see lifecycle timeline
+6. **Agenda view** - Verify calendar events load and display
+
+**Previous Test Results:**
 - ✅ Navigation works (Home ↔ Agenda ↔ Initiatives)
 - ✅ Funnels render correctly
 - ✅ Data loads properly
