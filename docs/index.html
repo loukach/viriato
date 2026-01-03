@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Visualização de dados abertos do Parlamento Português - Iniciativas legislativas e agenda parlamentar">
     <title>Viriato - Portuguese Parliament Open Data</title>
     <style>
         * {
@@ -16,6 +17,36 @@
             background: #f5f5f5;
             color: #333;
             line-height: 1.6;
+        }
+
+        /* Skip to content - Accessibility */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: #667eea;
+            color: white;
+            padding: 8px 16px;
+            z-index: 1001;
+            transition: top 0.3s;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .skip-link:focus {
+            top: 0;
+        }
+
+        /* Focus styles for accessibility */
+        *:focus-visible {
+            outline: 2px solid #667eea;
+            outline-offset: 2px;
+        }
+
+        button:focus-visible,
+        a:focus-visible {
+            outline: 2px solid #667eea;
+            outline-offset: 2px;
         }
 
         /* Navigation Tabs */
@@ -480,16 +511,21 @@
         }
 
         .initiative-details {
-            display: none;
-            margin-top: 15px;
-            padding-top: 15px;
-            border-top: 1px solid #e2e8f0;
+            max-height: 0;
+            overflow: hidden;
+            margin-top: 0;
+            padding-top: 0;
+            border-top: 1px solid transparent;
             font-size: 0.9rem;
             color: #4a5568;
+            transition: max-height 0.3s ease, margin-top 0.3s ease, padding-top 0.3s ease, border-color 0.3s ease;
         }
 
         .initiative-card.expanded .initiative-details {
-            display: block;
+            max-height: 2000px;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top-color: #e2e8f0;
         }
 
         .expand-indicator {
@@ -497,6 +533,19 @@
             color: #94a3b8;
             font-size: 0.85rem;
             margin-top: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .expand-icon {
+            display: inline-block;
+            transition: transform 0.3s ease;
+        }
+
+        .initiative-card.expanded .expand-icon {
+            transform: rotate(180deg);
         }
 
         .timeline {
@@ -636,13 +685,60 @@
             font-size: 1.1rem;
         }
 
+        .loading::before {
+            content: '';
+            display: block;
+            width: 40px;
+            height: 40px;
+            margin: 0 auto 20px;
+            border: 4px solid #e2e8f0;
+            border-top-color: #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
         .error {
             text-align: center;
-            padding: 60px 20px;
+            padding: 40px 20px;
             color: #dc2626;
             background: #fee2e2;
             border-radius: 8px;
             margin: 20px;
+        }
+
+        .error-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .error-message {
+            margin-bottom: 20px;
+            color: #991b1b;
+        }
+
+        .retry-btn {
+            padding: 10px 24px;
+            background: #dc2626;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .retry-btn:hover {
+            background: #b91c1c;
+        }
+
+        .retry-btn:focus {
+            outline: 2px solid #dc2626;
+            outline-offset: 2px;
         }
 
         /* Footer */
@@ -678,6 +774,12 @@
             .nav-tabs {
                 width: 100%;
                 overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: none;
+            }
+
+            .nav-tabs::-webkit-scrollbar {
+                display: none;
             }
 
             .viewers {
@@ -691,24 +793,110 @@
             .home-header h1 {
                 font-size: 2em;
             }
+
+            .search-container {
+                flex-direction: column;
+            }
+
+            .search-btn,
+            .clear-search-btn {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 15px;
+            }
+
+            .home-view {
+                padding: 30px 15px;
+            }
+
+            .home-header h1 {
+                font-size: 1.8em;
+            }
+
+            .home-subtitle {
+                font-size: 1.1em;
+            }
+
+            .viewer-card {
+                padding: 25px;
+            }
+
+            .viewer-stats {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .filter-buttons {
+                flex-direction: column;
+            }
+
+            .filter-btn {
+                width: 100%;
+                text-align: center;
+            }
+
+            .funnel-chart {
+                overflow-x: auto;
+                justify-content: flex-start;
+                padding-bottom: 10px;
+            }
+
+            .phase-step {
+                min-width: 45px;
+            }
+
+            .initiative-meta {
+                flex-direction: column;
+                gap: 5px;
+            }
+
+            .stats {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .stat-box {
+                width: 100%;
+            }
+        }
+
+        /* Reduced motion preference */
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
         }
     </style>
 </head>
 <body>
+    <!-- Skip to content - Accessibility -->
+    <a href="#main-content" class="skip-link">Saltar para o conteúdo</a>
+
     <!-- Navigation -->
-    <nav class="main-nav">
+    <nav class="main-nav" role="navigation" aria-label="Navegação principal">
         <div class="nav-container">
-            <div class="logo">Viriato</div>
-            <div class="nav-tabs">
-                <a href="#/" class="nav-tab" data-view="home">Home</a>
-                <a href="#/iniciativas" class="nav-tab" data-view="iniciativas">Iniciativas</a>
-                <a href="#/agenda" class="nav-tab" data-view="agenda">Agenda</a>
+            <div class="logo" aria-label="Viriato - Página inicial">Viriato</div>
+            <div class="nav-tabs" role="tablist" aria-label="Secções do site">
+                <a href="#/" class="nav-tab" data-view="home" role="tab" aria-selected="true">Home</a>
+                <a href="#/iniciativas" class="nav-tab" data-view="iniciativas" role="tab" aria-selected="false">Iniciativas</a>
+                <a href="#/agenda" class="nav-tab" data-view="agenda" role="tab" aria-selected="false">Agenda</a>
             </div>
         </div>
     </nav>
 
+    <!-- Main Content -->
+    <main id="main-content">
+
     <!-- HOME VIEW -->
-    <div id="home-view" class="view active home-view">
+    <div id="home-view" class="view active home-view" role="tabpanel" aria-labelledby="home-tab">
         <div class="container">
             <div class="home-header">
                 <h1>Viriato</h1>
@@ -720,8 +908,8 @@
             </div>
 
             <div class="viewers">
-                <div class="viewer-card" onclick="navigateTo('#/agenda')">
-                    <div class="viewer-icon">📅</div>
+                <div class="viewer-card" onclick="navigateTo('#/agenda')" onkeydown="handleCardKeydown(event, '#/agenda')" tabindex="0" role="button" aria-label="Ver Agenda Parlamentar">
+                    <div class="viewer-icon" aria-hidden="true">📅</div>
                     <div class="viewer-title">Parliamentary Agenda</div>
                     <div class="viewer-description">
                         View the daily parliamentary calendar showing plenary sessions, committee meetings, and other events.
@@ -738,8 +926,8 @@
                     </div>
                 </div>
 
-                <div class="viewer-card" onclick="navigateTo('#/iniciativas')">
-                    <div class="viewer-icon">📋</div>
+                <div class="viewer-card" onclick="navigateTo('#/iniciativas')" onkeydown="handleCardKeydown(event, '#/iniciativas')" tabindex="0" role="button" aria-label="Ver Iniciativas Legislativas">
+                    <div class="viewer-icon" aria-hidden="true">📋</div>
                     <div class="viewer-title">Legislative Initiatives</div>
                     <div class="viewer-description">
                         Explore legislative initiatives through all phases of the parliamentary process.
@@ -764,7 +952,7 @@
     </div>
 
     <!-- INICIATIVAS VIEW -->
-    <div id="iniciativas-view" class="view">
+    <div id="iniciativas-view" class="view" role="tabpanel" aria-labelledby="iniciativas-tab">
         <div class="container">
             <div class="iniciativas-header">
                 <h1>Iniciativas Legislativas</h1>
@@ -787,22 +975,22 @@
 
             <div class="filters">
                 <div class="filter-group">
-                    <label class="filter-label">Search Initiatives:</label>
-                    <div class="search-container">
-                        <input type="text" id="search-input" class="search-input" placeholder="Search by title (e.g., 'saúde', 'educação', 'ambiente')..." />
-                        <button id="search-btn" class="search-btn" onclick="performSearch()">Search</button>
-                        <button id="clear-search-btn" class="clear-search-btn" onclick="clearSearch()">Clear</button>
+                    <label class="filter-label" id="search-label">Pesquisar Iniciativas:</label>
+                    <div class="search-container" role="search">
+                        <input type="text" id="search-input" class="search-input" placeholder="Pesquisar por título (ex: 'saúde', 'educação', 'ambiente')..." aria-label="Pesquisar iniciativas" />
+                        <button id="search-btn" class="search-btn" onclick="performSearch()" aria-label="Pesquisar">Pesquisar</button>
+                        <button id="clear-search-btn" class="clear-search-btn" onclick="clearSearch()" aria-label="Limpar pesquisa">Limpar</button>
                     </div>
                     <div id="search-results-info" class="search-results-info"></div>
                 </div>
                 <div class="filter-group">
-                    <label class="filter-label">Filter by Type:</label>
-                    <div class="filter-buttons">
-                        <button class="filter-btn active" data-type="all">All Types</button>
-                        <button class="filter-btn" data-type="P">Laws (Projeto de Lei)</button>
-                        <button class="filter-btn" data-type="R">Resolutions (Projeto de Resolução)</button>
-                        <button class="filter-btn" data-type="L">Government Bills (Proposta de Lei)</button>
-                        <button class="filter-btn" data-type="D">Deliberations</button>
+                    <label class="filter-label" id="filter-label">Filtrar por Tipo:</label>
+                    <div class="filter-buttons" role="group" aria-labelledby="filter-label">
+                        <button class="filter-btn active" data-type="all">Todos</button>
+                        <button class="filter-btn" data-type="P">Projetos de Lei</button>
+                        <button class="filter-btn" data-type="R">Projetos de Resolução</button>
+                        <button class="filter-btn" data-type="L">Propostas de Lei</button>
+                        <button class="filter-btn" data-type="D">Deliberações</button>
                     </div>
                 </div>
             </div>
@@ -818,12 +1006,12 @@
                 </div>
             </div>
 
-            <div id="initiatives" class="loading">Loading initiatives...</div>
+            <div id="initiatives" class="loading" role="status" aria-live="polite">A carregar iniciativas...</div>
         </div>
     </div>
 
     <!-- AGENDA VIEW -->
-    <div id="agenda-view" class="view">
+    <div id="agenda-view" class="view" role="tabpanel" aria-labelledby="agenda-tab">
         <div class="container">
             <div class="agenda-header">
                 <h1>Parliamentary Agenda</h1>
@@ -859,9 +1047,11 @@
                 </div>
             </div>
 
-            <div id="agenda" class="loading">Loading agenda...</div>
+            <div id="agenda" class="loading" role="status" aria-live="polite">A carregar agenda...</div>
         </div>
     </div>
+
+    </main>
 
     <!-- Footer -->
     <footer>
@@ -881,22 +1071,42 @@
         let AGENDA_DATA = [];
         let SEARCH_RESULTS = null;  // null = no search, array = search results
 
+        // Page titles for each route
+        const PAGE_TITLES = {
+            'home': 'Viriato - Portuguese Parliament Open Data',
+            'iniciativas': 'Iniciativas Legislativas - Viriato',
+            'agenda': 'Agenda Parlamentar - Viriato'
+        };
+
         // Router
         function navigateTo(hash) {
             window.location.hash = hash;
+        }
+
+        // Keyboard handler for cards
+        function handleCardKeydown(event, hash) {
+            if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                navigateTo(hash);
+            }
         }
 
         function handleRoute() {
             const hash = window.location.hash || '#/';
             const route = hash.substring(2) || 'home';
 
-            // Update active tab
+            // Update page title
+            document.title = PAGE_TITLES[route] || PAGE_TITLES['home'];
+
+            // Update active tab and aria-selected
             document.querySelectorAll('.nav-tab').forEach(tab => {
                 tab.classList.remove('active');
+                tab.setAttribute('aria-selected', 'false');
             });
             const activeTab = document.querySelector(`[data-view="${route}"]`);
             if (activeTab) {
                 activeTab.classList.add('active');
+                activeTab.setAttribute('aria-selected', 'true');
             }
 
             // Update active view
@@ -938,9 +1148,19 @@
                 setupFilters();
             } catch (error) {
                 console.error('Error loading initiatives:', error);
-                document.getElementById('initiatives').innerHTML =
-                    '<div class="error">Erro ao carregar iniciativas. Por favor, recarregue a página.</div>';
+                document.getElementById('initiatives').innerHTML = `
+                    <div class="error" role="alert">
+                        <div class="error-title">Erro ao carregar iniciativas</div>
+                        <div class="error-message">O servidor pode estar a iniciar (aguarde 10-30 segundos) ou houve um problema de ligação.</div>
+                        <button class="retry-btn" onclick="retryLoadInitiatives()">Tentar novamente</button>
+                    </div>`;
             }
+        }
+
+        function retryLoadInitiatives() {
+            document.getElementById('initiatives').innerHTML = '<div class="loading">A carregar iniciativas...</div>';
+            INITIATIVES_DATA = [];
+            loadInitiatives();
         }
 
         // Load Agenda Data
@@ -959,9 +1179,19 @@
                 renderAgenda();
             } catch (error) {
                 console.error('Error loading agenda:', error);
-                document.getElementById('agenda').innerHTML =
-                    '<div class="error">Erro ao carregar agenda. Por favor, recarregue a página.</div>';
+                document.getElementById('agenda').innerHTML = `
+                    <div class="error" role="alert">
+                        <div class="error-title">Erro ao carregar agenda</div>
+                        <div class="error-message">O servidor pode estar a iniciar (aguarde 10-30 segundos) ou houve um problema de ligação.</div>
+                        <button class="retry-btn" onclick="retryLoadAgenda()">Tentar novamente</button>
+                    </div>`;
             }
+        }
+
+        function retryLoadAgenda() {
+            document.getElementById('agenda').innerHTML = '<div class="loading">A carregar agenda...</div>';
+            AGENDA_DATA = [];
+            loadAgenda();
         }
 
         // Render Lifecycle Funnels
@@ -1218,46 +1448,59 @@
                 `).join('');
 
                 html += `
-                    <div class="initiative-card" onclick="toggleCard(this)">
+                    <article class="initiative-card" onclick="toggleCard(this, event)" onkeydown="handleInitiativeKeydown(event, this)" tabindex="0" role="button" aria-expanded="false" aria-label="${ini.IniTitulo}">
                         <div class="initiative-header">
-                            <span class="initiative-badge ${typeClass}">${ini.IniTipo}</span>
+                            <span class="initiative-badge ${typeClass}" aria-label="Tipo ${ini.IniTipo}">${ini.IniTipo}</span>
                             <span class="initiative-number">${ini.IniNr}/${ini.IniTipo}</span>
                         </div>
                         <div class="initiative-title">${ini.IniTitulo}</div>
                         <div class="initiative-meta">
-                            <span>📅 ${formatDate(ini.DataInicioleg)}</span>
-                            <span>📊 ${events.length} fases</span>
+                            <span aria-label="Data de início"><span aria-hidden="true">📅</span> ${formatDate(ini.DataInicioleg)}</span>
+                            <span aria-label="${events.length} fases"><span aria-hidden="true">📊</span> ${events.length} fases</span>
                         </div>
                         <div class="initiative-status">
                             ${status}
                         </div>
-                        <div class="initiative-details">
+                        <div class="initiative-details" aria-hidden="true">
                             <strong>Tipo:</strong> ${ini.IniDescTipo}<br>
                             <strong>Autores:</strong> ${authors}<br>
                             <strong>Legislatura:</strong> ${ini.IniLeg}<br>
-                            ${ini.IniLinkTexto ? `<strong>Texto:</strong> <a href="${ini.IniLinkTexto}" target="_blank">PDF</a><br>` : ''}
+                            ${ini.IniLinkTexto ? `<strong>Texto:</strong> <a href="${ini.IniLinkTexto}" target="_blank" rel="noopener">PDF</a><br>` : ''}
                             <div class="timeline">
                                 <strong>Ciclo de vida (${events.length} eventos):</strong>
                                 ${timeline}
                             </div>
                         </div>
                         <div class="expand-indicator">
-                            ▼ Clique para ver ciclo de vida completo
+                            <span class="expand-icon" aria-hidden="true">▼</span>
+                            <span class="expand-text">Clique para ver ciclo de vida</span>
                         </div>
-                    </div>
+                    </article>
                 `;
             });
 
             container.innerHTML = html || '<p style="text-align: center; color: #6b7280;">Nenhuma iniciativa encontrada</p>';
         }
 
-        function toggleCard(card) {
+        function toggleCard(card, event) {
+            // Prevent toggle if clicking on a link inside the card
+            if (event && event.target.tagName === 'A') {
+                return;
+            }
             card.classList.toggle('expanded');
-            const indicator = card.querySelector('.expand-indicator');
-            if (card.classList.contains('expanded')) {
-                indicator.textContent = '▲ Clique para ocultar';
-            } else {
-                indicator.textContent = '▼ Clique para ver ciclo de vida completo';
+            const isExpanded = card.classList.contains('expanded');
+            card.setAttribute('aria-expanded', isExpanded);
+
+            const indicatorText = card.querySelector('.expand-text');
+            if (indicatorText) {
+                indicatorText.textContent = isExpanded ? 'Clique para ocultar' : 'Clique para ver ciclo de vida';
+            }
+        }
+
+        function handleInitiativeKeydown(event, card) {
+            if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                toggleCard(card, event);
             }
         }
 
@@ -1298,7 +1541,7 @@
 
             // Disable button while searching
             searchBtn.disabled = true;
-            searchBtn.textContent = 'Searching...';
+            searchBtn.textContent = 'A pesquisar...';
 
             try {
                 // Convert query to tsquery format (add :* for prefix matching)
@@ -1313,7 +1556,7 @@
                 SEARCH_RESULTS = results;
 
                 // Show results info
-                resultsInfo.textContent = `Found ${results.length} initiative${results.length !== 1 ? 's' : ''} matching "${query}"`;
+                resultsInfo.textContent = `Encontradas ${results.length} iniciativa${results.length !== 1 ? 's' : ''} para "${query}"`;
                 resultsInfo.classList.add('visible');
                 clearBtn.classList.add('visible');
 
@@ -1328,11 +1571,11 @@
 
             } catch (error) {
                 console.error('Search error:', error);
-                resultsInfo.textContent = `Search error: ${error.message}`;
+                resultsInfo.textContent = `Erro na pesquisa: ${error.message}`;
                 resultsInfo.classList.add('visible');
             } finally {
                 searchBtn.disabled = false;
-                searchBtn.textContent = 'Search';
+                searchBtn.textContent = 'Pesquisar';
             }
         }
 
@@ -1381,33 +1624,34 @@
                 `).join('');
 
                 html += `
-                    <div class="initiative-card" onclick="toggleCard(this)">
+                    <article class="initiative-card" onclick="toggleCard(this, event)" onkeydown="handleInitiativeKeydown(event, this)" tabindex="0" role="button" aria-expanded="false" aria-label="${ini.IniTitulo}">
                         <div class="initiative-header">
-                            <span class="initiative-badge ${typeClass}">${ini.IniTipo}</span>
+                            <span class="initiative-badge ${typeClass}" aria-label="Tipo ${ini.IniTipo}">${ini.IniTipo}</span>
                             <span class="initiative-number">${ini.IniNr}/${ini.IniTipo}</span>
                         </div>
                         <div class="initiative-title">${ini.IniTitulo}</div>
                         <div class="initiative-meta">
-                            <span>📅 ${formatDate(ini.DataInicioleg)}</span>
-                            <span>📊 ${events.length} fases</span>
+                            <span aria-label="Data de início"><span aria-hidden="true">📅</span> ${formatDate(ini.DataInicioleg)}</span>
+                            <span aria-label="${events.length} fases"><span aria-hidden="true">📊</span> ${events.length} fases</span>
                         </div>
                         <div class="initiative-status">
                             ${status}
                         </div>
-                        <div class="initiative-details">
+                        <div class="initiative-details" aria-hidden="true">
                             <strong>Tipo:</strong> ${ini.IniDescTipo}<br>
                             <strong>Autores:</strong> ${authors}<br>
                             <strong>Legislatura:</strong> ${ini.IniLeg}<br>
-                            ${ini.IniLinkTexto ? `<strong>Texto:</strong> <a href="${ini.IniLinkTexto}" target="_blank">PDF</a><br>` : ''}
+                            ${ini.IniLinkTexto ? `<strong>Texto:</strong> <a href="${ini.IniLinkTexto}" target="_blank" rel="noopener">PDF</a><br>` : ''}
                             <div class="timeline">
                                 <strong>Ciclo de vida (${events.length} eventos):</strong>
                                 ${timeline}
                             </div>
                         </div>
                         <div class="expand-indicator">
-                            ▼ Clique para ver ciclo de vida completo
+                            <span class="expand-icon" aria-hidden="true">▼</span>
+                            <span class="expand-text">Clique para ver ciclo de vida</span>
                         </div>
-                    </div>
+                    </article>
                 `;
             });
 
