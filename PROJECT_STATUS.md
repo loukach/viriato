@@ -74,9 +74,9 @@ All documentation uses:
 
 ## Next Steps
 
-**In Progress:**
-- Exposing search functionality in frontend (API already supports it)
-- Making funnel data dynamic (using /api/phase-counts)
+**Recently Completed:**
+- ✅ Search functionality in frontend (uses /api/search endpoint)
+- ✅ Dynamic funnel data computation from loaded initiatives
 
 **Potential features to consider:**
 - Deputy profiles and voting records
