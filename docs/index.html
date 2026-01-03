@@ -283,6 +283,80 @@
             color: white;
         }
 
+        /* Search */
+        .search-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .search-btn {
+            padding: 12px 24px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .search-btn:hover {
+            background: #5a67d8;
+        }
+
+        .search-btn:disabled {
+            background: #a0aec0;
+            cursor: not-allowed;
+        }
+
+        .clear-search-btn {
+            padding: 12px 16px;
+            background: #e2e8f0;
+            color: #4a5568;
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s;
+            display: none;
+        }
+
+        .clear-search-btn:hover {
+            background: #cbd5e0;
+        }
+
+        .clear-search-btn.visible {
+            display: block;
+        }
+
+        .search-results-info {
+            margin-bottom: 15px;
+            padding: 10px 15px;
+            background: #e0e7ff;
+            border-radius: 6px;
+            color: #3730a3;
+            display: none;
+        }
+
+        .search-results-info.visible {
+            display: block;
+        }
+
         /* Funnels */
         .funnels {
             display: grid;
@@ -713,12 +787,22 @@
 
             <div class="filters">
                 <div class="filter-group">
+                    <label class="filter-label">Search Initiatives:</label>
+                    <div class="search-container">
+                        <input type="text" id="search-input" class="search-input" placeholder="Search by title (e.g., 'saúde', 'educação', 'ambiente')..." />
+                        <button id="search-btn" class="search-btn" onclick="performSearch()">Search</button>
+                        <button id="clear-search-btn" class="clear-search-btn" onclick="clearSearch()">Clear</button>
+                    </div>
+                    <div id="search-results-info" class="search-results-info"></div>
+                </div>
+                <div class="filter-group">
                     <label class="filter-label">Filter by Type:</label>
                     <div class="filter-buttons">
                         <button class="filter-btn active" data-type="all">All Types</button>
                         <button class="filter-btn" data-type="P">Laws (Projeto de Lei)</button>
                         <button class="filter-btn" data-type="R">Resolutions (Projeto de Resolução)</button>
                         <button class="filter-btn" data-type="L">Government Bills (Proposta de Lei)</button>
+                        <button class="filter-btn" data-type="D">Deliberations</button>
                     </div>
                 </div>
             </div>
@@ -795,6 +879,7 @@
         // Global data
         let INITIATIVES_DATA = [];
         let AGENDA_DATA = [];
+        let SEARCH_RESULTS = null;  // null = no search, array = search results
 
         // Router
         function navigateTo(hash) {
@@ -881,34 +966,172 @@
 
         // Render Lifecycle Funnels
         function renderLifecycleFunnels() {
-            const lawsPhases = [
-                { name: 'Entrada', count: 322 },
-                { name: 'Admissão', count: 309 },
-                { name: 'Anúncio', count: 304 },
-                { name: 'Discussão', count: 95 },
-                { name: 'Votação generalidade', count: 180 },
-                { name: 'Comissão especialidade', count: 146 },
-                { name: 'Votação final', count: 74 },
-                { name: 'Envio promulgação', count: 20 },
-                { name: 'Promulgação', count: 14 },
-                { name: 'Referenda', count: 14 },
-                { name: 'Lei (DR)', count: 14 }
+            // Define phase orders for each lifecycle path
+            const lawsPhaseOrder = [
+                'Entrada',
+                'Admissão',
+                'Anúncio',
+                'Discussão na generalidade',
+                'Votação na generalidade',
+                'Baixa comissão especialidade',
+                'Votação final global',
+                'Enviado para promulgação',
+                'Promulgação',
+                'Referenda ministerial',
+                'Publicação'
             ];
 
-            const resolutionsPhases = [
-                { name: 'Entrada', count: 457 },
-                { name: 'Admissão', count: 440 },
-                { name: 'Anúncio', count: 433 },
-                { name: 'Discussão', count: 120 },
-                { name: 'Votação generalidade', count: 203 },
-                { name: 'Votação deliberação', count: 95 },
-                { name: 'Redação final', count: 79 },
-                { name: 'Resolução (DAR)', count: 83 },
-                { name: 'Resolução (DR)', count: 81 }
+            const resolutionsPhaseOrder = [
+                'Entrada',
+                'Admissão',
+                'Anúncio',
+                'Discussão',
+                'Votação na generalidade',
+                'Votação deliberação',
+                'Redação final',
+                'Publicação (DAR)',
+                'Publicação (DR)'
             ];
+
+            // Phase name mappings (full name -> display name)
+            const phaseDisplayNames = {
+                'Entrada': 'Entrada',
+                'Admissão': 'Admissão',
+                'Anúncio': 'Anúncio',
+                'Discussão na generalidade': 'Discussão',
+                'Discussão': 'Discussão',
+                'Votação na generalidade': 'Votação generalidade',
+                'Baixa comissão especialidade': 'Comissão especialidade',
+                'Votação final global': 'Votação final',
+                'Enviado para promulgação': 'Envio promulgação',
+                'Promulgação': 'Promulgação',
+                'Referenda ministerial': 'Referenda',
+                'Publicação': 'Lei (DR)',
+                'Votação deliberação': 'Votação deliberação',
+                'Redação final': 'Redação final',
+                'Publicação (DAR)': 'Resolução (DAR)',
+                'Publicação (DR)': 'Resolução (DR)'
+            };
+
+            // Count initiatives that reached each phase
+            function countPhasesForType(initiatives, phaseOrder) {
+                const counts = {};
+                phaseOrder.forEach(phase => counts[phase] = 0);
+
+                initiatives.forEach(ini => {
+                    const events = ini.IniEventos || [];
+                    const phases = new Set(events.map(e => e.Fase));
+
+                    phaseOrder.forEach(phase => {
+                        // Check if this initiative has reached this phase
+                        // Match by phase name contains (for flexibility)
+                        const hasPhase = events.some(e => {
+                            const eventPhase = e.Fase || '';
+                            return eventPhase.includes(phase) || phase.includes(eventPhase.split(' - ')[0]);
+                        });
+                        if (hasPhase) counts[phase]++;
+                    });
+                });
+
+                return phaseOrder.map(phase => ({
+                    name: phaseDisplayNames[phase] || phase,
+                    count: counts[phase]
+                }));
+            }
+
+            // Filter initiatives by type for funnel calculation
+            // Laws: P (Projeto de Lei) and L (Proposta de Lei)
+            // Resolutions: R (Projeto de Resolução)
+            const lawsInitiatives = INITIATIVES_DATA.filter(ini =>
+                ini.IniTipo === 'P' || ini.IniTipo === 'L'
+            );
+            const resolutionsInitiatives = INITIATIVES_DATA.filter(ini =>
+                ini.IniTipo === 'R'
+            );
+
+            // Use computed data if available, fallback to hardcoded for now
+            let lawsPhases, resolutionsPhases;
+
+            if (INITIATIVES_DATA.length > 0) {
+                // Compute from data - simplified approach using event counting
+                lawsPhases = computeFunnelFromData(lawsInitiatives, 'laws');
+                resolutionsPhases = computeFunnelFromData(resolutionsInitiatives, 'resolutions');
+            } else {
+                // Fallback to hardcoded values
+                lawsPhases = [
+                    { name: 'Entrada', count: 322 },
+                    { name: 'Admissão', count: 309 },
+                    { name: 'Anúncio', count: 304 },
+                    { name: 'Discussão', count: 95 },
+                    { name: 'Votação generalidade', count: 180 },
+                    { name: 'Comissão especialidade', count: 146 },
+                    { name: 'Votação final', count: 74 },
+                    { name: 'Envio promulgação', count: 20 },
+                    { name: 'Promulgação', count: 14 },
+                    { name: 'Referenda', count: 14 },
+                    { name: 'Lei (DR)', count: 14 }
+                ];
+
+                resolutionsPhases = [
+                    { name: 'Entrada', count: 457 },
+                    { name: 'Admissão', count: 440 },
+                    { name: 'Anúncio', count: 433 },
+                    { name: 'Discussão', count: 120 },
+                    { name: 'Votação generalidade', count: 203 },
+                    { name: 'Votação deliberação', count: 95 },
+                    { name: 'Redação final', count: 79 },
+                    { name: 'Resolução (DAR)', count: 83 },
+                    { name: 'Resolução (DR)', count: 81 }
+                ];
+            }
 
             renderFunnelChart('laws-funnel', lawsPhases, '#2563eb');
             renderFunnelChart('resolutions-funnel', resolutionsPhases, '#16a34a');
+        }
+
+        function computeFunnelFromData(initiatives, type) {
+            // Define phase patterns for matching
+            const lawsPatterns = [
+                { name: 'Entrada', pattern: /entrada/i },
+                { name: 'Admissão', pattern: /admiss[ãa]o/i },
+                { name: 'Anúncio', pattern: /an[úu]ncio/i },
+                { name: 'Discussão', pattern: /discuss[ãa]o.*generalidade|generalidade.*discuss/i },
+                { name: 'Votação generalidade', pattern: /vota[çc][ãa]o.*generalidade/i },
+                { name: 'Comissão especialidade', pattern: /especialidade|comiss[ãa]o/i },
+                { name: 'Votação final', pattern: /vota[çc][ãa]o.*final|final.*global/i },
+                { name: 'Envio promulgação', pattern: /enviado.*promulga[çc][ãa]o|promulga[çc][ãa]o.*enviad/i },
+                { name: 'Promulgação', pattern: /^promulga[çc][ãa]o$|decreto.*promulga/i },
+                { name: 'Referenda', pattern: /referenda/i },
+                { name: 'Lei (DR)', pattern: /publica[çc][ãa]o.*dr|di[áa]rio.*rep[úu]blica|lei.*publicad/i }
+            ];
+
+            const resolutionsPatterns = [
+                { name: 'Entrada', pattern: /entrada/i },
+                { name: 'Admissão', pattern: /admiss[ãa]o/i },
+                { name: 'Anúncio', pattern: /an[úu]ncio/i },
+                { name: 'Discussão', pattern: /discuss[ãa]o/i },
+                { name: 'Votação generalidade', pattern: /vota[çc][ãa]o.*generalidade/i },
+                { name: 'Votação deliberação', pattern: /delibera[çc][ãa]o|vota[çc][ãa]o.*deliber/i },
+                { name: 'Redação final', pattern: /reda[çc][ãa]o.*final/i },
+                { name: 'Resolução (DAR)', pattern: /dar|di[áa]rio.*assembleia/i },
+                { name: 'Resolução (DR)', pattern: /dr|di[áa]rio.*rep[úu]blica/i }
+            ];
+
+            const patterns = type === 'laws' ? lawsPatterns : resolutionsPatterns;
+            const counts = patterns.map(p => ({ name: p.name, count: 0 }));
+
+            initiatives.forEach(ini => {
+                const events = ini.IniEventos || [];
+                const allPhases = events.map(e => (e.Fase || '').toLowerCase()).join(' ');
+
+                patterns.forEach((p, i) => {
+                    if (p.pattern.test(allPhases)) {
+                        counts[i].count++;
+                    }
+                });
+            });
+
+            return counts;
         }
 
         function renderFunnelChart(containerId, phases, color) {
@@ -964,6 +1187,14 @@
         }
 
         function renderInitiatives(filterType) {
+            // If there's an active search, use the search results renderer instead
+            if (SEARCH_RESULTS !== null) {
+                const matchingIds = new Set(SEARCH_RESULTS.map(r => r.ini_id));
+                const matchedInitiatives = INITIATIVES_DATA.filter(ini => matchingIds.has(ini.IniId));
+                renderSearchResults(matchedInitiatives);
+                return;
+            }
+
             const container = document.getElementById('initiatives');
             let filtered = filterType === 'all'
                 ? INITIATIVES_DATA
@@ -1040,6 +1271,147 @@
                     renderInitiatives(type);
                 });
             });
+
+            // Setup search on Enter key
+            const searchInput = document.getElementById('search-input');
+            if (searchInput) {
+                searchInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        performSearch();
+                    }
+                });
+            }
+        }
+
+        // Search Functions
+        async function performSearch() {
+            const searchInput = document.getElementById('search-input');
+            const searchBtn = document.getElementById('search-btn');
+            const clearBtn = document.getElementById('clear-search-btn');
+            const resultsInfo = document.getElementById('search-results-info');
+            const query = searchInput.value.trim();
+
+            if (!query) {
+                clearSearch();
+                return;
+            }
+
+            // Disable button while searching
+            searchBtn.disabled = true;
+            searchBtn.textContent = 'Searching...';
+
+            try {
+                // Convert query to tsquery format (add :* for prefix matching)
+                const tsQuery = query.split(/\s+/).map(word => word + ':*').join(' & ');
+                const response = await fetch(`${API_URL}/api/search?q=${encodeURIComponent(tsQuery)}&limit=100`);
+
+                if (!response.ok) {
+                    throw new Error(`Search failed: ${response.status}`);
+                }
+
+                const results = await response.json();
+                SEARCH_RESULTS = results;
+
+                // Show results info
+                resultsInfo.textContent = `Found ${results.length} initiative${results.length !== 1 ? 's' : ''} matching "${query}"`;
+                resultsInfo.classList.add('visible');
+                clearBtn.classList.add('visible');
+
+                // Get the matching initiative IDs
+                const matchingIds = new Set(results.map(r => r.ini_id));
+
+                // Filter INITIATIVES_DATA to only show matching initiatives
+                const matchedInitiatives = INITIATIVES_DATA.filter(ini => matchingIds.has(ini.IniId));
+
+                // Render only matching initiatives
+                renderSearchResults(matchedInitiatives);
+
+            } catch (error) {
+                console.error('Search error:', error);
+                resultsInfo.textContent = `Search error: ${error.message}`;
+                resultsInfo.classList.add('visible');
+            } finally {
+                searchBtn.disabled = false;
+                searchBtn.textContent = 'Search';
+            }
+        }
+
+        function clearSearch() {
+            const searchInput = document.getElementById('search-input');
+            const clearBtn = document.getElementById('clear-search-btn');
+            const resultsInfo = document.getElementById('search-results-info');
+
+            searchInput.value = '';
+            SEARCH_RESULTS = null;
+            clearBtn.classList.remove('visible');
+            resultsInfo.classList.remove('visible');
+
+            // Re-render with current filter
+            const activeFilter = document.querySelector('.filter-btn.active');
+            const type = activeFilter ? activeFilter.dataset.type : 'all';
+            renderInitiatives(type);
+        }
+
+        function renderSearchResults(matchedInitiatives) {
+            const container = document.getElementById('initiatives');
+
+            // Apply current type filter to search results
+            const activeFilter = document.querySelector('.filter-btn.active');
+            const filterType = activeFilter ? activeFilter.dataset.type : 'all';
+
+            let filtered = filterType === 'all'
+                ? matchedInitiatives
+                : matchedInitiatives.filter(ini => ini.IniTipo === filterType);
+
+            let html = '';
+            filtered.forEach(ini => {
+                const status = getCurrentStatus(ini);
+                const authors = getAuthors(ini);
+                const typeClass = `type-${ini.IniTipo}`;
+                const events = ini.IniEventos || [];
+                const sortedEvents = events.slice().sort((a, b) =>
+                    (a.DataFase || '').localeCompare(b.DataFase || '')
+                );
+
+                const timeline = sortedEvents.map(evt => `
+                    <div class="timeline-item">
+                        <span class="timeline-date">${formatDate(evt.DataFase)}</span>
+                        <span class="timeline-phase">${evt.Fase || 'N/A'}</span>
+                    </div>
+                `).join('');
+
+                html += `
+                    <div class="initiative-card" onclick="toggleCard(this)">
+                        <div class="initiative-header">
+                            <span class="initiative-badge ${typeClass}">${ini.IniTipo}</span>
+                            <span class="initiative-number">${ini.IniNr}/${ini.IniTipo}</span>
+                        </div>
+                        <div class="initiative-title">${ini.IniTitulo}</div>
+                        <div class="initiative-meta">
+                            <span>📅 ${formatDate(ini.DataInicioleg)}</span>
+                            <span>📊 ${events.length} fases</span>
+                        </div>
+                        <div class="initiative-status">
+                            ${status}
+                        </div>
+                        <div class="initiative-details">
+                            <strong>Tipo:</strong> ${ini.IniDescTipo}<br>
+                            <strong>Autores:</strong> ${authors}<br>
+                            <strong>Legislatura:</strong> ${ini.IniLeg}<br>
+                            ${ini.IniLinkTexto ? `<strong>Texto:</strong> <a href="${ini.IniLinkTexto}" target="_blank">PDF</a><br>` : ''}
+                            <div class="timeline">
+                                <strong>Ciclo de vida (${events.length} eventos):</strong>
+                                ${timeline}
+                            </div>
+                        </div>
+                        <div class="expand-indicator">
+                            ▼ Clique para ver ciclo de vida completo
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html || '<p style="text-align: center; color: #6b7280;">Nenhuma iniciativa encontrada</p>';
         }
 
         // Render Agenda

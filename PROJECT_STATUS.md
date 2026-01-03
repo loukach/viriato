@@ -1,37 +1,43 @@
 # Project Status - Viriato
 
-**Last Updated:** January 2, 2026
-**Current Phase:** Prototyping (Phase 2)
+**Last Updated:** January 3, 2026
+**Current Phase:** Production (Phase 3)
 
 ## Quick Overview
 
 **What:** Portuguese Parliament data visualization tools
-**Live:** https://loukach.github.io/viriato/
-**Tech:** Static HTML + embedded JSON (no backend, no framework)
+**Live Site:** https://loukach.github.io/viriato/
+**API:** https://viriato-api.onrender.com
+**Tech:** SPA (vanilla JS) + Flask REST API + PostgreSQL
 
 ## What's Built
 
-### 1. Landing Page
+### Single Page Application
 - **File:** `docs/index.html`
 - **Status:** ✅ Complete and deployed
-- **What:** Purple gradient page with cards linking to both viewers
+- **What:** Hash-routed SPA with 3 views:
+  - **Home** (`#/`) - Purple gradient landing with stats cards
+  - **Iniciativas** (`#/iniciativas`) - Legislative initiatives tracker
+  - **Agenda** (`#/agenda`) - Parliamentary calendar
 
-### 2. Parliamentary Agenda Viewer
-- **File:** `docs/agenda.html`
-- **Status:** ✅ Complete and deployed
-- **What:** Calendar showing all parliamentary activities (Jun-Dec 2025)
-- **Data:** 213 days, 8 event types (plenary, committees, visits, etc.)
-- **Features:** Shows ALL days including weekends/empty days
+### Flask REST API
+- **File:** `api/app.py`
+- **Status:** ✅ Deployed on Render.com
+- **Endpoints:**
+  - `/api/health` - Health check
+  - `/api/iniciativas` - All initiatives with events
+  - `/api/iniciativas/<id>` - Single initiative
+  - `/api/phase-counts` - Phase statistics
+  - `/api/agenda` - Calendar events
+  - `/api/stats` - Overall statistics
+  - `/api/search` - Full-text search (Portuguese)
 
-### 3. Legislative Initiatives Viewer
-- **File:** `docs/iniciativas.html`
-- **Status:** ✅ Complete and deployed
-- **What:** Track 808 bills/resolutions through legislative process
-- **Data:** 808 initiatives, 7 types, 60 phases
-- **Features:**
-  - Two lifecycle funnels (Laws path vs Resolutions path)
-  - Horizontal bar chart ordered by legislative progression
-  - Filterable list with expandable lifecycle timelines
+### PostgreSQL Database
+- **Status:** ✅ Deployed on Render.com
+- **Tables:**
+  - `iniciativas` - 808 legislative initiatives
+  - `iniciativa_events` - 4,888 lifecycle events
+  - `agenda_events` - 34 calendar events
 
 ## Data Status
 
@@ -66,24 +72,26 @@ All documentation uses:
 - File paths and line numbers
 - No jargon without explanation
 
-## Next Steps (Not Started)
+## Next Steps
+
+**Recently Completed:**
+- ✅ Search functionality in frontend (uses /api/search endpoint)
+- ✅ Dynamic funnel data computation from loaded initiatives
 
 **Potential features to consider:**
 - Deputy profiles and voting records
-- Search functionality
 - More detailed initiative information
 - Committee meeting details
 - Historical comparisons
 
-**No immediate plans** - waiting for feedback on current prototypes.
-
 ## Development Notes
 
 **Architecture decisions:**
-- Static HTML to keep it simple
-- Embedded data to avoid CORS issues
-- No build process required
-- GitHub Pages for free hosting
+- Single Page Application with hash routing (no build process required)
+- Flask REST API for data access (CORS enabled)
+- PostgreSQL for persistent storage with full-text search
+- GitHub Pages for frontend hosting (free)
+- Render.com for API and database hosting (free tier)
 
 **Design principle:**
 "It's important to not hide the complexity of running a democracy" - we show all 60 phases, no simplification.
@@ -95,29 +103,29 @@ All documentation uses:
 
 ## File Locations
 
-**Live site:** `/docs` folder
-- index.html (landing)
-- agenda.html (calendar)
-- iniciativas.html (initiatives)
-- data.js (embedded data)
+**Frontend (GitHub Pages):** `/docs` folder
+- `index.html` - Single Page Application
+
+**Backend API:** `/api` folder
+- `app.py` - Flask REST API (8 endpoints)
+- `__init__.py` - Package init
+
+**Database Scripts:** `/scripts` folder
+- `schema.sql` - Database schema
+- `load_to_postgres.py` - ETL: JSON → PostgreSQL
+- `download_datasets.py` - Fetch from parlamento.pt
+- `apply_schema.py` - Schema deployment
 
 **Source data:** `/data` folder
-- raw/ (17 JSON datasets)
-- schemas/ (18 schema files)
-- samples/ (prototype data)
+- `raw/` - 17 JSON datasets (46 MB)
+- `schemas/` - Extracted JSON schemas
+- `samples/` - Sample data for testing
 
-**Documentation:** `/docs` folder (markdown files)
-- iniciativas-lifecycle.md
-- iniciativas-analysis.md
-- discovery-notes.md
-- dataset-relationships.md
-- schema-analysis.md
-- agenda-parlamentar.md
-- using-playwright-to-find-dataset-urls.md
-
-**Utilities:** `/scripts` folder
-- download_datasets.py
-- extract_schemas.py
+**Documentation:** Root and `/docs` folders
+- `README.md` - Project overview
+- `PROJECT_STATUS.md` - This file
+- `docs/iniciativas-lifecycle.md` - 60 phases explained
+- `docs/deployment-guide.md` - Render.com setup
 
 ## Known Issues
 
@@ -125,7 +133,20 @@ None currently. All features working as designed.
 
 ## Testing
 
-All pages tested with Playwright:
+**Start of Session Testing Checklist:**
+Use Playwright MCP to test the live site (https://loukach.github.io/viriato/):
+
+1. **Navigation** - Click through Home → Iniciativas → Agenda tabs
+2. **Search functionality** - On Iniciativas page:
+   - Type "saúde" in search box and click Search
+   - Verify results appear with matching initiatives
+   - Click Clear to reset
+3. **Type filters** - Click each filter button (All, Laws, Resolutions, Government Bills, Deliberations)
+4. **Funnels** - Verify both Laws and Resolutions funnels render with bars
+5. **Initiative cards** - Click a card to expand and see lifecycle timeline
+6. **Agenda view** - Verify calendar events load and display
+
+**Previous Test Results:**
 - ✅ Navigation works (Home ↔ Agenda ↔ Initiatives)
 - ✅ Funnels render correctly
 - ✅ Data loads properly
@@ -133,6 +154,8 @@ All pages tested with Playwright:
 
 ## Performance
 
-- Agenda page: ~100KB (fast)
-- Iniciativas page: ~2.7MB (acceptable, loads in <2s)
-- No backend calls - everything cached
+- Initial page load: Fast (SPA is lightweight)
+- Iniciativas data: ~2.7MB (loaded from API on first visit)
+- Agenda data: ~100KB (loaded from API on first visit)
+- API cold start: ~10-30s on Render.com free tier (spins down after inactivity)
+- Data cached in memory after first load
