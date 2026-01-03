@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Viriato - Portuguese Parliament Data</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 60px;
+        }
+
+        h1 {
+            font-size: 3em;
+            margin-bottom: 15px;
+            font-weight: 700;
+            letter-spacing: -1px;
+        }
+
+        .subtitle {
+            font-size: 1.3em;
+            opacity: 0.95;
+            font-weight: 300;
+        }
+
+        .description {
+            max-width: 700px;
+            margin: 20px auto 0;
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+
+        .viewers {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .viewer-card {
+            background: white;
+            border-radius: 12px;
+            padding: 40px;
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .viewer-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .viewer-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .viewer-icon {
+            font-size: 3em;
+            margin-bottom: 20px;
+        }
+
+        .viewer-title {
+            font-size: 1.8em;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #2d3748;
+        }
+
+        .viewer-description {
+            color: #4a5568;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .viewer-stats {
+            display: flex;
+            gap: 20px;
+            margin-top: 25px;
+            padding-top: 25px;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .stat {
+            flex: 1;
+        }
+
+        .stat-value {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #667eea;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 0.85em;
+            color: #718096;
+            margin-top: 5px;
+        }
+
+        .viewer-cta {
+            display: inline-flex;
+            align-items: center;
+            margin-top: 20px;
+            color: #667eea;
+            font-weight: 600;
+            gap: 8px;
+        }
+
+        .viewer-cta::after {
+            content: '→';
+            transition: transform 0.3s ease;
+        }
+
+        .viewer-card:hover .viewer-cta::after {
+            transform: translateX(5px);
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 60px;
+            color: white;
+            opacity: 0.8;
+        }
+
+        footer a {
+            color: white;
+            text-decoration: underline;
+        }
+
+        @media (max-width: 900px) {
+            .viewers {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 2.5em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Viriato</h1>
+            <div class="subtitle">Portuguese Parliament Open Data</div>
+            <div class="description">
+                Visualizing legislative activity from Portugal's XVII Legislature (2024-present).
+                Explore parliamentary agenda and legislative initiatives.
+            </div>
+        </header>
+
+        <div class="viewers">
+            <a href="agenda.html" class="viewer-card">
+                <div class="viewer-icon">📅</div>
+                <div class="viewer-title">Parliamentary Agenda</div>
+                <div class="viewer-description">
+                    View the daily parliamentary calendar showing plenary sessions, committee meetings, and other events.
+                </div>
+                <div class="viewer-stats">
+                    <div class="stat">
+                        <span class="stat-value">213</span>
+                        <div class="stat-label">Days tracked</div>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value">Jun-Dec</span>
+                        <div class="stat-label">2025</div>
+                    </div>
+                </div>
+                <div class="viewer-cta">View Calendar</div>
+            </a>
+
+            <a href="iniciativas.html" class="viewer-card">
+                <div class="viewer-icon">📋</div>
+                <div class="viewer-title">Legislative Initiatives</div>
+                <div class="viewer-description">
+                    Explore 808 legislative initiatives through all 60 phases of the parliamentary process.
+                </div>
+                <div class="viewer-stats">
+                    <div class="stat">
+                        <span class="stat-value">808</span>
+                        <div class="stat-label">Initiatives</div>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value">60</span>
+                        <div class="stat-label">Phases</div>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value">7</span>
+                        <div class="stat-label">Types</div>
+                    </div>
+                </div>
+                <div class="viewer-cta">View Initiatives</div>
+            </a>
+        </div>
+
+        <footer>
+            <p>Data source: <a href="https://www.parlamento.pt" target="_blank">Parlamento.pt</a> |
+            Legislature XVII (2024-present)</p>
+        </footer>
+    </div>
+</body>
+</html>

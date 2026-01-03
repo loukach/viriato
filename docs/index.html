@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Viriato - Portuguese Parliament Data</title>
+    <title>Viriato - Portuguese Parliament Open Data</title>
     <style>
         * {
             margin: 0;
@@ -13,55 +13,123 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        /* Navigation Tabs */
+        .main-nav {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 40px 20px;
+            padding: 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+        }
+
+        .logo {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 700;
+            padding: 15px 0;
+            margin-right: 40px;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 5px;
+            flex: 1;
+        }
+
+        .nav-tab {
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            padding: 15px 25px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+        }
+
+        .nav-tab:hover {
+            color: white;
+            background: rgba(255,255,255,0.1);
+        }
+
+        .nav-tab.active {
+            color: white;
+            border-bottom-color: white;
+            background: rgba(255,255,255,0.15);
+        }
+
+        /* View Container */
+        .view {
+            display: none;
+        }
+
+        .view.active {
+            display: block;
         }
 
         .container {
-            max-width: 1000px;
+            max-width: 1400px;
             margin: 0 auto;
+            padding: 20px;
         }
 
-        header {
+        /* HOME VIEW STYLES */
+        .home-view {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: calc(100vh - 60px);
+            padding: 60px 20px;
+        }
+
+        .home-header {
             text-align: center;
             color: white;
             margin-bottom: 60px;
         }
 
-        h1 {
+        .home-header h1 {
             font-size: 3em;
             margin-bottom: 15px;
             font-weight: 700;
-            letter-spacing: -1px;
         }
 
-        .subtitle {
+        .home-subtitle {
             font-size: 1.3em;
             opacity: 0.95;
             font-weight: 300;
         }
 
-        .description {
+        .home-description {
             max-width: 700px;
             margin: 20px auto 0;
             opacity: 0.9;
-            line-height: 1.6;
         }
 
         .viewers {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
             gap: 30px;
-            margin-top: 40px;
+            max-width: 1000px;
+            margin: 0 auto;
         }
 
         .viewer-card {
             background: white;
             border-radius: 12px;
             padding: 40px;
-            text-decoration: none;
-            color: inherit;
+            cursor: pointer;
             transition: all 0.3s ease;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             position: relative;
@@ -97,7 +165,6 @@
 
         .viewer-description {
             color: #4a5568;
-            line-height: 1.6;
             margin-bottom: 20px;
         }
 
@@ -126,106 +193,936 @@
             margin-top: 5px;
         }
 
-        .viewer-cta {
-            display: inline-flex;
-            align-items: center;
+        /* INICIATIVAS VIEW STYLES */
+        .iniciativas-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 30px 20px;
+            background: linear-gradient(135deg, #1a5f2a 0%, #2d8f4e 100%);
+            color: white;
+            border-radius: 8px;
+        }
+
+        .iniciativas-header h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .stats {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
             margin-top: 20px;
-            color: #667eea;
+            flex-wrap: wrap;
+        }
+
+        .stat-box {
+            background: rgba(255,255,255,0.2);
+            padding: 10px 20px;
+            border-radius: 5px;
+        }
+
+        .stat-number {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .stat-box-label {
+            font-size: 0.8rem;
+            opacity: 0.9;
+        }
+
+        .filters {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .filter-group {
+            margin-bottom: 15px;
+        }
+
+        .filter-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .filter-label {
             font-weight: 600;
+            margin-bottom: 10px;
+            display: block;
+            color: #2d3748;
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 8px 16px;
+            border: 2px solid #e2e8f0;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .filter-btn:hover {
+            border-color: #667eea;
+            background: #f7fafc;
+        }
+
+        .filter-btn.active {
+            border-color: #667eea;
+            background: #667eea;
+            color: white;
+        }
+
+        /* Funnels */
+        .funnels {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .funnel-container {
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .funnel-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #2d3748;
+        }
+
+        .funnel-chart {
+            display: flex;
             gap: 8px;
+            justify-content: center;
+            align-items: flex-end;
+            min-height: 300px;
         }
 
-        .viewer-cta::after {
-            content: '→';
-            transition: transform 0.3s ease;
+        .phase-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
         }
 
-        .viewer-card:hover .viewer-cta::after {
-            transform: translateX(5px);
+        .phase-bar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            color: white;
+            font-weight: 600;
+            font-size: 0.9rem;
+            min-width: 50px;
+            transition: transform 0.2s;
         }
 
+        .phase-bar:hover {
+            transform: scale(1.05);
+        }
+
+        .phase-count {
+            color: white;
+        }
+
+        .phase-name {
+            font-size: 0.7rem;
+            color: #4a5568;
+            text-align: center;
+            max-width: 70px;
+            line-height: 1.2;
+        }
+
+        /* Initiative cards */
+        .initiative-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .initiative-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .initiative-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .initiative-badge {
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: white;
+        }
+
+        .type-P { background: #2563eb; }
+        .type-R { background: #16a34a; }
+        .type-L { background: #9333ea; }
+        .type-D { background: #ea580c; }
+
+        .initiative-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 8px;
+        }
+
+        .initiative-meta {
+            display: flex;
+            gap: 20px;
+            font-size: 0.9rem;
+            color: #64748b;
+            margin-bottom: 8px;
+        }
+
+        .initiative-status {
+            color: #16a34a;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .initiative-details {
+            display: none;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #e2e8f0;
+            font-size: 0.9rem;
+            color: #4a5568;
+        }
+
+        .initiative-card.expanded .initiative-details {
+            display: block;
+        }
+
+        .expand-indicator {
+            text-align: center;
+            color: #94a3b8;
+            font-size: 0.85rem;
+            margin-top: 10px;
+        }
+
+        .timeline {
+            margin-top: 15px;
+        }
+
+        .timeline-item {
+            padding: 8px 0;
+            border-left: 2px solid #e2e8f0;
+            padding-left: 15px;
+            margin-left: 5px;
+        }
+
+        .timeline-date {
+            color: #94a3b8;
+            font-size: 0.85rem;
+            margin-right: 10px;
+        }
+
+        .timeline-phase {
+            color: #475569;
+        }
+
+        /* AGENDA VIEW STYLES */
+        .agenda-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 30px 20px;
+            background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+            color: white;
+            border-radius: 8px;
+        }
+
+        .agenda-header h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+        }
+
+        .legend-shape {
+            width: 20px;
+            height: 20px;
+            display: inline-block;
+        }
+
+        .bg-committee { background: #3b82f6; }
+        .bg-plenary { background: #10b981; }
+        .bg-visits { background: #f59e0b; }
+        .bg-groups { background: #8b5cf6; }
+        .bg-other { background: #6b7280; }
+
+        .calendar {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .day-column {
+            margin-bottom: 30px;
+        }
+
+        .day-header {
+            font-weight: 600;
+            padding: 12px;
+            background: #f8fafc;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            color: #1e293b;
+        }
+
+        .day-date {
+            font-size: 1.1rem;
+        }
+
+        .day-weekday {
+            font-size: 0.9rem;
+            color: #64748b;
+            margin-left: 10px;
+        }
+
+        .event-card {
+            background: white;
+            border-left: 4px solid #3b82f6;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .event-time {
+            font-size: 0.85rem;
+            color: #64748b;
+            margin-bottom: 5px;
+        }
+
+        .event-title {
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 5px;
+        }
+
+        .event-location {
+            font-size: 0.9rem;
+            color: #64748b;
+        }
+
+        .event-section {
+            display: inline-block;
+            padding: 2px 8px;
+            background: #e0e7ff;
+            color: #3730a3;
+            border-radius: 3px;
+            font-size: 0.8rem;
+            margin-top: 5px;
+        }
+
+        /* Loading & Error States */
+        .loading {
+            text-align: center;
+            padding: 60px 20px;
+            color: #64748b;
+            font-size: 1.1rem;
+        }
+
+        .error {
+            text-align: center;
+            padding: 60px 20px;
+            color: #dc2626;
+            background: #fee2e2;
+            border-radius: 8px;
+            margin: 20px;
+        }
+
+        /* Footer */
         footer {
             text-align: center;
+            padding: 40px 20px;
+            color: #64748b;
+            border-top: 1px solid #e2e8f0;
             margin-top: 60px;
-            color: white;
-            opacity: 0.8;
         }
 
         footer a {
-            color: white;
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        footer a:hover {
             text-decoration: underline;
         }
 
+        /* Responsive */
         @media (max-width: 900px) {
+            .nav-container {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .logo {
+                margin-right: 0;
+                margin-bottom: 10px;
+            }
+
+            .nav-tabs {
+                width: 100%;
+                overflow-x: auto;
+            }
+
             .viewers {
                 grid-template-columns: 1fr;
             }
 
-            h1 {
-                font-size: 2.5em;
+            .funnels {
+                grid-template-columns: 1fr;
+            }
+
+            .home-header h1 {
+                font-size: 2em;
             }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>Viriato</h1>
-            <div class="subtitle">Portuguese Parliament Open Data</div>
-            <div class="description">
-                Visualizing legislative activity from Portugal's XVII Legislature (2024-present).
-                Explore parliamentary agenda and legislative initiatives.
+    <!-- Navigation -->
+    <nav class="main-nav">
+        <div class="nav-container">
+            <div class="logo">Viriato</div>
+            <div class="nav-tabs">
+                <a href="#/" class="nav-tab" data-view="home">Home</a>
+                <a href="#/iniciativas" class="nav-tab" data-view="iniciativas">Iniciativas</a>
+                <a href="#/agenda" class="nav-tab" data-view="agenda">Agenda</a>
             </div>
-        </header>
-
-        <div class="viewers">
-            <a href="agenda.html" class="viewer-card">
-                <div class="viewer-icon">📅</div>
-                <div class="viewer-title">Parliamentary Agenda</div>
-                <div class="viewer-description">
-                    View the daily parliamentary calendar showing plenary sessions, committee meetings, and other events.
-                </div>
-                <div class="viewer-stats">
-                    <div class="stat">
-                        <span class="stat-value">213</span>
-                        <div class="stat-label">Days tracked</div>
-                    </div>
-                    <div class="stat">
-                        <span class="stat-value">Jun-Dec</span>
-                        <div class="stat-label">2025</div>
-                    </div>
-                </div>
-                <div class="viewer-cta">View Calendar</div>
-            </a>
-
-            <a href="iniciativas.html" class="viewer-card">
-                <div class="viewer-icon">📋</div>
-                <div class="viewer-title">Legislative Initiatives</div>
-                <div class="viewer-description">
-                    Explore 808 legislative initiatives through all 60 phases of the parliamentary process.
-                </div>
-                <div class="viewer-stats">
-                    <div class="stat">
-                        <span class="stat-value">808</span>
-                        <div class="stat-label">Initiatives</div>
-                    </div>
-                    <div class="stat">
-                        <span class="stat-value">60</span>
-                        <div class="stat-label">Phases</div>
-                    </div>
-                    <div class="stat">
-                        <span class="stat-value">7</span>
-                        <div class="stat-label">Types</div>
-                    </div>
-                </div>
-                <div class="viewer-cta">View Initiatives</div>
-            </a>
         </div>
+    </nav>
 
-        <footer>
-            <p>Data source: <a href="https://www.parlamento.pt" target="_blank">Parlamento.pt</a> |
-            Legislature XVII (2024-present)</p>
-        </footer>
+    <!-- HOME VIEW -->
+    <div id="home-view" class="view active home-view">
+        <div class="container">
+            <div class="home-header">
+                <h1>Viriato</h1>
+                <div class="home-subtitle">Portuguese Parliament Open Data</div>
+                <div class="home-description">
+                    Visualizing legislative activity from Portugal's XVII Legislature (2024-present).
+                    Explore parliamentary agenda and legislative initiatives.
+                </div>
+            </div>
+
+            <div class="viewers">
+                <div class="viewer-card" onclick="navigateTo('#/agenda')">
+                    <div class="viewer-icon">📅</div>
+                    <div class="viewer-title">Parliamentary Agenda</div>
+                    <div class="viewer-description">
+                        View the daily parliamentary calendar showing plenary sessions, committee meetings, and other events.
+                    </div>
+                    <div class="viewer-stats">
+                        <div class="stat">
+                            <span class="stat-value" id="home-agenda-count">34</span>
+                            <div class="stat-label">Events</div>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value">Jan 2026</span>
+                            <div class="stat-label">Current</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="viewer-card" onclick="navigateTo('#/iniciativas')">
+                    <div class="viewer-icon">📋</div>
+                    <div class="viewer-title">Legislative Initiatives</div>
+                    <div class="viewer-description">
+                        Explore legislative initiatives through all phases of the parliamentary process.
+                    </div>
+                    <div class="viewer-stats">
+                        <div class="stat">
+                            <span class="stat-value" id="home-ini-count">808</span>
+                            <div class="stat-label">Initiatives</div>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value" id="home-ini-completed">102</span>
+                            <div class="stat-label">Completed</div>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value">7</span>
+                            <div class="stat-label">Types</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
+
+    <!-- INICIATIVAS VIEW -->
+    <div id="iniciativas-view" class="view">
+        <div class="container">
+            <div class="iniciativas-header">
+                <h1>Iniciativas Legislativas</h1>
+                <p>XVII Legislature (2024-present)</p>
+                <div class="stats">
+                    <div class="stat-box">
+                        <div class="stat-number" id="ini-total">-</div>
+                        <div class="stat-box-label">Total Iniciativas</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-number" id="ini-completed">-</div>
+                        <div class="stat-box-label">Completed</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-number" id="ini-phases">60</div>
+                        <div class="stat-box-label">Lifecycle Phases</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="filters">
+                <div class="filter-group">
+                    <label class="filter-label">Filter by Type:</label>
+                    <div class="filter-buttons">
+                        <button class="filter-btn active" data-type="all">All Types</button>
+                        <button class="filter-btn" data-type="P">Laws (Projeto de Lei)</button>
+                        <button class="filter-btn" data-type="R">Resolutions (Projeto de Resolução)</button>
+                        <button class="filter-btn" data-type="L">Government Bills (Proposta de Lei)</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="funnels">
+                <div class="funnel-container">
+                    <div class="funnel-title">Laws Lifecycle</div>
+                    <div id="laws-funnel" class="funnel-chart"></div>
+                </div>
+                <div class="funnel-container">
+                    <div class="funnel-title">Resolutions Lifecycle</div>
+                    <div id="resolutions-funnel" class="funnel-chart"></div>
+                </div>
+            </div>
+
+            <div id="initiatives" class="loading">Loading initiatives...</div>
+        </div>
+    </div>
+
+    <!-- AGENDA VIEW -->
+    <div id="agenda-view" class="view">
+        <div class="container">
+            <div class="agenda-header">
+                <h1>Parliamentary Agenda</h1>
+                <p>XVII Legislature Calendar</p>
+                <div class="stats">
+                    <div class="stat-box">
+                        <div class="stat-number" id="agenda-total">-</div>
+                        <div class="stat-box-label">Events</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="legend">
+                <div class="legend-item">
+                    <span class="legend-shape bg-committee"></span>
+                    <span>Committee Meetings</span>
+                </div>
+                <div class="legend-item">
+                    <span class="legend-shape bg-plenary"></span>
+                    <span>Plenary Sessions</span>
+                </div>
+                <div class="legend-item">
+                    <span class="legend-shape bg-visits"></span>
+                    <span>Visits</span>
+                </div>
+                <div class="legend-item">
+                    <span class="legend-shape bg-groups"></span>
+                    <span>Parliamentary Groups</span>
+                </div>
+                <div class="legend-item">
+                    <span class="legend-shape bg-other"></span>
+                    <span>Other</span>
+                </div>
+            </div>
+
+            <div id="agenda" class="loading">Loading agenda...</div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>
+            Data source: <a href="https://www.parlamento.pt" target="_blank">Parlamento.pt</a> |
+            Legislature XVII (2024-present) |
+            API: <a href="https://viriato-api.onrender.com/api/health" target="_blank">viriato-api.onrender.com</a>
+        </p>
+    </footer>
+
+    <script>
+        // API Configuration
+        const API_URL = 'https://viriato-api.onrender.com';
+
+        // Global data
+        let INITIATIVES_DATA = [];
+        let AGENDA_DATA = [];
+
+        // Router
+        function navigateTo(hash) {
+            window.location.hash = hash;
+        }
+
+        function handleRoute() {
+            const hash = window.location.hash || '#/';
+            const route = hash.substring(2) || 'home';
+
+            // Update active tab
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            const activeTab = document.querySelector(`[data-view="${route}"]`);
+            if (activeTab) {
+                activeTab.classList.add('active');
+            }
+
+            // Update active view
+            document.querySelectorAll('.view').forEach(view => {
+                view.classList.remove('active');
+            });
+            const activeView = document.getElementById(`${route}-view`);
+            if (activeView) {
+                activeView.classList.add('active');
+
+                // Load data for view if needed
+                if (route === 'iniciativas' && INITIATIVES_DATA.length === 0) {
+                    loadInitiatives();
+                } else if (route === 'agenda' && AGENDA_DATA.length === 0) {
+                    loadAgenda();
+                }
+            }
+        }
+
+        // Load Initiatives Data
+        async function loadInitiatives() {
+            try {
+                const response = await fetch(`${API_URL}/api/iniciativas`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                INITIATIVES_DATA = await response.json();
+                console.log(`Loaded ${INITIATIVES_DATA.length} initiatives`);
+
+                // Update stats
+                document.getElementById('ini-total').textContent = INITIATIVES_DATA.length;
+                const completed = INITIATIVES_DATA.filter(i => i._isCompleted).length;
+                document.getElementById('ini-completed').textContent = completed;
+                document.getElementById('home-ini-count').textContent = INITIATIVES_DATA.length;
+                document.getElementById('home-ini-completed').textContent = completed;
+
+                renderLifecycleFunnels();
+                renderInitiatives('all');
+                setupFilters();
+            } catch (error) {
+                console.error('Error loading initiatives:', error);
+                document.getElementById('initiatives').innerHTML =
+                    '<div class="error">Erro ao carregar iniciativas. Por favor, recarregue a página.</div>';
+            }
+        }
+
+        // Load Agenda Data
+        async function loadAgenda() {
+            try {
+                const response = await fetch(`${API_URL}/api/agenda`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                AGENDA_DATA = await response.json();
+                console.log(`Loaded ${AGENDA_DATA.length} agenda events`);
+
+                document.getElementById('agenda-total').textContent = AGENDA_DATA.length;
+                document.getElementById('home-agenda-count').textContent = AGENDA_DATA.length;
+
+                renderAgenda();
+            } catch (error) {
+                console.error('Error loading agenda:', error);
+                document.getElementById('agenda').innerHTML =
+                    '<div class="error">Erro ao carregar agenda. Por favor, recarregue a página.</div>';
+            }
+        }
+
+        // Render Lifecycle Funnels
+        function renderLifecycleFunnels() {
+            const lawsPhases = [
+                { name: 'Entrada', count: 322 },
+                { name: 'Admissão', count: 309 },
+                { name: 'Anúncio', count: 304 },
+                { name: 'Discussão', count: 95 },
+                { name: 'Votação generalidade', count: 180 },
+                { name: 'Comissão especialidade', count: 146 },
+                { name: 'Votação final', count: 74 },
+                { name: 'Envio promulgação', count: 20 },
+                { name: 'Promulgação', count: 14 },
+                { name: 'Referenda', count: 14 },
+                { name: 'Lei (DR)', count: 14 }
+            ];
+
+            const resolutionsPhases = [
+                { name: 'Entrada', count: 457 },
+                { name: 'Admissão', count: 440 },
+                { name: 'Anúncio', count: 433 },
+                { name: 'Discussão', count: 120 },
+                { name: 'Votação generalidade', count: 203 },
+                { name: 'Votação deliberação', count: 95 },
+                { name: 'Redação final', count: 79 },
+                { name: 'Resolução (DAR)', count: 83 },
+                { name: 'Resolução (DR)', count: 81 }
+            ];
+
+            renderFunnelChart('laws-funnel', lawsPhases, '#2563eb');
+            renderFunnelChart('resolutions-funnel', resolutionsPhases, '#16a34a');
+        }
+
+        function renderFunnelChart(containerId, phases, color) {
+            const container = document.getElementById(containerId);
+            const maxCount = Math.max(...phases.map(p => p.count));
+
+            let html = '';
+            phases.forEach(phase => {
+                const heightPercent = (phase.count / maxCount) * 100;
+                const height = Math.max(heightPercent * 2, 40);
+
+                html += `
+                    <div class="phase-step">
+                        <div class="phase-bar" style="height: ${height}px; background: ${color};">
+                            <div class="phase-count">${phase.count}</div>
+                        </div>
+                        <div class="phase-name">${phase.name}</div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        // Render Initiatives
+        function getCurrentStatus(initiative) {
+            return initiative._currentStatus || 'Desconhecido';
+        }
+
+        function getAuthors(initiative) {
+            const authors = [];
+
+            if (initiative.IniAutorGruposParlamentares) {
+                const groups = Array.isArray(initiative.IniAutorGruposParlamentares)
+                    ? initiative.IniAutorGruposParlamentares
+                    : [initiative.IniAutorGruposParlamentares];
+                groups.forEach(g => {
+                    if (g.GP) authors.push(g.GP);
+                });
+            }
+
+            if (initiative.IniAutorOutros && initiative.IniAutorOutros.nome) {
+                authors.push(initiative.IniAutorOutros.nome);
+            }
+
+            return authors.length > 0 ? authors.join(', ') : 'N/A';
+        }
+
+        function formatDate(dateStr) {
+            if (!dateStr) return '';
+            const [year, month, day] = dateStr.split('-');
+            return `${day}/${month}/${year}`;
+        }
+
+        function renderInitiatives(filterType) {
+            const container = document.getElementById('initiatives');
+            let filtered = filterType === 'all'
+                ? INITIATIVES_DATA
+                : INITIATIVES_DATA.filter(ini => ini.IniTipo === filterType);
+
+            let html = '';
+            filtered.forEach(ini => {
+                const status = getCurrentStatus(ini);
+                const authors = getAuthors(ini);
+                const typeClass = `type-${ini.IniTipo}`;
+                const events = ini.IniEventos || [];
+                const sortedEvents = events.slice().sort((a, b) =>
+                    (a.DataFase || '').localeCompare(b.DataFase || '')
+                );
+
+                const timeline = sortedEvents.map(evt => `
+                    <div class="timeline-item">
+                        <span class="timeline-date">${formatDate(evt.DataFase)}</span>
+                        <span class="timeline-phase">${evt.Fase || 'N/A'}</span>
+                    </div>
+                `).join('');
+
+                html += `
+                    <div class="initiative-card" onclick="toggleCard(this)">
+                        <div class="initiative-header">
+                            <span class="initiative-badge ${typeClass}">${ini.IniTipo}</span>
+                            <span class="initiative-number">${ini.IniNr}/${ini.IniTipo}</span>
+                        </div>
+                        <div class="initiative-title">${ini.IniTitulo}</div>
+                        <div class="initiative-meta">
+                            <span>📅 ${formatDate(ini.DataInicioleg)}</span>
+                            <span>📊 ${events.length} fases</span>
+                        </div>
+                        <div class="initiative-status">
+                            ${status}
+                        </div>
+                        <div class="initiative-details">
+                            <strong>Tipo:</strong> ${ini.IniDescTipo}<br>
+                            <strong>Autores:</strong> ${authors}<br>
+                            <strong>Legislatura:</strong> ${ini.IniLeg}<br>
+                            ${ini.IniLinkTexto ? `<strong>Texto:</strong> <a href="${ini.IniLinkTexto}" target="_blank">PDF</a><br>` : ''}
+                            <div class="timeline">
+                                <strong>Ciclo de vida (${events.length} eventos):</strong>
+                                ${timeline}
+                            </div>
+                        </div>
+                        <div class="expand-indicator">
+                            ▼ Clique para ver ciclo de vida completo
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html || '<p style="text-align: center; color: #6b7280;">Nenhuma iniciativa encontrada</p>';
+        }
+
+        function toggleCard(card) {
+            card.classList.toggle('expanded');
+            const indicator = card.querySelector('.expand-indicator');
+            if (card.classList.contains('expanded')) {
+                indicator.textContent = '▲ Clique para ocultar';
+            } else {
+                indicator.textContent = '▼ Clique para ver ciclo de vida completo';
+            }
+        }
+
+        function setupFilters() {
+            const buttons = document.querySelectorAll('.filter-btn');
+            buttons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    buttons.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    const type = btn.dataset.type;
+                    renderInitiatives(type);
+                });
+            });
+        }
+
+        // Render Agenda
+        function renderAgenda() {
+            const container = document.getElementById('agenda');
+
+            // Filter out metadata events
+            const realEvents = AGENDA_DATA.filter(e => !e.Title.includes('Calendarização'));
+
+            // Group by date
+            const grouped = {};
+            realEvents.forEach(event => {
+                const date = event.EventStartDate;
+                if (!grouped[date]) {
+                    grouped[date] = [];
+                }
+                grouped[date].push(event);
+            });
+
+            // Sort dates
+            const sortedDates = Object.keys(grouped).sort();
+
+            let html = '<div class="calendar">';
+
+            sortedDates.forEach(date => {
+                const events = grouped[date];
+                const [day, month, year] = date.split('/');
+                const dateObj = new Date(year, month - 1, day);
+                const weekday = dateObj.toLocaleDateString('pt-PT', { weekday: 'long' });
+
+                html += `
+                    <div class="day-column">
+                        <div class="day-header">
+                            <span class="day-date">${date}</span>
+                            <span class="day-weekday">${weekday}</span>
+                        </div>
+                `;
+
+                events.forEach(event => {
+                    const sectionClass = getSectionClass(event.Section);
+                    const time = event.EventStartTime || '';
+
+                    html += `
+                        <div class="event-card" style="border-left-color: ${getSectionColor(event.Section)}">
+                            ${time ? `<div class="event-time">${time}</div>` : ''}
+                            <div class="event-title">${event.Title}</div>
+                            ${event.Local ? `<div class="event-location">📍 ${event.Local}</div>` : ''}
+                            <span class="event-section">${event.Section}</span>
+                        </div>
+                    `;
+                });
+
+                html += '</div>';
+            });
+
+            html += '</div>';
+
+            container.innerHTML = html;
+        }
+
+        function getSectionColor(section) {
+            const colors = {
+                'Comissões Parlamentares': '#3b82f6',
+                'Plenário': '#10b981',
+                'Visitas ao Palácio de S. Bento': '#f59e0b',
+                'Grupos Parlamentares / Partidos / DURP / Ninsc': '#8b5cf6'
+            };
+            return colors[section] || '#6b7280';
+        }
+
+        function getSectionClass(section) {
+            const classes = {
+                'Comissões Parlamentares': 'bg-committee',
+                'Plenário': 'bg-plenary',
+                'Visitas ao Palácio de S. Bento': 'bg-visits',
+                'Grupos Parlamentares / Partidos / DURP / Ninsc': 'bg-groups'
+            };
+            return classes[section] || 'bg-other';
+        }
+
+        // Initialize
+        window.addEventListener('hashchange', handleRoute);
+        window.addEventListener('DOMContentLoaded', handleRoute);
+    </script>
 </body>
 </html>

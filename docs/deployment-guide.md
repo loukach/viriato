@@ -129,47 +129,53 @@ Expected response for `/api/health`:
 }
 ```
 
-## Step 3: Update Frontend to Use API
+## Step 3: Frontend Architecture (Single Page Application)
 
-### Current State
-Frontend uses embedded `data.js` (2.6 MB) loaded directly in HTML.
+### Current Architecture ✅ DEPLOYED
 
-### Option A: Keep GitHub Pages, Call Render API
+The frontend is a **Single Page Application (SPA)** that loads all data from the Render API:
 
-**Pros:** Simple, no deployment changes
-**Cons:** Cross-origin requests (CORS already enabled in API)
+- **File**: `docs/index.html` (single HTML file)
+- **Views**: Home, Iniciativas, Agenda (tab-based navigation)
+- **Routing**: Hash-based routing (`#/`, `#/iniciativas`, `#/agenda`)
+- **Data Loading**: Fetches from `https://viriato-api.onrender.com/api/*`
+- **Size**: ~30 KB (no embedded data)
 
-Update `docs/iniciativas.html` and `docs/agenda.html`:
+### Key Features
+
+1. **Tabbed Navigation**: Switch between views without page reloads
+2. **Bookmarkable URLs**: Each view has a unique URL hash
+3. **Lazy Loading**: Data fetched only when view is accessed
+4. **Shared API Logic**: Single codebase for all API calls
+5. **Mobile Responsive**: Works on all screen sizes
+
+### API Integration
 
 ```javascript
-// OLD: data.js loads INITIATIVES_DATA
-<script src="data.js"></script>
-<script>
-const iniciativas = INITIATIVES_DATA;
-</script>
-
-// NEW: Fetch from API
-<script>
+// Automatic data loading when view is accessed
 const API_URL = 'https://viriato-api.onrender.com';
 
-async function loadIniciativas() {
+// Iniciativas loaded when #/iniciativas is accessed
+async function loadInitiatives() {
     const response = await fetch(`${API_URL}/api/iniciativas`);
-    const iniciativas = await response.json();
-    // ...rest of code
+    INITIATIVES_DATA = await response.json();
+    renderInitiatives();
 }
 
-loadIniciativas();
-</script>
+// Agenda loaded when #/agenda is accessed
+async function loadAgenda() {
+    const response = await fetch(`${API_URL}/api/agenda`);
+    AGENDA_DATA = await response.json();
+    renderAgenda();
+}
 ```
 
-### Option B: Deploy Frontend to Render (Static Site)
+### Legacy Files
 
-**Pros:** Single domain, faster
-**Cons:** Need to deploy frontend changes
-
-1. Create static site service in Render
-2. Point to `docs/` directory
-3. Auto-deploy on git push
+Old standalone pages are archived in `docs/archive/`:
+- `index-landing.html` - Original landing page
+- `iniciativas-standalone.html` - Standalone iniciativas viewer
+- `agenda-standalone.html` - Standalone agenda viewer
 
 ## Step 4: Enable Automatic Data Updates
 

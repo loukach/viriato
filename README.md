@@ -13,62 +13,97 @@ Two interactive web tools built with Portuguese Parliament's open data:
 
 ## Current Status
 
-**Phase:** Prototyping (Phase 2)
+**Phase:** Production (Phase 3)
 
 **Completed:**
 - ✅ Data discovery (17 datasets mapped and documented)
 - ✅ Legislative process analysis (60 phases documented)
-- ✅ Two working prototypes deployed to GitHub Pages
+- ✅ PostgreSQL database backend deployed on Render.com
+- ✅ REST API with 8 endpoints
+- ✅ Single Page Application (SPA) with hash routing
+- ✅ Full production deployment on GitHub Pages + Render.com
 
 **Built:**
-- Landing page with navigation
-- Agenda calendar viewer (213 days, Jun-Dec 2025)
-- Iniciativas viewer with lifecycle funnels (808 initiatives, 7 types)
+- Single Page Application with three views (Home, Iniciativas, Agenda)
+- PostgreSQL database with 808 iniciativas, 4,888 events, 34 agenda items
+- Flask REST API backend
+- Automatic data loading from API
+- Responsive design for all screen sizes
 
 ## Quick Start
 
-**View the prototypes:**
+**View the live app:**
 ```
-https://loukach.github.io/viriato/               # Landing page
-https://loukach.github.io/viriato/agenda.html    # Calendar
-https://loukach.github.io/viriato/iniciativas.html  # Initiatives
+https://loukach.github.io/viriato/               # Home
+https://loukach.github.io/viriato/#/iniciativas  # Initiatives
+https://loukach.github.io/viriato/#/agenda       # Agenda
+```
+
+**API endpoints:**
+```
+https://viriato-api.onrender.com/api/health      # Health check
+https://viriato-api.onrender.com/api/iniciativas # All initiatives
+https://viriato-api.onrender.com/api/agenda      # Agenda events
+https://viriato-api.onrender.com/api/stats       # Statistics
 ```
 
 **Local development:**
 ```bash
-# Just open any HTML file in docs/ folder
+# Open the SPA
 open docs/index.html
+
+# Or run the API locally
+pip install -r requirements.txt
+export DATABASE_URL="postgresql://..."
+python api/app.py
 ```
 
-No build process needed - static HTML with embedded data.
+No build process needed - Single Page Application with API data loading.
+
+## Architecture
+
+```
+┌─────────────────┐
+│  GitHub Pages   │  Single Page App (docs/index.html)
+│  (Frontend)     │  → Calls API via HTTPS
+└────────┬────────┘
+         │
+         ↓ HTTPS
+┌─────────────────┐
+│   Render.com    │  Flask REST API (api/app.py)
+│   (API Backend) │  → Queries PostgreSQL
+└────────┬────────┘
+         │
+         ↓ SQL
+┌─────────────────┐
+│   Render.com    │  PostgreSQL Database
+│   (Database)    │  808 iniciativas, 4,888 events, 34 agenda items
+└─────────────────┘
+```
 
 ## Project Structure
 
 ```
 viriato/
-├── docs/                     # GitHub Pages site (static HTML)
-│   ├── index.html           # Landing page
-│   ├── agenda.html          # Parliamentary agenda viewer
-│   ├── iniciativas.html     # Legislative initiatives viewer
-│   └── data.js              # Embedded data (2.6MB)
+├── docs/                     # GitHub Pages site (SPA)
+│   ├── index.html           # Single Page Application
+│   └── archive/             # Legacy standalone pages
+├── api/                      # Flask REST API
+│   └── app.py               # 8 endpoints for data access
+├── scripts/                  # Database & data utilities
+│   ├── download_datasets.py # Fetch from parlamento.pt
+│   ├── load_to_postgres.py  # ETL: JSON → PostgreSQL
+│   ├── schema.sql           # Database schema
+│   └── apply_schema.py      # Schema deployment
 ├── data/                     # Source data
-│   ├── raw/                 # 17 downloaded datasets (45.6 MB JSON)
-│   ├── schemas/             # Extracted schemas (18 files)
-│   ├── samples/             # Sample data for prototypes
-│   │   ├── IniciativasSample.json  # 100 initiatives
-│   │   └── PhaseCounts.json        # Phase statistics
-│   └── manifest.json        # Download metadata
+│   ├── raw/                 # 17 downloaded datasets (JSON)
+│   └── schemas/             # Extracted schemas
 ├── docs/ (markdown)          # Documentation
-│   ├── iniciativas-lifecycle.md    # 60 phases explained
-│   ├── iniciativas-analysis.md     # Dataset analysis
-│   ├── discovery-notes.md          # Initial findings
-│   └── dataset-relationships.md    # How datasets connect
-├── scripts/                  # Data utilities
-│   ├── download_datasets.py # Get all 17 datasets
-│   └── extract_schemas.py   # Generate schemas
-└── prototype/               # Development versions
-    ├── iniciativas.html     # Working copy
-    └── data.js              # Working copy
+│   ├── iniciativas-lifecycle.md      # 60 phases explained
+│   ├── database-implementation-plan.md  # DB design
+│   └── deployment-guide.md           # Render.com deployment
+├── requirements.txt          # Python dependencies
+└── render.yaml              # Render.com configuration
 ```
 
 ## Key Features
@@ -99,9 +134,29 @@ All data from [parlamento.pt open data portal](https://www.parlamento.pt/Cidadan
 
 Based on ideas from [adamastor](https://github.com/bcamarneiro/adamastor).
 
+## Technology Stack
+
+**Frontend:**
+- Single Page Application (vanilla JavaScript, no frameworks)
+- Hash-based routing for bookmarkable views
+- Responsive CSS with mobile support
+- Hosted on GitHub Pages
+
+**Backend:**
+- Flask REST API (Python)
+- PostgreSQL database with JSONB for flexible data storage
+- Portuguese full-text search (to_tsvector)
+- Hosted on Render.com (free tier)
+
+**Data Pipeline:**
+- Download scripts fetch from parlamento.pt
+- ETL scripts load JSON → PostgreSQL
+- UPSERT logic for weekly/daily updates
+
 ## Development Approach
 
 1. **Understand first** - Map all available data before building
-2. **Static first** - No backend, no framework overhead
+2. **API-driven** - Separate frontend and backend for flexibility
 3. **Embrace complexity** - Show real legislative process, not simplified version
 4. **Progressive enhancement** - Start simple, add features based on feedback
+5. **Performance** - Lazy load data, cache in memory, minimal API calls
