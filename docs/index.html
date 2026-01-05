@@ -1853,12 +1853,15 @@
                 typeCounts[type] = (typeCounts[type] || 0) + 1;
             });
 
-            // Type display names and colors
+            // Type display names and colors (all 7 initiative types)
             const typeConfig = {
-                'P': { name: 'Projetos de Lei', color: 'linear-gradient(135deg, #2563eb, #1d4ed8)' },
                 'R': { name: 'Projetos de Resolução', color: 'linear-gradient(135deg, #16a34a, #15803d)' },
+                'J': { name: 'Projetos de Lei', color: 'linear-gradient(135deg, #2563eb, #1d4ed8)' },
                 'L': { name: 'Propostas de Lei', color: 'linear-gradient(135deg, #9333ea, #7c3aed)' },
-                'D': { name: 'Deliberações', color: 'linear-gradient(135deg, #ea580c, #dc2626)' }
+                'D': { name: 'Proj. Deliberação', color: 'linear-gradient(135deg, #ea580c, #dc2626)' },
+                'I': { name: 'Inquéritos Parl.', color: 'linear-gradient(135deg, #0891b2, #0e7490)' },
+                'S': { name: 'Propostas de Resolução', color: 'linear-gradient(135deg, #059669, #047857)' },
+                'A': { name: 'Apreciações Parl.', color: 'linear-gradient(135deg, #d97706, #b45309)' }
             };
 
             let html = '';
@@ -1880,13 +1883,20 @@
         function renderMonthWidget() {
             const container = document.getElementById('month-widget');
 
-            // Count by month
+            // Count by month using first event date (Entrada)
             const monthCounts = {};
             INITIATIVES_DATA.forEach(ini => {
-                const date = ini.DataInicioleg;
-                if (date) {
-                    const monthKey = date.substring(0, 7); // YYYY-MM
-                    monthCounts[monthKey] = (monthCounts[monthKey] || 0) + 1;
+                const events = ini.IniEventos || [];
+                if (events.length > 0) {
+                    // Sort events by date and get the first one (Entrada)
+                    const sortedEvents = events.slice().sort((a, b) =>
+                        (a.DataFase || '').localeCompare(b.DataFase || '')
+                    );
+                    const firstDate = sortedEvents[0].DataFase;
+                    if (firstDate) {
+                        const monthKey = firstDate.substring(0, 7); // YYYY-MM
+                        monthCounts[monthKey] = (monthCounts[monthKey] || 0) + 1;
+                    }
                 }
             });
 
