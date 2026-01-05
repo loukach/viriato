@@ -588,6 +588,183 @@
             font-weight: 500;
         }
 
+        /* Analytics Widgets */
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .widget {
+            background: var(--bg-card);
+            padding: 24px;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border-light);
+        }
+
+        .widget-title {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .widget-title-icon {
+            font-size: 1.2rem;
+        }
+
+        /* Horizontal Bar Chart */
+        .bar-chart {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .bar-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .bar-label {
+            min-width: 80px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            text-align: right;
+        }
+
+        .bar-track {
+            flex: 1;
+            height: 28px;
+            background: var(--bg-primary);
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .bar-fill {
+            height: 100%;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 10px;
+            min-width: 40px;
+            transition: width 0.5s ease;
+        }
+
+        .bar-value {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: white;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+        }
+
+        .bar-value-outside {
+            position: absolute;
+            right: -35px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        /* Party Colors */
+        .party-PAN { background: linear-gradient(135deg, #2d8f4e, #1a5f2a); }
+        .party-CH { background: linear-gradient(135deg, #1e3a5f, #0d1f33); }
+        .party-PCP { background: linear-gradient(135deg, #dc2626, #b91c1c); }
+        .party-L { background: linear-gradient(135deg, #16a34a, #15803d); }
+        .party-PS { background: linear-gradient(135deg, #ec4899, #db2777); }
+        .party-BE { background: linear-gradient(135deg, #7c3aed, #6d28d9); }
+        .party-IL { background: linear-gradient(135deg, #06b6d4, #0891b2); }
+        .party-CDS-PP { background: linear-gradient(135deg, #3b82f6, #2563eb); }
+        .party-PSD { background: linear-gradient(135deg, #f97316, #ea580c); }
+        .party-GOV { background: linear-gradient(135deg, #6b7280, #4b5563); }
+        .party-default { background: linear-gradient(135deg, #94a3b8, #64748b); }
+
+        /* Timeline Chart */
+        .timeline-chart {
+            display: flex;
+            align-items: flex-end;
+            gap: 4px;
+            height: 120px;
+            padding-top: 10px;
+        }
+
+        .timeline-bar {
+            flex: 1;
+            min-width: 20px;
+            background: linear-gradient(180deg, var(--primary), var(--primary-dark));
+            border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+            position: relative;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+
+        .timeline-bar:hover {
+            filter: brightness(1.1);
+            transform: scaleY(1.02);
+            transform-origin: bottom;
+        }
+
+        .timeline-bar-label {
+            position: absolute;
+            bottom: -22px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            white-space: nowrap;
+        }
+
+        .timeline-bar-value {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        /* Type distribution mini cards */
+        .type-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .type-card {
+            padding: 16px;
+            border-radius: var(--radius-md);
+            text-align: center;
+            transition: all var(--transition-fast);
+        }
+
+        .type-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .type-card-value {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: white;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .type-card-label {
+            font-size: 0.75rem;
+            color: rgba(255,255,255,0.9);
+            margin-top: 4px;
+            font-weight: 500;
+        }
+
         /* Initiative cards */
         .initiative-card {
             background: var(--bg-card);
@@ -1237,6 +1414,46 @@
                 </div>
             </div>
 
+            <!-- Analytics Widgets -->
+            <div class="analytics-grid" id="analytics-widgets">
+                <div class="widget">
+                    <div class="widget-title">
+                        <span class="widget-title-icon" aria-hidden="true">📊</span>
+                        Por Tipo
+                    </div>
+                    <div id="type-widget" class="type-grid">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+                <div class="widget">
+                    <div class="widget-title">
+                        <span class="widget-title-icon" aria-hidden="true">📅</span>
+                        Por Mês
+                    </div>
+                    <div id="month-widget" class="timeline-chart" style="margin-bottom: 30px;">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+                <div class="widget">
+                    <div class="widget-title">
+                        <span class="widget-title-icon" aria-hidden="true">🏛️</span>
+                        Por Grupo Parlamentar
+                    </div>
+                    <div id="party-widget" class="bar-chart">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+                <div class="widget">
+                    <div class="widget-title">
+                        <span class="widget-title-icon" aria-hidden="true">👤</span>
+                        Por Origem
+                    </div>
+                    <div id="origin-widget" class="bar-chart">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+            </div>
+
             <div id="initiatives" class="loading" role="status" aria-live="polite">A carregar iniciativas...</div>
         </div>
     </div>
@@ -1375,6 +1592,7 @@
                 document.getElementById('home-ini-completed').textContent = completed;
 
                 renderLifecycleFunnels();
+                renderAnalyticsWidgets();
                 renderInitiatives('all');
                 setupFilters();
             } catch (error) {
@@ -1615,6 +1833,204 @@
             });
 
             container.innerHTML = html;
+        }
+
+        // Render Analytics Widgets
+        function renderAnalyticsWidgets() {
+            renderTypeWidget();
+            renderMonthWidget();
+            renderPartyWidget();
+            renderOriginWidget();
+        }
+
+        function renderTypeWidget() {
+            const container = document.getElementById('type-widget');
+
+            // Count by type
+            const typeCounts = {};
+            INITIATIVES_DATA.forEach(ini => {
+                const type = ini.IniTipo || 'Outro';
+                typeCounts[type] = (typeCounts[type] || 0) + 1;
+            });
+
+            // Type display names and colors
+            const typeConfig = {
+                'P': { name: 'Projetos de Lei', color: 'linear-gradient(135deg, #2563eb, #1d4ed8)' },
+                'R': { name: 'Projetos de Resolução', color: 'linear-gradient(135deg, #16a34a, #15803d)' },
+                'L': { name: 'Propostas de Lei', color: 'linear-gradient(135deg, #9333ea, #7c3aed)' },
+                'D': { name: 'Deliberações', color: 'linear-gradient(135deg, #ea580c, #dc2626)' }
+            };
+
+            let html = '';
+            Object.entries(typeCounts)
+                .sort((a, b) => b[1] - a[1])
+                .forEach(([type, count]) => {
+                    const config = typeConfig[type] || { name: type, color: 'linear-gradient(135deg, #6b7280, #4b5563)' };
+                    html += `
+                        <div class="type-card" style="background: ${config.color}">
+                            <div class="type-card-value">${count}</div>
+                            <div class="type-card-label">${config.name}</div>
+                        </div>
+                    `;
+                });
+
+            container.innerHTML = html;
+        }
+
+        function renderMonthWidget() {
+            const container = document.getElementById('month-widget');
+
+            // Count by month
+            const monthCounts = {};
+            INITIATIVES_DATA.forEach(ini => {
+                const date = ini.DataInicioleg;
+                if (date) {
+                    const monthKey = date.substring(0, 7); // YYYY-MM
+                    monthCounts[monthKey] = (monthCounts[monthKey] || 0) + 1;
+                }
+            });
+
+            // Sort months chronologically
+            const sortedMonths = Object.keys(monthCounts).sort();
+            const maxCount = Math.max(...Object.values(monthCounts));
+
+            // Month names in Portuguese
+            const monthNames = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+
+            let html = '';
+            sortedMonths.forEach(monthKey => {
+                const count = monthCounts[monthKey];
+                const heightPercent = (count / maxCount) * 100;
+                const [year, month] = monthKey.split('-');
+                const monthName = monthNames[parseInt(month) - 1];
+                const label = `${monthName}`;
+
+                html += `
+                    <div class="timeline-bar" style="height: ${heightPercent}%" title="${count} iniciativas em ${monthName} ${year}">
+                        <span class="timeline-bar-value">${count}</span>
+                        <span class="timeline-bar-label">${label}</span>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        function renderPartyWidget() {
+            const container = document.getElementById('party-widget');
+
+            // Count by parliamentary group
+            const partyCounts = {};
+            INITIATIVES_DATA.forEach(ini => {
+                if (ini.IniAutorGruposParlamentares) {
+                    const groups = Array.isArray(ini.IniAutorGruposParlamentares)
+                        ? ini.IniAutorGruposParlamentares
+                        : [ini.IniAutorGruposParlamentares];
+                    groups.forEach(g => {
+                        if (g.GP) {
+                            partyCounts[g.GP] = (partyCounts[g.GP] || 0) + 1;
+                        }
+                    });
+                }
+            });
+
+            // Sort by count descending and take top 8
+            const sortedParties = Object.entries(partyCounts)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 8);
+
+            const maxCount = sortedParties.length > 0 ? sortedParties[0][1] : 1;
+
+            // Party color classes
+            const partyColors = {
+                'PAN': 'party-PAN',
+                'CH': 'party-CH',
+                'PCP': 'party-PCP',
+                'L': 'party-L',
+                'PS': 'party-PS',
+                'BE': 'party-BE',
+                'IL': 'party-IL',
+                'CDS-PP': 'party-CDS-PP',
+                'PSD': 'party-PSD'
+            };
+
+            let html = '';
+            sortedParties.forEach(([party, count]) => {
+                const widthPercent = (count / maxCount) * 100;
+                const colorClass = partyColors[party] || 'party-default';
+
+                html += `
+                    <div class="bar-item">
+                        <span class="bar-label">${party}</span>
+                        <div class="bar-track">
+                            <div class="bar-fill ${colorClass}" style="width: ${widthPercent}%">
+                                <span class="bar-value">${count}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html || '<p style="color: var(--text-muted); text-align: center;">Sem dados</p>';
+        }
+
+        function renderOriginWidget() {
+            const container = document.getElementById('origin-widget');
+
+            // Count by origin (Government vs Parliament)
+            const originCounts = {
+                'Parlamento': 0,
+                'Governo': 0,
+                'Outro': 0
+            };
+
+            INITIATIVES_DATA.forEach(ini => {
+                if (ini.IniAutorOutros && ini.IniAutorOutros.nome) {
+                    const nome = ini.IniAutorOutros.nome;
+                    if (nome === 'Governo') {
+                        originCounts['Governo']++;
+                    } else {
+                        originCounts['Outro']++;
+                    }
+                } else if (ini.IniAutorGruposParlamentares) {
+                    originCounts['Parlamento']++;
+                } else {
+                    originCounts['Outro']++;
+                }
+            });
+
+            // Sort by count descending, filter out zeros
+            const sortedOrigins = Object.entries(originCounts)
+                .filter(([_, count]) => count > 0)
+                .sort((a, b) => b[1] - a[1]);
+
+            const maxCount = sortedOrigins.length > 0 ? sortedOrigins[0][1] : 1;
+
+            // Origin colors
+            const originColors = {
+                'Parlamento': 'linear-gradient(135deg, #667eea, #5a67d8)',
+                'Governo': 'linear-gradient(135deg, #6b7280, #4b5563)',
+                'Outro': 'linear-gradient(135deg, #94a3b8, #64748b)'
+            };
+
+            let html = '';
+            sortedOrigins.forEach(([origin, count]) => {
+                const widthPercent = (count / maxCount) * 100;
+                const color = originColors[origin] || originColors['Outro'];
+
+                html += `
+                    <div class="bar-item">
+                        <span class="bar-label">${origin}</span>
+                        <div class="bar-track">
+                            <div class="bar-fill" style="width: ${widthPercent}%; background: ${color}">
+                                <span class="bar-value">${count}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html || '<p style="color: var(--text-muted); text-align: center;">Sem dados</p>';
         }
 
         // Render Initiatives
