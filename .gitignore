@@ -8,8 +8,9 @@ env/
 venv/
 .venv
 
-# Environment variables (contains secrets)
+# Environment variables and MCP config (contains secrets)
 .env
+.mcp.json
 
 # IDEs
 .vscode/
