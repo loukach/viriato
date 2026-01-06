@@ -1383,6 +1383,16 @@
 
             <div class="filters">
                 <div class="filter-group">
+                    <label class="filter-label" id="legislature-label">Legislatura:</label>
+                    <div class="filter-buttons" role="group" aria-labelledby="legislature-label">
+                        <button class="filter-btn active" data-legislature="all">Todas</button>
+                        <button class="filter-btn" data-legislature="XVII">XVII (2024-presente)</button>
+                        <button class="filter-btn" data-legislature="XVI">XVI (2024)</button>
+                        <button class="filter-btn" data-legislature="XV">XV (2022-2024)</button>
+                        <button class="filter-btn" data-legislature="XIV">XIV (2019-2022)</button>
+                    </div>
+                </div>
+                <div class="filter-group">
                     <label class="filter-label" id="search-label">Pesquisar Iniciativas:</label>
                     <div class="search-container" role="search">
                         <input type="text" id="search-input" class="search-input" placeholder="Pesquisar por título (ex: 'saúde', 'educação', 'ambiente')..." aria-label="Pesquisar iniciativas" />
@@ -1518,6 +1528,7 @@
         let INITIATIVES_DATA = [];
         let AGENDA_DATA = [];
         let SEARCH_RESULTS = null;  // null = no search, array = search results
+        let SELECTED_LEGISLATURE = 'all';  // Track selected legislature
 
         // Page titles for each route
         const PAGE_TITLES = {
@@ -1577,12 +1588,18 @@
         // Load Initiatives Data
         async function loadInitiatives() {
             try {
-                const response = await fetch(`${API_URL}/api/iniciativas`);
+                // Build URL with legislature filter if selected
+                let url = `${API_URL}/api/iniciativas`;
+                if (SELECTED_LEGISLATURE !== 'all') {
+                    url += `?legislature=${SELECTED_LEGISLATURE}`;
+                }
+
+                const response = await fetch(url);
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 INITIATIVES_DATA = await response.json();
-                console.log(`Loaded ${INITIATIVES_DATA.length} initiatives`);
+                console.log(`Loaded ${INITIATIVES_DATA.length} initiatives for legislature ${SELECTED_LEGISLATURE}`);
 
                 // Update stats
                 document.getElementById('ini-total').textContent = INITIATIVES_DATA.length;
@@ -1590,6 +1607,14 @@
                 document.getElementById('ini-completed').textContent = completed;
                 document.getElementById('home-ini-count').textContent = INITIATIVES_DATA.length;
                 document.getElementById('home-ini-completed').textContent = completed;
+
+                // Update header to show selected legislature
+                const headerText = document.querySelector('.iniciativas-header p');
+                if (SELECTED_LEGISLATURE === 'all') {
+                    headerText.textContent = 'All Legislatures (XIV-XVII)';
+                } else {
+                    headerText.textContent = `Legislature ${SELECTED_LEGISLATURE}`;
+                }
 
                 renderLifecycleFunnels();
                 renderAnalyticsWidgets();
@@ -2152,13 +2177,37 @@
         }
 
         function setupFilters() {
-            const buttons = document.querySelectorAll('.filter-btn');
-            buttons.forEach(btn => {
+            // Type filter buttons
+            const typeButtons = document.querySelectorAll('.filter-btn[data-type]');
+            typeButtons.forEach(btn => {
                 btn.addEventListener('click', () => {
-                    buttons.forEach(b => b.classList.remove('active'));
+                    typeButtons.forEach(b => b.classList.remove('active'));
                     btn.classList.add('active');
                     const type = btn.dataset.type;
                     renderInitiatives(type);
+                });
+            });
+
+            // Legislature filter buttons
+            const legislatureButtons = document.querySelectorAll('.filter-btn[data-legislature]');
+            legislatureButtons.forEach(btn => {
+                btn.addEventListener('click', async () => {
+                    legislatureButtons.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    const legislature = btn.dataset.legislature;
+                    SELECTED_LEGISLATURE = legislature;
+
+                    // Clear search when changing legislature
+                    SEARCH_RESULTS = null;
+                    const searchInput = document.getElementById('search-input');
+                    if (searchInput) searchInput.value = '';
+                    document.getElementById('clear-search-btn').classList.remove('visible');
+                    document.getElementById('search-results-info').classList.remove('visible');
+
+                    // Reload data with new legislature filter
+                    document.getElementById('initiatives').innerHTML = '<div class="loading">A carregar iniciativas...</div>';
+                    INITIATIVES_DATA = [];
+                    await loadInitiatives();
                 });
             });
 
@@ -2193,7 +2242,14 @@
             try {
                 // Convert query to tsquery format (add :* for prefix matching)
                 const tsQuery = query.split(/\s+/).map(word => word + ':*').join(' & ');
-                const response = await fetch(`${API_URL}/api/search?q=${encodeURIComponent(tsQuery)}&limit=100`);
+
+                // Build URL with legislature filter if selected
+                let url = `${API_URL}/api/search?q=${encodeURIComponent(tsQuery)}&limit=100`;
+                if (SELECTED_LEGISLATURE !== 'all') {
+                    url += `&legislature=${SELECTED_LEGISLATURE}`;
+                }
+
+                const response = await fetch(url);
 
                 if (!response.ok) {
                     throw new Error(`Search failed: ${response.status}`);

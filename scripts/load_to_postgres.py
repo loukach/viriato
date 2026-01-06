@@ -45,7 +45,15 @@ except ImportError:
 
 # Configuration
 DATA_DIR = Path(__file__).parent.parent / "data" / "raw"
-INICIATIVAS_FILE = DATA_DIR / "IniciativasXVII_json.txt"
+
+# All legislature files to load
+INICIATIVAS_FILES = [
+    DATA_DIR / "IniciativasXIV_json.txt",
+    DATA_DIR / "IniciativasXV_json.txt",
+    DATA_DIR / "IniciativasXVI_json.txt",
+    DATA_DIR / "IniciativasXVII_json.txt"
+]
+
 AGENDA_FILE = DATA_DIR / "AgendaParlamentar_json.txt"
 
 
@@ -248,38 +256,49 @@ def transform_agenda_event(agenda_json):
 
 
 def load_iniciativas(conn):
-    """Load iniciativas and their events."""
-    print(f"\n=== Loading Iniciativas ===")
-    print(f"Reading: {INICIATIVAS_FILE}")
-
-    if not INICIATIVAS_FILE.exists():
-        print(f"ERROR: File not found: {INICIATIVAS_FILE}")
-        return
-
-    # Load JSON
-    with open(INICIATIVAS_FILE, 'r', encoding='utf-8') as f:
-        data = json.load(f)
-
-    print(f"Found {len(data)} iniciativas")
+    """Load iniciativas and their events from all legislature files."""
+    print(f"\n=== Loading Iniciativas (All Legislatures) ===")
 
     cur = conn.cursor()
 
-    # Prepare data
-    iniciativas_data = []
+    # Prepare data for all legislatures
+    all_iniciativas_data = []
     all_events = []
 
-    for ini_json in data:
-        ini_row = transform_iniciativa(ini_json)
-        iniciativas_data.append(ini_row)
+    # Process each legislature file
+    for iniciativas_file in INICIATIVAS_FILES:
+        legislature = iniciativas_file.stem.replace('Iniciativas', '').replace('_json', '')
 
-        events = transform_iniciativa_events(ini_json['IniId'], ini_json)
-        all_events.extend(events)
+        if not iniciativas_file.exists():
+            print(f"⚠ Skipping {legislature}: File not found - {iniciativas_file}")
+            continue
 
-    print(f"Transformed {len(iniciativas_data)} iniciativas")
-    print(f"Transformed {len(all_events)} events")
+        print(f"\n  Loading {legislature}...")
+        print(f"  Reading: {iniciativas_file}")
+
+        # Load JSON
+        with open(iniciativas_file, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+
+        print(f"  Found {len(data):,} iniciativas in {legislature}")
+
+        # Transform data
+        legislature_count = 0
+        for ini_json in data:
+            ini_row = transform_iniciativa(ini_json)
+            all_iniciativas_data.append(ini_row)
+
+            events = transform_iniciativa_events(ini_json['IniId'], ini_json)
+            all_events.extend(events)
+            legislature_count += 1
+
+        print(f"  ✓ Processed {legislature_count:,} iniciativas from {legislature}")
+
+    print(f"\n  TOTAL: {len(all_iniciativas_data):,} iniciativas across all legislatures")
+    print(f"  TOTAL: {len(all_events):,} events")
 
     # Insert iniciativas (UPSERT)
-    print("Inserting iniciativas...")
+    print("\n  Inserting iniciativas into database...")
 
     insert_query = """
         INSERT INTO iniciativas (
@@ -315,7 +334,7 @@ def load_iniciativas(conn):
             row['current_status'], row['current_phase_code'], row['is_completed'],
             row['text_link'], row['raw_data']
         )
-        for row in iniciativas_data
+        for row in all_iniciativas_data
     ]
 
     execute_values(cur, insert_query, values)
@@ -324,13 +343,13 @@ def load_iniciativas(conn):
     cur.execute("SELECT id, ini_id FROM iniciativas")
     ini_id_map = {row[1]: row[0] for row in cur.fetchall()}
 
-    print(f"Inserted/updated {len(ini_id_map)} iniciativas")
+    print(f"  ✓ Inserted/updated {len(ini_id_map):,} iniciativas")
 
     # Insert events (delete old events first to avoid duplicates)
-    print("Deleting old events...")
+    print("\n  Deleting old events...")
     cur.execute("DELETE FROM iniciativa_events")
 
-    print("Inserting events...")
+    print("  Inserting events...")
 
     event_insert_query = """
         INSERT INTO iniciativa_events (
@@ -351,11 +370,11 @@ def load_iniciativas(conn):
     ]
 
     execute_values(cur, event_insert_query, event_values)
-    print(f"Inserted {len(event_values)} events")
+    print(f"  ✓ Inserted {len(event_values):,} events")
 
     cur.close()
     conn.commit()
-    print("✓ Iniciativas loaded successfully")
+    print("\n✓ All iniciativas and events loaded successfully")
 
 
 def load_agenda(conn):
@@ -432,49 +451,69 @@ def print_stats(conn):
 
     cur = conn.cursor()
 
-    # Iniciativas stats
-    cur.execute("SELECT COUNT(*) FROM iniciativas")
-    total_ini = cur.fetchone()[0]
+    # Iniciativas by legislature
+    cur.execute("SELECT legislature, COUNT(*) FROM iniciativas GROUP BY legislature ORDER BY legislature")
+    leg_counts = cur.fetchall()
 
+    print(f"\nIniciativas by Legislature:")
+    total_ini = 0
+    for leg, count in leg_counts:
+        print(f"  {leg}: {count:,} initiatives")
+        total_ini += count
+    print(f"  TOTAL: {total_ini:,} initiatives")
+
+    # Completed count
     cur.execute("SELECT COUNT(*) FROM iniciativas WHERE is_completed = TRUE")
     completed_ini = cur.fetchone()[0]
+    print(f"  Completed: {completed_ini:,} ({completed_ini/total_ini*100:.1f}%)")
 
+    # Events
+    cur.execute("SELECT COUNT(*) FROM iniciativa_events")
+    total_events = cur.fetchone()[0]
+    print(f"\nTotal Events: {total_events:,}")
+
+    # Agenda
+    cur.execute("SELECT COUNT(*) FROM agenda_events")
+    total_agenda = cur.fetchone()[0]
+    print(f"Agenda Events: {total_agenda:,}")
+
+    # Type breakdown
     cur.execute("SELECT type, COUNT(*) FROM iniciativas GROUP BY type ORDER BY COUNT(*) DESC")
     type_counts = cur.fetchall()
 
-    cur.execute("SELECT COUNT(*) FROM iniciativa_events")
-    total_events = cur.fetchone()[0]
-
-    cur.execute("SELECT COUNT(*) FROM agenda_events")
-    total_agenda = cur.fetchone()[0]
-
-    print(f"Iniciativas: {total_ini} total, {completed_ini} completed")
-    print(f"Events: {total_events}")
-    print(f"Agenda: {total_agenda}")
-
-    print(f"\nIniciativas by type:")
+    print(f"\nIniciativas by Type:")
     for type_code, count in type_counts:
-        print(f"  {type_code}: {count}")
+        print(f"  {type_code}: {count:,}")
 
     cur.close()
 
 
 def main():
     """Main entry point."""
-    print("="*60)
+    print("="*80)
     print("Viriato - Load Portuguese Parliament Data to PostgreSQL")
-    print("="*60)
+    print("  Multi-Legislature Support: XIV, XV, XVI, XVII")
+    print("="*80)
 
-    # Check files exist
-    if not INICIATIVAS_FILE.exists():
-        print(f"ERROR: {INICIATIVAS_FILE} not found")
-        print("Run: python scripts/download_datasets.py")
+    # Check which legislature files exist
+    available_files = [f for f in INICIATIVAS_FILES if f.exists()]
+
+    if not available_files:
+        print(f"\nERROR: No iniciativas files found in {DATA_DIR}")
+        print("Expected files:")
+        for f in INICIATIVAS_FILES:
+            print(f"  - {f.name}")
+        print("\nRun: python scripts/download_datasets.py")
         sys.exit(1)
+
+    print(f"\nFound {len(available_files)} legislature file(s):")
+    for f in available_files:
+        leg = f.stem.replace('Iniciativas', '').replace('_json', '')
+        print(f"  ✓ {leg} - {f.name}")
 
     if not AGENDA_FILE.exists():
-        print(f"ERROR: {AGENDA_FILE} not found")
-        print("Run: python scripts/download_datasets.py")
-        sys.exit(1)
+        print(f"\n⚠ WARNING: {AGENDA_FILE.name} not found")
+        print("  Agenda will not be loaded")
 
     # Connect to database
     print("\nConnecting to database...")
@@ -484,14 +523,18 @@ def main():
     try:
         # Load data
         load_iniciativas(conn)
-        load_agenda(conn)
+
+        if AGENDA_FILE.exists():
+            load_agenda(conn)
+        else:
+            print("\n⚠ Skipping agenda load (file not found)")
 
         # Print stats
         print_stats(conn)
 
-        print("\n" + "="*60)
+        print("\n" + "="*80)
         print("✓ All data loaded successfully!")
-        print("="*60)
+        print("="*80)
 
     except Exception as e:
         print(f"\nERROR: {e}")

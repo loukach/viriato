@@ -59,6 +59,10 @@ def get_iniciativas():
     """
     Get all iniciativas with their events.
 
+    Query parameters:
+        legislature - Filter by legislature (e.g. XIV, XV, XVI, XVII)
+                     If not specified, returns all legislatures
+
     Returns data in format compatible with existing frontend:
     [
         {
@@ -76,15 +80,27 @@ def get_iniciativas():
         conn = get_db_connection()
         cur = conn.cursor()
 
-        # Get all iniciativas
-        cur.execute("""
+        # Get optional legislature filter
+        legislature = request.args.get('legislature')
+
+        # Build query with optional filter
+        query = """
             SELECT
                 ini_id, legislature, number, type, type_description,
                 title, author_type, author_name, start_date, end_date,
                 current_status, is_completed, text_link, raw_data
             FROM iniciativas
-            ORDER BY start_date DESC
-        """)
+        """
+        params = []
+
+        if legislature:
+            query += " WHERE legislature = %s"
+            params.append(legislature)
+
+        query += " ORDER BY start_date DESC"
+
+        # Get iniciativas
+        cur.execute(query, params)
 
         iniciativas = cur.fetchall()
 
@@ -221,45 +237,108 @@ def get_agenda():
         return jsonify({'error': str(e)}), 500
 
 
-@app.route('/api/stats', methods=['GET'])
-def get_stats():
-    """Get overall statistics."""
+@app.route('/api/legislatures', methods=['GET'])
+def get_legislatures():
+    """Get list of available legislatures with counts."""
     try:
         conn = get_db_connection()
         cur = conn.cursor()
 
+        cur.execute("""
+            SELECT
+                legislature,
+                COUNT(*) as count,
+                MIN(start_date) as earliest_date,
+                MAX(start_date) as latest_date
+            FROM iniciativas
+            GROUP BY legislature
+            ORDER BY legislature DESC
+        """)
+
+        legislatures = []
+        for row in cur.fetchall():
+            legislatures.append({
+                'legislature': row['legislature'],
+                'count': row['count'],
+                'earliest_date': row['earliest_date'].isoformat() if row['earliest_date'] else None,
+                'latest_date': row['latest_date'].isoformat() if row['latest_date'] else None
+            })
+
+        cur.close()
+        conn.close()
+
+        return jsonify(legislatures)
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/stats', methods=['GET'])
+def get_stats():
+    """
+    Get overall statistics.
+
+    Query parameters:
+        legislature - Filter by legislature (optional)
+    """
+    try:
+        conn = get_db_connection()
+        cur = conn.cursor()
+
+        # Get optional legislature filter
+        legislature = request.args.get('legislature')
+
         stats = {}
 
+        # Build WHERE clause
+        where_clause = ""
+        params = []
+        if legislature:
+            where_clause = " WHERE legislature = %s"
+            params.append(legislature)
+
         # Total iniciativas
-        cur.execute("SELECT COUNT(*) as count FROM iniciativas")
+        cur.execute(f"SELECT COUNT(*) as count FROM iniciativas{where_clause}", params)
         stats['total'] = cur.fetchone()['count']
 
         # Completed
-        cur.execute("SELECT COUNT(*) as count FROM iniciativas WHERE is_completed = TRUE")
+        cur.execute(f"SELECT COUNT(*) as count FROM iniciativas{where_clause} {'AND' if legislature else 'WHERE'} is_completed = TRUE",
+                   params + [] if not legislature else params)
         stats['completed'] = cur.fetchone()['count']
 
+        # By legislature (only if not filtered)
+        if not legislature:
+            cur.execute("""
+                SELECT legislature, COUNT(*) as count
+                FROM iniciativas
+                GROUP BY legislature
+                ORDER BY legislature DESC
+            """)
+            stats['by_legislature'] = [{'legislature': row['legislature'], 'count': row['count']}
+                                       for row in cur.fetchall()]
+
         # By type
-        cur.execute("""
+        cur.execute(f"""
             SELECT type_description, COUNT(*) as count
-            FROM iniciativas
+            FROM iniciativas{where_clause}
             GROUP BY type_description
             ORDER BY count DESC
-        """)
+        """, params)
         stats['by_type'] = [{'type': row['type_description'], 'count': row['count']}
                            for row in cur.fetchall()]
 
         # By status
-        cur.execute("""
+        cur.execute(f"""
             SELECT current_status, COUNT(*) as count
-            FROM iniciativas
+            FROM iniciativas{where_clause}
             GROUP BY current_status
             ORDER BY count DESC
             LIMIT 10
-        """)
+        """, params)
         stats['by_status'] = [{'status': row['current_status'], 'count': row['count']}
                              for row in cur.fetchall()]
 
-        # Agenda count
+        # Agenda count (no filter for agenda)
         cur.execute("SELECT COUNT(*) as count FROM agenda_events")
         stats['agenda_events'] = cur.fetchone()['count']
 
@@ -280,10 +359,12 @@ def search_iniciativas():
     Query params:
         q - search query
         limit - max results (default 20)
+        legislature - filter by legislature (optional)
     """
     try:
         query = request.args.get('q', '')
         limit = int(request.args.get('limit', 20))
+        legislature = request.args.get('legislature')
 
         if not query:
             return jsonify([])
@@ -291,21 +372,34 @@ def search_iniciativas():
         conn = get_db_connection()
         cur = conn.cursor()
 
-        cur.execute("""
+        # Build query with optional legislature filter
+        sql_query = """
             SELECT
-                ini_id, title, type_description, current_status, start_date,
+                ini_id, legislature, title, type_description, current_status, start_date,
                 ts_rank(to_tsvector('portuguese', title), query) as rank
             FROM iniciativas,
                  to_tsquery('portuguese', %s) as query
             WHERE to_tsvector('portuguese', title) @@ query
+        """
+        params = [query]
+
+        if legislature:
+            sql_query += " AND legislature = %s"
+            params.append(legislature)
+
+        sql_query += """
             ORDER BY rank DESC
             LIMIT %s
-        """, (query, limit))
+        """
+        params.append(limit)
+
+        cur.execute(sql_query, params)
 
         results = []
         for row in cur.fetchall():
             results.append({
                 'ini_id': row['ini_id'],
+                'legislature': row['legislature'],
                 'title': row['title'],
                 'type': row['type_description'],
                 'status': row['current_status'],
