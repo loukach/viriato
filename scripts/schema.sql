@@ -113,6 +113,34 @@ CREATE INDEX IF NOT EXISTS idx_agenda_title_fts
     ON agenda_events USING GIN(to_tsvector('portuguese', title));
 
 -- =============================================================================
+-- TABLE 4: agenda_initiative_links (Junction table linking Agenda to Initiatives)
+-- =============================================================================
+
+CREATE TABLE IF NOT EXISTS agenda_initiative_links (
+    id SERIAL PRIMARY KEY,
+    agenda_event_id INTEGER NOT NULL REFERENCES agenda_events(id) ON DELETE CASCADE,
+    iniciativa_id INTEGER NOT NULL REFERENCES iniciativas(id) ON DELETE CASCADE,
+    link_type VARCHAR(50) NOT NULL,         -- 'bid_direct', 'committee_date', 'text_reference'
+    link_confidence DECIMAL(3,2),           -- 0.00 to 1.00 (1.00 = certain, 0.50 = probable, etc.)
+    extracted_text TEXT,                    -- Evidence for the link (BID reference, matched text, etc.)
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Indexes for link queries
+CREATE INDEX IF NOT EXISTS idx_agenda_links_agenda
+    ON agenda_initiative_links(agenda_event_id);
+CREATE INDEX IF NOT EXISTS idx_agenda_links_iniciativa
+    ON agenda_initiative_links(iniciativa_id);
+CREATE INDEX IF NOT EXISTS idx_agenda_links_type
+    ON agenda_initiative_links(link_type);
+CREATE INDEX IF NOT EXISTS idx_agenda_links_confidence
+    ON agenda_initiative_links(link_confidence);
+
+-- Prevent duplicate links of same type
+CREATE UNIQUE INDEX IF NOT EXISTS idx_agenda_links_unique
+    ON agenda_initiative_links(agenda_event_id, iniciativa_id, link_type);
+
+-- =============================================================================
 -- HELPER FUNCTIONS
 -- =============================================================================
 
@@ -157,6 +185,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- Trigger to automatically update current_status when events are added
+DROP TRIGGER IF EXISTS trigger_update_iniciativa_status ON iniciativa_events;
 CREATE TRIGGER trigger_update_iniciativa_status
 AFTER INSERT OR UPDATE ON iniciativa_events
 FOR EACH ROW
@@ -169,6 +198,7 @@ EXECUTE FUNCTION update_iniciativa_current_status();
 COMMENT ON TABLE iniciativas IS 'Legislative initiatives (Iniciativas) from Portuguese Parliament';
 COMMENT ON TABLE iniciativa_events IS 'Lifecycle events/phases for each legislative initiative';
 COMMENT ON TABLE agenda_events IS 'Parliamentary calendar events (agenda)';
+COMMENT ON TABLE agenda_initiative_links IS 'Links between agenda events and initiatives (extracted from HTML BID references and committee/date matching)';
 
 COMMENT ON COLUMN iniciativas.ini_id IS 'Unique identifier from Parliament API';
 COMMENT ON COLUMN iniciativas.type IS 'P=Proposta, R=Resolução, D=Deliberação, etc.';

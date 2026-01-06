@@ -23,8 +23,10 @@ Example:
 import json
 import os
 import sys
+import re
 from pathlib import Path
 from datetime import datetime
+import html
 
 # Configure UTF-8 output for Windows
 if sys.platform == 'win32':
@@ -445,6 +447,189 @@ def load_agenda(conn):
     print("✓ Agenda loaded successfully")
 
 
+def link_agenda_to_initiatives_bid(conn):
+    """
+    Link agenda events to initiatives using BID references from HTML.
+
+    Strategy 1: Parse BID=XXXXX from agenda description (InternetText).
+    Confidence: 1.00 (direct reference)
+    """
+    print(f"\n=== Linking Agenda → Initiatives (Strategy 1: BID Parsing) ===")
+
+    cur = conn.cursor()
+
+    # Get all agenda events with descriptions
+    cur.execute("""
+        SELECT id, event_id, description
+        FROM agenda_events
+        WHERE description IS NOT NULL AND description != ''
+    """)
+
+    agenda_events = cur.fetchall()
+    print(f"Processing {len(agenda_events)} agenda events with descriptions...")
+
+    links_created = 0
+    links_skipped = 0
+
+    for agenda_id, event_id, description in agenda_events:
+        # Decode HTML entities
+        description_decoded = html.unescape(description)
+
+        # Extract BID references (pattern: BID=315636)
+        bid_pattern = r'BID=(\d+)'
+        bids = re.findall(bid_pattern, description_decoded)
+
+        if not bids:
+            continue
+
+        # Remove duplicates
+        unique_bids = list(set(bids))
+
+        for bid in unique_bids:
+            # Find matching initiative
+            cur.execute("""
+                SELECT id, ini_id, title
+                FROM iniciativas
+                WHERE ini_id = %s
+            """, (bid,))
+
+            result = cur.fetchone()
+
+            if result:
+                iniciativa_id, ini_id, ini_title = result
+
+                # Insert link (ON CONFLICT DO NOTHING)
+                try:
+                    cur.execute("""
+                        INSERT INTO agenda_initiative_links (
+                            agenda_event_id, iniciativa_id, link_type,
+                            link_confidence, extracted_text
+                        )
+                        VALUES (%s, %s, %s, %s, %s)
+                        ON CONFLICT (agenda_event_id, iniciativa_id, link_type)
+                        DO NOTHING
+                    """, (
+                        agenda_id,
+                        iniciativa_id,
+                        'bid_direct',
+                        1.00,  # Perfect confidence
+                        f'BID={bid}'
+                    ))
+
+                    if cur.rowcount > 0:
+                        links_created += 1
+                    else:
+                        links_skipped += 1
+
+                except psycopg2.IntegrityError:
+                    links_skipped += 1
+                    conn.rollback()
+
+    conn.commit()
+    cur.close()
+
+    print(f"✓ Created {links_created} new BID links")
+    print(f"  Skipped {links_skipped} duplicate links")
+    print(f"  Total: {links_created + links_skipped} BID references found")
+
+
+def link_agenda_to_initiatives_committee_date(conn):
+    """
+    Link agenda events to initiatives using committee + date matching.
+
+    Strategy 2: Match by committee name and date proximity (±7 days).
+    Only for committee phases (126, 181).
+    Confidence: 0.70 (probable but not certain)
+    """
+    print(f"\n=== Linking Agenda → Initiatives (Strategy 2: Committee + Date) ===")
+
+    cur = conn.cursor()
+
+    # Get agenda events with committee and date
+    cur.execute("""
+        SELECT id, event_id, committee, start_date, title
+        FROM agenda_events
+        WHERE committee IS NOT NULL
+          AND committee != ''
+          AND start_date IS NOT NULL
+    """)
+
+    agenda_events = cur.fetchall()
+    print(f"Processing {len(agenda_events)} committee agenda events...")
+
+    links_created = 0
+    links_skipped = 0
+    potential_matches = 0
+
+    for agenda_id, event_id, committee, start_date, title in agenda_events:
+        # Find matching initiative events by committee and date
+        # Match within ±7 days window
+        cur.execute("""
+            SELECT DISTINCT
+                i.id, i.ini_id, i.title,
+                ie.phase_code, ie.phase_name,
+                ie.event_date,
+                ABS(ie.event_date - %s::date) as date_diff
+            FROM iniciativas i
+            JOIN iniciativa_events ie ON i.id = ie.iniciativa_id
+            WHERE ie.committee = %s
+              AND ie.phase_code IN ('126', '181')  -- Committee phases
+              AND ie.event_date BETWEEN %s::date - INTERVAL '7 days'
+                                    AND %s::date + INTERVAL '7 days'
+              AND NOT EXISTS (
+                  -- Don't create link if BID link already exists
+                  SELECT 1 FROM agenda_initiative_links
+                  WHERE agenda_event_id = %s
+                    AND iniciativa_id = i.id
+                    AND link_type = 'bid_direct'
+              )
+            ORDER BY date_diff ASC
+            LIMIT 5  -- Max 5 matches per agenda event
+        """, (start_date, committee, start_date, start_date, agenda_id))
+
+        matches = cur.fetchall()
+        potential_matches += len(matches)
+
+        for iniciativa_id, ini_id, ini_title, phase_code, phase_name, event_date, date_diff in matches:
+            # Calculate confidence based on date proximity
+            # 0 days diff = 0.75, 7 days diff = 0.50
+            confidence = max(0.50, 0.75 - (date_diff * 0.0357))  # Linear decay
+
+            # Insert link
+            try:
+                cur.execute("""
+                    INSERT INTO agenda_initiative_links (
+                        agenda_event_id, iniciativa_id, link_type,
+                        link_confidence, extracted_text
+                    )
+                    VALUES (%s, %s, %s, %s, %s)
+                    ON CONFLICT (agenda_event_id, iniciativa_id, link_type)
+                    DO NOTHING
+                """, (
+                    agenda_id,
+                    iniciativa_id,
+                    'committee_date',
+                    round(confidence, 2),
+                    f'{committee} | {phase_name} | {event_date} (±{int(date_diff)} days)'
+                ))
+
+                if cur.rowcount > 0:
+                    links_created += 1
+                else:
+                    links_skipped += 1
+
+            except psycopg2.IntegrityError:
+                links_skipped += 1
+                conn.rollback()
+
+    conn.commit()
+    cur.close()
+
+    print(f"✓ Created {links_created} new committee/date links")
+    print(f"  Skipped {links_skipped} duplicate links")
+    print(f"  Total potential matches: {potential_matches}")
+
+
 def print_stats(conn):
     """Print database statistics."""
     print(f"\n=== Database Statistics ===")
@@ -484,6 +669,40 @@ def print_stats(conn):
     print(f"\nIniciativas by Type:")
     for type_code, count in type_counts:
         print(f"  {type_code}: {count:,}")
+
+    # Agenda → Initiative links
+    cur.execute("SELECT COUNT(*) FROM agenda_initiative_links")
+    total_links = cur.fetchone()[0]
+
+    if total_links > 0:
+        print(f"\nAgenda → Initiative Links: {total_links:,}")
+
+        # Breakdown by link type
+        cur.execute("""
+            SELECT link_type, COUNT(*), AVG(link_confidence)
+            FROM agenda_initiative_links
+            GROUP BY link_type
+            ORDER BY COUNT(*) DESC
+        """)
+        link_breakdown = cur.fetchall()
+
+        for link_type, count, avg_conf in link_breakdown:
+            avg_conf_pct = (avg_conf * 100) if avg_conf else 0
+            print(f"  {link_type}: {count:,} (avg confidence: {avg_conf_pct:.0f}%)")
+
+        # Coverage stats
+        cur.execute("""
+            SELECT COUNT(DISTINCT agenda_event_id)
+            FROM agenda_initiative_links
+        """)
+        linked_agenda = cur.fetchone()[0]
+
+        cur.execute("SELECT COUNT(*) FROM agenda_events")
+        total_agenda_for_coverage = cur.fetchone()[0]
+
+        if total_agenda_for_coverage > 0:
+            coverage = (linked_agenda / total_agenda_for_coverage) * 100
+            print(f"  Coverage: {linked_agenda:,} / {total_agenda_for_coverage:,} agenda events ({coverage:.1f}%)")
 
     cur.close()
 
@@ -526,6 +745,10 @@ def main():
 
         if AGENDA_FILE.exists():
             load_agenda(conn)
+
+            # Link agenda to initiatives
+            link_agenda_to_initiatives_bid(conn)
+            link_agenda_to_initiatives_committee_date(conn)
         else:
             print("\n⚠ Skipping agenda load (file not found)")
 
