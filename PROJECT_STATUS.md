@@ -56,8 +56,8 @@
 **Initiatives by Legislature:**
 - ✅ Legislature XIV (2019-2022): 2,587 initiatives
 - ✅ Legislature XV (2022-2024): 1,952 initiatives
-- ✅ Legislature XVI (2024): 1,401 initiatives
-- ✅ Legislature XVII (2024-present): 808 initiatives
+- ✅ Legislature XVI (2024-2025): 1,401 initiatives
+- ✅ Legislature XVII (2025-present): 808 initiatives
 - **Total: 6,748 initiatives** spanning 6+ years
 
 **Other Datasets (17 total, ~210 MB):**

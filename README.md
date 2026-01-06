@@ -25,8 +25,8 @@ Two interactive web tools built with Portuguese Parliament's open data:
 
 **Built:**
 - Single Page Application with three views (Home, Iniciativas, Agenda)
-- PostgreSQL database with 808 iniciativas, 4,888 events, 34 agenda items
-- Flask REST API backend
+- PostgreSQL database with 6,748 iniciativas (XIV-XVII), 57,078 events, 34 agenda items
+- Flask REST API backend with multi-legislature support
 - Automatic data loading from API
 - Responsive design for all screen sizes
 
@@ -126,9 +126,9 @@ viriato/
 ## Data Sources
 
 All data from [parlamento.pt open data portal](https://www.parlamento.pt/Cidadania/Paginas/DadosAbertos.aspx):
-- Legislature XVII (2024-present)
+- Legislatures XIV-XVII (2019-present)
 - 17 datasets covering initiatives, agenda, deputies, committees, etc.
-- Updated: Jun-Dec 2025
+- Updated: Oct 2019 - Dec 2025
 
 ## Inspiration
 

@@ -1310,7 +1310,7 @@
                 <h1>Viriato</h1>
                 <div class="home-subtitle">Portuguese Parliament Open Data</div>
                 <div class="home-description">
-                    Visualizing legislative activity from Portugal's XVII Legislature (2024-present).
+                    Visualizing legislative activity from Portugal's XVII Legislature (2025-present).
                     Explore parliamentary agenda and legislative initiatives.
                 </div>
             </div>
@@ -1364,7 +1364,7 @@
         <div class="container">
             <div class="iniciativas-header">
                 <h1>Iniciativas Legislativas</h1>
-                <p>XVII Legislature (2024-present)</p>
+                <p>XVII Legislature (2025-present)</p>
                 <div class="stats">
                     <div class="stat-box">
                         <div class="stat-number" id="ini-total">-</div>
@@ -1386,8 +1386,8 @@
                     <label class="filter-label" id="legislature-label">Legislatura:</label>
                     <div class="filter-buttons" role="group" aria-labelledby="legislature-label">
                         <button class="filter-btn" data-legislature="all">Todas</button>
-                        <button class="filter-btn active" data-legislature="XVII">XVII (2024-presente)</button>
-                        <button class="filter-btn" data-legislature="XVI">XVI (2024)</button>
+                        <button class="filter-btn active" data-legislature="XVII">XVII (2025-presente)</button>
+                        <button class="filter-btn" data-legislature="XVI">XVI (2024-2025)</button>
                         <button class="filter-btn" data-legislature="XV">XV (2022-2024)</button>
                         <button class="filter-btn" data-legislature="XIV">XIV (2019-2022)</button>
                     </div>
@@ -1515,7 +1515,7 @@
     <footer>
         <p>
             Data source: <a href="https://www.parlamento.pt" target="_blank">Parlamento.pt</a> |
-            Legislature XVII (2024-present) |
+            Legislature XVII (2025-present) |
             API: <a href="https://viriato-api.onrender.com/api/health" target="_blank">viriato-api.onrender.com</a>
         </p>
     </footer>
@@ -1613,7 +1613,7 @@
                 if (SELECTED_LEGISLATURE === 'all') {
                     headerText.textContent = 'All Legislatures (XIV-XVII)';
                 } else if (SELECTED_LEGISLATURE === 'XVII') {
-                    headerText.textContent = 'XVII Legislature (2024-present)';
+                    headerText.textContent = 'XVII Legislature (2025-present)';
                 } else {
                     headerText.textContent = `Legislature ${SELECTED_LEGISLATURE}`;
                 }
