@@ -1385,8 +1385,8 @@
                 <div class="filter-group">
                     <label class="filter-label" id="legislature-label">Legislatura:</label>
                     <div class="filter-buttons" role="group" aria-labelledby="legislature-label">
-                        <button class="filter-btn active" data-legislature="all">Todas</button>
-                        <button class="filter-btn" data-legislature="XVII">XVII (2024-presente)</button>
+                        <button class="filter-btn" data-legislature="all">Todas</button>
+                        <button class="filter-btn active" data-legislature="XVII">XVII (2024-presente)</button>
                         <button class="filter-btn" data-legislature="XVI">XVI (2024)</button>
                         <button class="filter-btn" data-legislature="XV">XV (2022-2024)</button>
                         <button class="filter-btn" data-legislature="XIV">XIV (2019-2022)</button>
@@ -1528,7 +1528,7 @@
         let INITIATIVES_DATA = [];
         let AGENDA_DATA = [];
         let SEARCH_RESULTS = null;  // null = no search, array = search results
-        let SELECTED_LEGISLATURE = 'all';  // Track selected legislature
+        let SELECTED_LEGISLATURE = 'XVII';  // Track selected legislature (default to current)
 
         // Page titles for each route
         const PAGE_TITLES = {
@@ -1612,6 +1612,8 @@
                 const headerText = document.querySelector('.iniciativas-header p');
                 if (SELECTED_LEGISLATURE === 'all') {
                     headerText.textContent = 'All Legislatures (XIV-XVII)';
+                } else if (SELECTED_LEGISLATURE === 'XVII') {
+                    headerText.textContent = 'XVII Legislature (2024-present)';
                 } else {
                     headerText.textContent = `Legislature ${SELECTED_LEGISLATURE}`;
                 }
