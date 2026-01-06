@@ -17,38 +17,52 @@
 - **Status:** ✅ Complete and deployed
 - **What:** Hash-routed SPA with 3 views:
   - **Home** (`#/`) - Purple gradient landing with stats cards
-  - **Iniciativas** (`#/iniciativas`) - Legislative initiatives tracker
+  - **Iniciativas** (`#/iniciativas`) - Legislative initiatives tracker with multi-legislature support
   - **Agenda** (`#/agenda`) - Parliamentary calendar
+- **Features:**
+  - Legislature selector (All, XVII, XVI, XV, XIV)
+  - Full-text search with Portuguese language support
+  - Type filters (Laws, Resolutions, Government Bills, etc.)
+  - Lifecycle funnels showing phase progression
+  - Analytics widgets (by type, month, party, origin)
 
 ### Flask REST API
 - **File:** `api/app.py`
 - **Status:** ✅ Deployed on Render.com
 - **Endpoints:**
   - `/api/health` - Health check
-  - `/api/iniciativas` - All initiatives with events
+  - `/api/iniciativas?legislature=XVII` - All initiatives (optional legislature filter)
   - `/api/iniciativas/<id>` - Single initiative
+  - `/api/legislatures` - List available legislatures with counts (NEW)
   - `/api/phase-counts` - Phase statistics
   - `/api/agenda` - Calendar events
-  - `/api/stats` - Overall statistics
-  - `/api/search` - Full-text search (Portuguese)
+  - `/api/stats?legislature=XVII` - Overall statistics (optional legislature filter)
+  - `/api/search?q=query&legislature=XVII` - Full-text search (optional legislature filter)
 
 ### PostgreSQL Database
 - **Status:** ✅ Deployed on Render.com
 - **Tables:**
-  - `iniciativas` - 808 legislative initiatives
-  - `iniciativa_events` - 4,888 lifecycle events
+  - `iniciativas` - 6,748 legislative initiatives (all 4 legislatures)
+  - `iniciativa_events` - 57,078 lifecycle events
   - `agenda_events` - 34 calendar events
 
 ## Data Status
 
 **Source:** Portuguese Parliament open data portal
-**Legislature:** XVII (2024-present)
-**Period:** June-December 2025
+**Legislatures:** XIV, XV, XVI, XVII (2019-present)
+**Period:** October 2019 - December 2025
 
-### Downloaded Datasets (17 total, 45.6 MB)
-- ✅ Initiatives (IniciativasXVII)
+### Downloaded Datasets
+**Initiatives by Legislature:**
+- ✅ Legislature XIV (2019-2022): 2,587 initiatives
+- ✅ Legislature XV (2022-2024): 1,952 initiatives
+- ✅ Legislature XVI (2024): 1,401 initiatives
+- ✅ Legislature XVII (2024-present): 808 initiatives
+- **Total: 6,748 initiatives** spanning 6+ years
+
+**Other Datasets (17 total, ~210 MB):**
 - ✅ Parliamentary Agenda (AgendaXVII)
-- ✅ Deputies Activity (AtividadeDeputadoXVII)
+- ✅ Deputies Activity (AtividadeDeputadoXVI, XVII)
 - ✅ 14 other datasets (committees, votes, questions, etc.)
 
 ### Processed Data
@@ -56,6 +70,7 @@
 - ✅ 100 initiative samples prepared
 - ✅ Phase counts calculated
 - ✅ Lifecycle analysis documented
+- ✅ All 4 legislatures loaded to PostgreSQL
 
 ## Documentation Status
 
@@ -77,12 +92,20 @@ All documentation uses:
 **Recently Completed:**
 - ✅ Search functionality in frontend (uses /api/search endpoint)
 - ✅ Dynamic funnel data computation from loaded initiatives
+- ✅ Multi-legislature support (XIV, XV, XVI, XVII)
+- ✅ Legislature selector in frontend
+- ✅ All 4 legislatures loaded to database (6,748 initiatives total)
+
+**Deployment Status:**
+- ✅ API changes pushed to GitHub (will auto-deploy on Render.com)
+- ⏳ Frontend changes pushed to GitHub (GitHub Pages deployment in progress, 1-10 minutes)
 
 **Potential features to consider:**
 - Deputy profiles and voting records
 - More detailed initiative information
 - Committee meeting details
-- Historical comparisons
+- Cross-legislature comparisons and analytics
+- Historical trends visualization
 
 ## Development Notes
 
