@@ -86,7 +86,7 @@ def get_iniciativas():
         # Build query with optional filter
         query = """
             SELECT
-                ini_id, legislature, number, type, type_description,
+                id, ini_id, legislature, number, type, type_description,
                 title, author_type, author_name, start_date, end_date,
                 current_status, is_completed, text_link, raw_data
             FROM iniciativas
@@ -103,29 +103,29 @@ def get_iniciativas():
         cur.execute(query, params)
         iniciativas = cur.fetchall()
 
-        # Get all initiative IDs for batch event query
-        ini_ids = [ini['ini_id'] for ini in iniciativas]
+        # Get all initiative database IDs for batch event query
+        ini_db_ids = [ini['id'] for ini in iniciativas]
 
         # Batch fetch all events (avoids N+1 query problem)
         events_query = """
-            SELECT ini_id, phase_name, phase_date, phase_description
+            SELECT iniciativa_id, phase_name, event_date, observations
             FROM iniciativa_events
-            WHERE ini_id = ANY(%s)
-            ORDER BY ini_id, phase_date
+            WHERE iniciativa_id = ANY(%s)
+            ORDER BY iniciativa_id, event_date
         """
-        cur.execute(events_query, (ini_ids,))
+        cur.execute(events_query, (ini_db_ids,))
         all_events = cur.fetchall()
 
-        # Group events by initiative ID
-        events_by_ini = {}
+        # Group events by initiative database ID
+        events_by_ini_db_id = {}
         for event in all_events:
-            ini_id = event['ini_id']
-            if ini_id not in events_by_ini:
-                events_by_ini[ini_id] = []
-            events_by_ini[ini_id].append({
+            ini_db_id = event['iniciativa_id']
+            if ini_db_id not in events_by_ini_db_id:
+                events_by_ini_db_id[ini_db_id] = []
+            events_by_ini_db_id[ini_db_id].append({
                 'Fase': event['phase_name'],
-                'DataFase': event['phase_date'].isoformat() if event['phase_date'] else None,
-                'DescFase': event['phase_description']
+                'DataFase': event['event_date'].isoformat() if event['event_date'] else None,
+                'DescFase': event['observations']
             })
 
         # Build response using normalized columns (no raw_data needed!)
@@ -142,7 +142,7 @@ def get_iniciativas():
                     'IniNr': ini['number'],
                     'IniLeg': ini['legislature'],
                     'IniLinkTexto': ini['text_link'],
-                    'IniEventos': events_by_ini.get(ini['ini_id'], []),
+                    'IniEventos': events_by_ini_db_id.get(ini['id'], []),
                     'IniAutorGruposParlamentares': raw_data.get('IniAutorGruposParlamentares'),
                     'IniAutorOutros': raw_data.get('IniAutorOutros'),
                     'DataInicioleg': ini['start_date'].isoformat() if ini['start_date'] else None,
