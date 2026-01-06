@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Visualização de dados abertos do Parlamento Português - Iniciativas legislativas e agenda parlamentar">
-    <title>Viriato - Portuguese Parliament Open Data</title>
+    <meta name="description" content="Visualização de dados abertos do Parlamento Português - Iniciativas legislativas e agenda parlamentar da XVII Legislatura">
+    <title>Viriato - Dados Abertos do Parlamento Português</title>
     <style>
         /* CSS Custom Properties for consistent theming */
         :root {
@@ -1308,50 +1308,50 @@
         <div class="container">
             <div class="home-header">
                 <h1>Viriato</h1>
-                <div class="home-subtitle">Portuguese Parliament Open Data</div>
+                <div class="home-subtitle">Dados Abertos do Parlamento Português</div>
                 <div class="home-description">
-                    Visualizing legislative activity from Portugal's XVII Legislature (2025-present).
-                    Explore parliamentary agenda and legislative initiatives.
+                    Visualização da atividade legislativa da XVII Legislatura (2025-presente).
+                    Explore a agenda parlamentar e as iniciativas legislativas.
                 </div>
             </div>
 
             <div class="viewers">
                 <div class="viewer-card" onclick="navigateTo('#/agenda')" onkeydown="handleCardKeydown(event, '#/agenda')" tabindex="0" role="button" aria-label="Ver Agenda Parlamentar">
                     <div class="viewer-icon" aria-hidden="true">📅</div>
-                    <div class="viewer-title">Parliamentary Agenda</div>
+                    <div class="viewer-title">Agenda Parlamentar</div>
                     <div class="viewer-description">
-                        View the daily parliamentary calendar showing plenary sessions, committee meetings, and other events.
+                        Consulte o calendário parlamentar com sessões plenárias, reuniões de comissões e outros eventos.
                     </div>
                     <div class="viewer-stats">
                         <div class="stat">
                             <span class="stat-value" id="home-agenda-count">34</span>
-                            <div class="stat-label">Events</div>
+                            <div class="stat-label">Eventos</div>
                         </div>
                         <div class="stat">
                             <span class="stat-value">Jan 2026</span>
-                            <div class="stat-label">Current</div>
+                            <div class="stat-label">Atual</div>
                         </div>
                     </div>
                 </div>
 
                 <div class="viewer-card" onclick="navigateTo('#/iniciativas')" onkeydown="handleCardKeydown(event, '#/iniciativas')" tabindex="0" role="button" aria-label="Ver Iniciativas Legislativas">
                     <div class="viewer-icon" aria-hidden="true">📋</div>
-                    <div class="viewer-title">Legislative Initiatives</div>
+                    <div class="viewer-title">Iniciativas Legislativas</div>
                     <div class="viewer-description">
-                        Explore legislative initiatives through all phases of the parliamentary process.
+                        Explore as iniciativas legislativas ao longo de todas as fases do processo parlamentar.
                     </div>
                     <div class="viewer-stats">
                         <div class="stat">
                             <span class="stat-value" id="home-ini-count">808</span>
-                            <div class="stat-label">Initiatives</div>
+                            <div class="stat-label">Iniciativas</div>
                         </div>
                         <div class="stat">
                             <span class="stat-value" id="home-ini-completed">102</span>
-                            <div class="stat-label">Completed</div>
+                            <div class="stat-label">Concluídas</div>
                         </div>
                         <div class="stat">
                             <span class="stat-value">7</span>
-                            <div class="stat-label">Types</div>
+                            <div class="stat-label">Tipos</div>
                         </div>
                     </div>
                 </div>
@@ -1472,12 +1472,12 @@
     <div id="agenda-view" class="view" role="tabpanel" aria-labelledby="agenda-tab">
         <div class="container">
             <div class="agenda-header">
-                <h1>Parliamentary Agenda</h1>
-                <p>XVII Legislature Calendar</p>
+                <h1>Agenda Parlamentar</h1>
+                <p>Calendário da XVII Legislatura</p>
                 <div class="stats">
                     <div class="stat-box">
                         <div class="stat-number" id="agenda-total">-</div>
-                        <div class="stat-box-label">Events</div>
+                        <div class="stat-box-label">Eventos</div>
                     </div>
                 </div>
             </div>
@@ -1514,8 +1514,8 @@
     <!-- Footer -->
     <footer>
         <p>
-            Data source: <a href="https://www.parlamento.pt" target="_blank">Parlamento.pt</a> |
-            Legislature XVII (2025-present) |
+            Fonte de dados: <a href="https://www.parlamento.pt" target="_blank">Parlamento.pt</a> |
+            XVII Legislatura (2025-presente) |
             API: <a href="https://viriato-api.onrender.com/api/health" target="_blank">viriato-api.onrender.com</a>
         </p>
     </footer>
@@ -1532,7 +1532,7 @@
 
         // Page titles for each route
         const PAGE_TITLES = {
-            'home': 'Viriato - Portuguese Parliament Open Data',
+            'home': 'Viriato - Dados Abertos do Parlamento Português',
             'iniciativas': 'Iniciativas Legislativas - Viriato',
             'agenda': 'Agenda Parlamentar - Viriato'
         };
