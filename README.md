@@ -1,15 +1,19 @@
 # Viriato
 
-Visualizing Portuguese Parliament open data. Making democracy more accessible and transparent.
+Visualização de dados abertos do Parlamento Português. Tornando a democracia mais acessível e transparente.
 
-**Live Site:** https://loukach.github.io/viriato/
+**Site:** https://loukach.github.io/viriato/
 
-## What This Is
+## O Que É
 
-Two interactive web tools built with Portuguese Parliament's open data:
+Duas ferramentas interativas construídas com dados abertos do Parlamento Português:
 
-1. **Parliamentary Agenda** - Daily calendar of all parliament activities
-2. **Legislative Initiatives** - Track 808 bills and resolutions through the legislative process
+1. **Agenda Parlamentar** - Calendário diário de todas as atividades parlamentares
+2. **Iniciativas Legislativas** - Acompanhamento de 6,748 propostas através do processo legislativo
+
+## Idioma
+
+**O website está em Português (Portugal)** para servir os cidadãos portugueses que são o público-alvo desta aplicação. Toda a interface, documentação e conteúdo são apresentados em português de Portugal, refletindo a língua oficial do parlamento e da população que representa.
 
 ## Current Status
 

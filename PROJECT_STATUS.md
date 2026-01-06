@@ -1,6 +1,6 @@
 # Project Status - Viriato
 
-**Last Updated:** January 3, 2026
+**Last Updated:** January 6, 2026
 **Current Phase:** Production (Phase 3)
 
 ## Quick Overview
@@ -9,20 +9,23 @@
 **Live Site:** https://loukach.github.io/viriato/
 **API:** https://viriato-api.onrender.com
 **Tech:** SPA (vanilla JS) + Flask REST API + PostgreSQL
+**Language:** Portuguese (Portugal) - Interface in PT-PT to serve Portuguese citizens
 
 ## What's Built
 
 ### Single Page Application
 - **File:** `docs/index.html`
 - **Status:** ✅ Complete and deployed
+- **Language:** Portuguese (PT-PT) throughout the interface
+- **Target Audience:** Portuguese citizens - all text and interface elements are in Portuguese from Portugal
 - **What:** Hash-routed SPA with 3 views:
   - **Home** (`#/`) - Purple gradient landing with stats cards
   - **Iniciativas** (`#/iniciativas`) - Legislative initiatives tracker with multi-legislature support
   - **Agenda** (`#/agenda`) - Parliamentary calendar
 - **Features:**
-  - Legislature selector (All, XVII, XVI, XV, XIV)
+  - Legislature selector (Todas, XVII, XVI, XV, XIV)
   - Full-text search with Portuguese language support
-  - Type filters (Laws, Resolutions, Government Bills, etc.)
+  - Type filters (Projetos de Lei, Projetos de Resolução, Propostas de Lei, etc.)
   - Lifecycle funnels showing phase progression
   - Analytics widgets (by type, month, party, origin)
 
@@ -116,8 +119,9 @@ All documentation uses:
 - GitHub Pages for frontend hosting (free)
 - Render.com for API and database hosting (free tier)
 
-**Design principle:**
-"It's important to not hide the complexity of running a democracy" - we show all 60 phases, no simplification.
+**Design principles:**
+- "It's important to not hide the complexity of running a democracy" - we show all 60 phases, no simplification
+- **Language:** Portuguese (PT-PT) throughout - this website serves Portuguese citizens accessing their parliament's data, so all interface text, labels, and content are in Portuguese from Portugal
 
 **Git workflow:**
 - All prototypes in `/docs` for GitHub Pages
