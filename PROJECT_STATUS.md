@@ -1,6 +1,6 @@
 # Project Status - Viriato
 
-**Last Updated:** January 6, 2026
+**Last Updated:** January 7, 2026
 **Current Phase:** Production (Phase 3)
 
 ## Quick Overview
@@ -21,7 +21,7 @@
 - **What:** Hash-routed SPA with 3 views:
   - **Home** (`#/`) - Purple gradient landing with stats cards
   - **Iniciativas** (`#/iniciativas`) - Legislative initiatives tracker with multi-legislature support
-  - **Agenda** (`#/agenda`) - Parliamentary calendar
+  - **Agenda** (`#/agenda`) - Parliamentary calendar with interactive filters and dual view modes
 - **Features:**
   - Legislature selector (Todas, XVII, XVI, XV, XIV)
   - Full-text search with Portuguese language support
@@ -36,9 +36,10 @@
   - `/api/health` - Health check
   - `/api/iniciativas?legislature=XVII` - All initiatives (optional legislature filter)
   - `/api/iniciativas/<id>` - Single initiative
-  - `/api/legislatures` - List available legislatures with counts (NEW)
+  - `/api/legislatures` - List available legislatures with counts
   - `/api/phase-counts` - Phase statistics
   - `/api/agenda` - Calendar events
+  - `/api/agenda/<event_id>/initiatives` - Linked initiatives + event description (InternetText)
   - `/api/stats?legislature=XVII` - Overall statistics (optional legislature filter)
   - `/api/search?q=query&legislature=XVII` - Full-text search (optional legislature filter)
 
@@ -98,6 +99,21 @@ All documentation uses:
 - ✅ Multi-legislature support (XIV, XV, XVI, XVII)
 - ✅ Legislature selector in frontend
 - ✅ All 4 legislatures loaded to database (6,748 initiatives total)
+- ✅ **Agenda View Redesign (January 2026):**
+  - Two view modes: Grelha (grid) and Cronograma (timeline, default)
+  - 7 distinct event types with color-coded filters:
+    - Plenário (green) - Actual plenary sessions where laws are voted
+    - Comissões (blue) - Parliamentary committee meetings
+    - Grupos Parlamentares (purple) - Political party group meetings
+    - Conf. Líderes (cyan) - Leaders conference
+    - Grupos Trabalho (pink) - Working groups
+    - Visitas (amber) - Palace visits (schools, guided tours)
+    - Assistências (grey) - Plenary assistances (non-legislative)
+  - Interactive legend filters (click to show/hide event types)
+  - Weekend rows displayed as thin grey lines
+  - Event detail modal with description (InternetText field)
+  - Shows all days from first to last event (no arbitrary cutoff)
+  - Better day separation with thicker borders
 
 **Deployment Status:**
 - ✅ API changes pushed to GitHub (will auto-deploy on Render.com)

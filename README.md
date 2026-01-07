@@ -113,9 +113,18 @@ viriato/
 ## Key Features
 
 ### Parliamentary Agenda
-- Complete calendar view (all days, including weekends)
-- Color-coded event types (plenary, committees, visits, etc.)
-- 213 days tracked (Jun-Dec 2025)
+- Two view modes: **Grelha** (grid) and **Cronograma** (timeline)
+- 7 distinct event types with interactive filters:
+  - **Plenário** (green) - Plenary sessions where laws are voted
+  - **Comissões** (blue) - Committee meetings
+  - **Grupos Parlamentares** (purple) - Party group meetings
+  - **Conf. Líderes** (cyan) - Leaders conference
+  - **Grupos Trabalho** (pink) - Working groups
+  - **Visitas** (amber) - Palace visits (schools, tours)
+  - **Assistências** (grey) - Plenary assistances
+- Click legend items to show/hide event types
+- Event detail modal with description (visit details, school names, times)
+- Complete calendar view (all days from first to last event, including weekends)
 
 ### Legislative Initiatives
 - Two lifecycle funnels showing progression:
