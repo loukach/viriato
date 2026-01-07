@@ -291,7 +291,7 @@ def get_agenda_initiatives(event_id):
         cur.execute("""
             SELECT
                 id, event_id, title, start_date, start_time, end_time,
-                section, committee, location, description
+                section, committee, location, description, raw_data
             FROM agenda_events
             WHERE event_id = %s
         """, (event_id,))
@@ -341,6 +341,10 @@ def get_agenda_initiatives(event_id):
                 'link_evidence': row['extracted_text']
             })
 
+        # Extract InternetText from raw_data if available
+        raw_data = agenda_row['raw_data'] or {}
+        internet_text = raw_data.get('InternetText')
+
         result = {
             'agenda_event': {
                 'event_id': agenda_row['event_id'],
@@ -350,7 +354,8 @@ def get_agenda_initiatives(event_id):
                 'end_time': str(agenda_row['end_time']) if agenda_row['end_time'] else None,
                 'section': agenda_row['section'],
                 'committee': agenda_row['committee'],
-                'location': agenda_row['location']
+                'location': agenda_row['location'],
+                'description_html': internet_text
             },
             'linked_initiatives': initiatives
         }

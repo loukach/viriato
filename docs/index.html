@@ -1673,6 +1673,36 @@
             opacity: 0.5;
         }
 
+        .event-description {
+            background: var(--bg-secondary);
+            border-left: 3px solid var(--primary);
+            padding: 16px 20px;
+            margin-bottom: 20px;
+            border-radius: 0 var(--radius-md) var(--radius-md) 0;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            color: var(--text-secondary);
+        }
+
+        .event-description p {
+            margin: 0 0 8px 0;
+        }
+
+        .event-description p:last-child {
+            margin-bottom: 0;
+        }
+
+        .initiatives-section-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-tertiary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border-light);
+        }
+
         .linked-initiative {
             background: var(--bg-card);
             border: 1px solid var(--border-light);
@@ -3302,16 +3332,34 @@
                 modalTitle.textContent = agenda_event.title;
                 modalSubtitle.textContent = `${agenda_event.date} • ${agenda_event.committee || agenda_event.section}`;
 
+                // Helper to decode HTML entities
+                function decodeHtml(html) {
+                    const txt = document.createElement('textarea');
+                    txt.innerHTML = html;
+                    return txt.value;
+                }
+
+                // Build modal content
+                let html = '';
+
+                // Show event description if available
+                if (agenda_event.description_html) {
+                    const decodedHtml = decodeHtml(agenda_event.description_html);
+                    html += `<div class="event-description">${decodedHtml}</div>`;
+                }
+
                 // Render initiatives
                 if (linked_initiatives.length === 0) {
-                    modalBody.innerHTML = `
-                        <div class="modal-empty">
-                            <div class="modal-empty-icon">📋</div>
-                            <div>Sem iniciativas legislativas vinculadas a este evento.</div>
-                        </div>
-                    `;
+                    if (!agenda_event.description_html) {
+                        html += `
+                            <div class="modal-empty">
+                                <div class="modal-empty-icon">📋</div>
+                                <div>Sem informação adicional para este evento.</div>
+                            </div>
+                        `;
+                    }
                 } else {
-                    let html = '';
+                    html += `<div class="initiatives-section-title">Iniciativas Legislativas</div>`;
                     linked_initiatives.forEach(ini => {
                         const statusClass = ini.is_completed ? 'completed' : '';
                         html += `
@@ -3340,8 +3388,8 @@
                             </div>
                         `;
                     });
-                    modalBody.innerHTML = html;
                 }
+                modalBody.innerHTML = html;
             } catch (error) {
                 console.error('Error loading agenda initiatives:', error);
                 modalBody.innerHTML = `
