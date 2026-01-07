@@ -1017,8 +1017,11 @@
 
         .bg-committee { background: linear-gradient(135deg, #3b82f6, #2563eb); }
         .bg-plenary { background: linear-gradient(135deg, #10b981, #059669); }
-        .bg-visits { background: linear-gradient(135deg, #f59e0b, #d97706); }
         .bg-groups { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
+        .bg-conference { background: linear-gradient(135deg, #0891b2, #0e7490); }
+        .bg-workgroup { background: linear-gradient(135deg, #ec4899, #db2777); }
+        .bg-visits { background: linear-gradient(135deg, #f59e0b, #d97706); }
+        .bg-assistances { background: linear-gradient(135deg, #94a3b8, #64748b); }
         .bg-other { background: linear-gradient(135deg, #6b7280, #4b5563); }
 
         /* Calendar Grid - compact for 7 days */
@@ -1132,9 +1135,29 @@
             color: #5b21b6;
         }
 
-        .agenda-event.other {
+        .agenda-event.conference {
+            background: #cffafe;
+            color: #0e7490;
+        }
+
+        .agenda-event.workgroup {
+            background: #fce7f3;
+            color: #9d174d;
+        }
+
+        .agenda-event.visits {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .agenda-event.assistances {
             background: #f1f5f9;
             color: #475569;
+        }
+
+        .agenda-event.other {
+            background: #e5e7eb;
+            color: #374151;
         }
 
         /* View Toggle */
@@ -1343,9 +1366,33 @@
             border-left: 2px solid #8b5cf6;
         }
 
-        .timeline-event.other {
+        .timeline-event.conference {
+            background: #cffafe;
+            color: #0e7490;
+            border-left: 2px solid #0891b2;
+        }
+
+        .timeline-event.workgroup {
+            background: #fce7f3;
+            color: #9d174d;
+            border-left: 2px solid #ec4899;
+        }
+
+        .timeline-event.visits {
+            background: #fef3c7;
+            color: #92400e;
+            border-left: 2px solid #f59e0b;
+        }
+
+        .timeline-event.assistances {
             background: #f1f5f9;
             color: #475569;
+            border-left: 2px solid #94a3b8;
+        }
+
+        .timeline-event.other {
+            background: #e5e7eb;
+            color: #374151;
             border-left: 2px solid #6b7280;
         }
 
@@ -2048,10 +2095,25 @@
                         <span class="legend-shape bg-groups"></span>
                         <span>Grupos Parlamentares</span>
                     </label>
-                    <label class="legend-filter active" data-type="other">
-                        <input type="checkbox" checked onchange="toggleAgendaFilter('other', this.checked)">
-                        <span class="legend-shape bg-other"></span>
-                        <span>Outros</span>
+                    <label class="legend-filter active" data-type="conference">
+                        <input type="checkbox" checked onchange="toggleAgendaFilter('conference', this.checked)">
+                        <span class="legend-shape bg-conference"></span>
+                        <span>Conf. Líderes</span>
+                    </label>
+                    <label class="legend-filter active" data-type="workgroup">
+                        <input type="checkbox" checked onchange="toggleAgendaFilter('workgroup', this.checked)">
+                        <span class="legend-shape bg-workgroup"></span>
+                        <span>Grupos Trabalho</span>
+                    </label>
+                    <label class="legend-filter active" data-type="visits">
+                        <input type="checkbox" checked onchange="toggleAgendaFilter('visits', this.checked)">
+                        <span class="legend-shape bg-visits"></span>
+                        <span>Visitas</span>
+                    </label>
+                    <label class="legend-filter active" data-type="assistances">
+                        <input type="checkbox" checked onchange="toggleAgendaFilter('assistances', this.checked)">
+                        <span class="legend-shape bg-assistances"></span>
+                        <span>Assistências</span>
                     </label>
                 </div>
                 <div class="view-toggle">
@@ -3049,14 +3111,17 @@
         }
 
         function getAgendaEventType(section, title) {
-            // Check title first for specific patterns
+            // Check section for specific event types
+            if (section.includes('Visitas')) return 'visits';
+            if (section.includes('Assistências')) return 'assistances';
+            if (section.includes('Conferência')) return 'conference';
+            if (section.includes('Grupo de Trabalho')) return 'workgroup';
+            // Check title for specific patterns
             if (title && (title.includes('Audiências') || title.includes('Audiência'))) return 'groups';
-            if (title && title.includes('Plenário')) return 'plenary';
-            // Then check section
+            // Core parliamentary types
             if (section.includes('Plenário') || section.includes('Plenario')) return 'plenary';
             if (section.includes('Grupos') || section.includes('Partidos') || section.includes('DURP')) return 'groups';
             if (section.includes('Comiss')) return 'committee';
-            // Everything else is "other": Visitas, Conferência de Líderes, Grupo de Trabalho, Assistências
             return 'other';
         }
 
@@ -3081,7 +3146,10 @@
             plenary: true,
             committee: true,
             groups: true,
-            other: true
+            visits: true,
+            conference: true,
+            workgroup: true,
+            assistances: true
         };
 
         function toggleAgendaFilter(type, checked) {
