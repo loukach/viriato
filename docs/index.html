@@ -3026,7 +3026,8 @@
             if (section.includes('Plenário') || section.includes('Plenario')) return 'plenary';
             if (section.includes('Grupos') || section.includes('Partidos') || section.includes('DURP')) return 'groups';
             if (section.includes('Comiss')) return 'committee';
-            return 'committee';
+            // Everything else is "other": Visitas, Conferência de Líderes, Grupo de Trabalho, Assistências
+            return 'other';
         }
 
         function shortenAgendaTitle(title) {
