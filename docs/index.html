@@ -849,9 +849,70 @@
             content: '';
             width: 8px;
             height: 8px;
-            background: var(--success);
             border-radius: 50%;
             display: inline-block;
+        }
+
+        /* Status category styles */
+        .initiative-status.status-submitted {
+            color: #6b7280;
+        }
+        .initiative-status.status-submitted::before {
+            background: #9ca3af;
+        }
+
+        .initiative-status.status-announced {
+            color: #0284c7;
+        }
+        .initiative-status.status-announced::before {
+            background: #38bdf8;
+        }
+
+        .initiative-status.status-discussion {
+            color: #2563eb;
+        }
+        .initiative-status.status-discussion::before {
+            background: #3b82f6;
+        }
+
+        .initiative-status.status-voting {
+            color: #ea580c;
+        }
+        .initiative-status.status-voting::before {
+            background: #f97316;
+        }
+
+        .initiative-status.status-finalizing {
+            color: #7c3aed;
+        }
+        .initiative-status.status-finalizing::before {
+            background: #8b5cf6;
+        }
+
+        .initiative-status.status-approved {
+            color: #059669;
+        }
+        .initiative-status.status-approved::before {
+            background: #10b981;
+        }
+
+        .initiative-status.status-rejected {
+            color: #dc2626;
+        }
+        .initiative-status.status-rejected::before {
+            background: #ef4444;
+        }
+
+        .status-category-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            opacity: 0.8;
+        }
+
+        .status-phase-name {
+            font-size: 0.85rem;
+            opacity: 0.9;
         }
 
         .initiative-details {
@@ -2100,19 +2161,51 @@
             color: var(--text-tertiary);
         }
 
-        .initiative-status {
+        .linked-initiative .initiative-status {
             padding: 3px 8px;
             border-radius: var(--radius-sm);
             font-size: 0.75rem;
             font-weight: 500;
-            background: #f0f9ff;
-            color: #0369a1;
             display: inline-block;
         }
 
-        .initiative-status.completed {
-            background: #f0fdf4;
-            color: #15803d;
+        .linked-initiative .initiative-status::before {
+            display: none;
+        }
+
+        .linked-initiative .initiative-status.status-submitted {
+            background: #f3f4f6;
+            color: #6b7280;
+        }
+
+        .linked-initiative .initiative-status.status-announced {
+            background: #e0f2fe;
+            color: #0284c7;
+        }
+
+        .linked-initiative .initiative-status.status-discussion {
+            background: #dbeafe;
+            color: #2563eb;
+        }
+
+        .linked-initiative .initiative-status.status-voting {
+            background: #ffedd5;
+            color: #ea580c;
+        }
+
+        .linked-initiative .initiative-status.status-finalizing {
+            background: #ede9fe;
+            color: #7c3aed;
+        }
+
+        .linked-initiative .initiative-status.status-approved {
+            background: #d1fae5;
+            color: #059669;
+        }
+
+        .linked-initiative .initiative-status.status-rejected {
+            background: #fee2e2;
+            color: #dc2626;
         }
 
         .initiative-link-btn {
@@ -2984,6 +3077,77 @@
             return initiative._currentStatus || 'Desconhecido';
         }
 
+        // Map 60+ phases to 7 simplified categories
+        function getStatusCategory(status) {
+            if (!status || status === 'Desconhecido') {
+                return { category: 'submitted', label: 'Submetida', cssClass: 'status-submitted' };
+            }
+
+            const s = status.toLowerCase();
+
+            // Approved (final positive states)
+            if (s.includes('lei (publicação dr)') ||
+                s.includes('resolução da ar (publicação dr)') ||
+                s.includes('deliberação (publicação dr)')) {
+                return { category: 'approved', label: 'Aprovada', cssClass: 'status-approved' };
+            }
+
+            // Rejected (final negative states)
+            if (s.includes('rejeitad') ||
+                s.includes('retirada') ||
+                s.includes('caducad')) {
+                return { category: 'rejected', label: 'Rejeitada', cssClass: 'status-rejected' };
+            }
+
+            // Finalizing (post-vote, pre-publication)
+            if (s.includes('promulgação') ||
+                s.includes('referenda') ||
+                s.includes('redação final') ||
+                s.includes('redacção final') ||
+                s.includes('envio incm') ||
+                s.includes('decreto (publicação)') ||
+                s.includes('resolução (publicação dar)') ||
+                s.includes('envio à comissão para fixação')) {
+                return { category: 'finalizing', label: 'A finalizar', cssClass: 'status-finalizing' };
+            }
+
+            // Voting (critical decision points)
+            if (s.includes('votação') ||
+                s.includes('votacao')) {
+                return { category: 'voting', label: 'Em votação', cssClass: 'status-voting' };
+            }
+
+            // In Discussion (active debate)
+            if (s.includes('discussão') ||
+                s.includes('discussao') ||
+                s.includes('apreciação') ||
+                s.includes('apreciacao') ||
+                s.includes('parecer')) {
+                return { category: 'discussion', label: 'Em discussão', cssClass: 'status-discussion' };
+            }
+
+            // Announced (committee assignment, waiting for discussion)
+            if (s.includes('anúncio') ||
+                s.includes('anuncio') ||
+                s.includes('baixa comissão') ||
+                s.includes('baixa comissao') ||
+                s.includes('separata')) {
+                return { category: 'announced', label: 'Anunciada', cssClass: 'status-announced' };
+            }
+
+            // Submitted (initial stages)
+            if (s.includes('entrada') ||
+                s.includes('publicação') ||
+                s.includes('publicacao') ||
+                s.includes('admissão') ||
+                s.includes('admissao')) {
+                return { category: 'submitted', label: 'Submetida', cssClass: 'status-submitted' };
+            }
+
+            // Default to announced for unknown active phases
+            return { category: 'announced', label: 'Em progresso', cssClass: 'status-announced' };
+        }
+
         function getAuthors(initiative) {
             const authors = [];
 
@@ -3026,6 +3190,7 @@
             let html = '';
             filtered.forEach(ini => {
                 const status = getCurrentStatus(ini);
+                const statusInfo = getStatusCategory(status);
                 const authors = getAuthors(ini);
                 const typeClass = `type-${ini.IniTipo}`;
                 const events = ini.IniEventos || [];
@@ -3051,8 +3216,8 @@
                             <span aria-label="Data de início"><span aria-hidden="true">📅</span> ${formatDate(ini.DataInicioleg)}</span>
                             <span aria-label="${events.length} fases"><span aria-hidden="true">📊</span> ${events.length} fases</span>
                         </div>
-                        <div class="initiative-status">
-                            ${status}
+                        <div class="initiative-status ${statusInfo.cssClass}" title="${status}">
+                            <span class="status-category-label">${statusInfo.label}</span>
                         </div>
                         <div class="initiative-details" aria-hidden="true">
                             <strong>Tipo:</strong> ${ini.IniDescTipo}<br>
@@ -3233,6 +3398,7 @@
             let html = '';
             filtered.forEach(ini => {
                 const status = getCurrentStatus(ini);
+                const statusInfo = getStatusCategory(status);
                 const authors = getAuthors(ini);
                 const typeClass = `type-${ini.IniTipo}`;
                 const events = ini.IniEventos || [];
@@ -3258,8 +3424,8 @@
                             <span aria-label="Data de início"><span aria-hidden="true">📅</span> ${formatDate(ini.DataInicioleg)}</span>
                             <span aria-label="${events.length} fases"><span aria-hidden="true">📊</span> ${events.length} fases</span>
                         </div>
-                        <div class="initiative-status">
-                            ${status}
+                        <div class="initiative-status ${statusInfo.cssClass}" title="${status}">
+                            <span class="status-category-label">${statusInfo.label}</span>
                         </div>
                         <div class="initiative-details" aria-hidden="true">
                             <strong>Tipo:</strong> ${ini.IniDescTipo}<br>
@@ -3719,7 +3885,7 @@
                 } else {
                     html += `<div class="initiatives-section-title">Iniciativas Legislativas</div>`;
                     linked_initiatives.forEach(ini => {
-                        const statusClass = ini.is_completed ? 'completed' : '';
+                        const statusInfo = getStatusCategory(ini.status || 'Em curso');
                         html += `
                             <div class="linked-initiative">
                                 <div class="initiative-header-row">
@@ -3735,7 +3901,7 @@
                                     ` : ''}
                                     <div class="initiative-meta-item">
                                         <span class="initiative-meta-label">Estado:</span>
-                                        <span class="initiative-status ${statusClass}">${ini.status || 'Em curso'}</span>
+                                        <span class="initiative-status ${statusInfo.cssClass}" title="${ini.status || ''}">${statusInfo.label}</span>
                                     </div>
                                 </div>
                                 ${ini.text_link ? `
