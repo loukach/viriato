@@ -1396,6 +1396,16 @@
             border-left: 2px solid #6b7280;
         }
 
+        /* Event time - hidden on desktop, shown on mobile */
+        .event-time {
+            display: none;
+        }
+
+        .event-title {
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
         /* Loading & Error States */
         .loading {
             text-align: center;
@@ -1595,6 +1605,284 @@
 
             .stat-box {
                 width: 100%;
+            }
+        }
+
+        /* Mobile-friendly Agenda Styles */
+        @media (max-width: 900px) {
+            /* Legend filters - horizontal scroll on tablet */
+            .agenda-controls .legend {
+                justify-content: flex-start;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: none;
+                padding: 16px;
+                gap: 10px;
+            }
+
+            .agenda-controls .legend::-webkit-scrollbar {
+                display: none;
+            }
+
+            .legend-filter {
+                flex-shrink: 0;
+                padding: 8px 14px;
+            }
+
+            /* Timeline adjustments for tablet */
+            .timeline {
+                min-width: 900px;
+            }
+
+            .hour-headers {
+                grid-template-columns: 80px repeat(15, 1fr);
+            }
+
+            .day-row {
+                grid-template-columns: 80px 1fr;
+            }
+
+            .day-label {
+                padding: 6px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            /* Agenda header */
+            .agenda-header h1 {
+                font-size: 1.5rem;
+            }
+
+            .agenda-header p {
+                font-size: 0.95rem;
+            }
+
+            /* Legend - more compact */
+            .agenda-controls .legend {
+                padding: 12px;
+                gap: 8px;
+                margin-bottom: 16px;
+            }
+
+            .legend-filter {
+                padding: 6px 10px;
+                font-size: 0.8rem;
+                white-space: nowrap;
+            }
+
+            .legend-shape {
+                width: 18px;
+                height: 18px;
+            }
+
+            /* View toggle */
+            .view-toggle {
+                width: 100%;
+                justify-content: center;
+                margin-bottom: 16px;
+            }
+
+            .view-btn {
+                flex: 1;
+                text-align: center;
+            }
+
+            /* Timeline - switch to mobile card layout */
+            .timeline-container {
+                overflow-x: hidden;
+            }
+
+            .timeline {
+                min-width: unset;
+                display: block;
+            }
+
+            .hour-headers {
+                display: none;
+            }
+
+            .day-row {
+                display: block;
+                min-height: unset;
+                border-bottom: 1px solid var(--border-light);
+                padding: 12px;
+            }
+
+            .day-row.weekend {
+                min-height: unset;
+                padding: 8px 12px;
+            }
+
+            .day-label {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                gap: 8px;
+                padding: 0;
+                margin-bottom: 10px;
+                border-right: none;
+                background: transparent;
+            }
+
+            .timeline .day-name {
+                font-size: 0.75rem;
+            }
+
+            .timeline .day-date {
+                font-size: 1rem;
+            }
+
+            .events-area {
+                position: static;
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+                height: auto !important;
+            }
+
+            .hour-grid {
+                display: none;
+            }
+
+            .timeline-event {
+                position: static !important;
+                left: unset !important;
+                width: 100% !important;
+                top: unset !important;
+                height: auto;
+                min-height: 44px;
+                padding: 10px 12px;
+                border-radius: var(--radius-sm);
+                font-size: 0.85rem;
+                white-space: normal;
+                line-height: 1.4;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+
+            .timeline-event:hover {
+                max-width: none;
+            }
+
+            /* Show event time on mobile */
+            .event-time {
+                display: inline-block;
+                font-weight: 600;
+                font-size: 0.8rem;
+                min-width: 45px;
+                flex-shrink: 0;
+                opacity: 0.9;
+            }
+
+            .event-title {
+                flex: 1;
+            }
+
+            /* Calendar Grid - mobile optimizations with horizontal scroll */
+            .calendar-grid {
+                font-size: 0.75rem;
+                min-width: 600px;
+                overflow-x: auto;
+            }
+
+            .calendar-day-header {
+                padding: 8px 4px;
+            }
+
+            .calendar-day-name {
+                font-size: 0.55rem;
+            }
+
+            .calendar-day-date {
+                font-size: 0.8rem;
+            }
+
+            .time-label {
+                font-size: 0.55rem;
+                padding: 2px;
+            }
+
+            .grid-cell {
+                min-height: 35px;
+            }
+
+            .agenda-event {
+                padding: 4px 6px;
+                font-size: 0.65rem;
+                min-height: 32px;
+                display: flex;
+                align-items: center;
+            }
+
+            .agenda-event:hover {
+                min-height: 32px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            /* Extra small phones */
+            .agenda-header h1 {
+                font-size: 1.3rem;
+            }
+
+            .agenda-header p {
+                font-size: 0.85rem;
+            }
+
+            .agenda-controls .legend {
+                padding: 10px;
+                gap: 6px;
+            }
+
+            .legend-filter {
+                padding: 8px 12px;
+                font-size: 0.75rem;
+            }
+
+            .legend-shape {
+                width: 18px;
+                height: 18px;
+            }
+
+            .view-btn {
+                padding: 8px 12px;
+                font-size: 0.75rem;
+            }
+
+            .day-row {
+                padding: 10px;
+            }
+
+            .timeline-event {
+                padding: 8px 10px;
+                font-size: 0.8rem;
+                min-height: 40px;
+            }
+
+            /* Modal adjustments */
+            .modal-content {
+                width: 95%;
+                max-height: 90vh;
+                margin: 10px;
+            }
+
+            .modal-header {
+                padding: 16px;
+            }
+
+            .modal-header h2 {
+                font-size: 1rem;
+            }
+
+            .modal-body {
+                padding: 16px;
+            }
+
+            .modal-close {
+                width: 36px;
+                height: 36px;
+                font-size: 1.2rem;
             }
         }
 
@@ -3350,13 +3638,15 @@
                     const type = getAgendaEventType(event.Section, event.Title);
                     const title = shortenAgendaTitle(event.Title);
                     const topPx = stackPos * EVENT_HEIGHT + 1;
+                    const timeDisplay = event.EventStartTime ? event.EventStartTime.substring(0, 5) : '';
 
                     html += `
                         <div class="timeline-event ${type}"
                              title="${event.Title}"
                              onclick="showAgendaInitiatives(${event.Id})"
                              style="left: ${leftPercent}%; width: ${widthPercent}%; top: ${topPx}px;">
-                            ${title}
+                            <span class="event-time">${timeDisplay}</span>
+                            <span class="event-title">${title}</span>
                         </div>
                     `;
                 });
