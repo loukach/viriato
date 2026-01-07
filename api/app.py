@@ -272,6 +272,100 @@ def get_agenda():
         return jsonify({'error': str(e)}), 500
 
 
+@app.route('/api/agenda/<int:event_id>/initiatives', methods=['GET'])
+def get_agenda_initiatives(event_id):
+    """
+    Get all initiatives linked to an agenda event.
+
+    Returns:
+        {
+            "agenda_event": {...},
+            "linked_initiatives": [...]
+        }
+    """
+    try:
+        conn = get_db_connection()
+        cur = conn.cursor()
+
+        # Get agenda event details
+        cur.execute("""
+            SELECT
+                id, event_id, title, start_date, start_time, end_time,
+                section, committee, location, description
+            FROM agenda_events
+            WHERE event_id = %s
+        """, (event_id,))
+
+        agenda_row = cur.fetchone()
+
+        if not agenda_row:
+            return jsonify({'error': 'Agenda event not found'}), 404
+
+        # Get linked initiatives with their details
+        cur.execute("""
+            SELECT
+                i.ini_id,
+                i.legislature,
+                i.number,
+                i.type,
+                i.type_description,
+                i.title,
+                i.author_name,
+                i.current_status,
+                i.is_completed,
+                i.text_link,
+                l.link_type,
+                l.link_confidence,
+                l.extracted_text
+            FROM agenda_initiative_links l
+            JOIN iniciativas i ON l.iniciativa_id = i.id
+            WHERE l.agenda_event_id = %s
+            ORDER BY l.link_confidence DESC, i.ini_id
+        """, (agenda_row['id'],))
+
+        initiatives = []
+        for row in cur.fetchall():
+            initiatives.append({
+                'ini_id': row['ini_id'],
+                'legislature': row['legislature'],
+                'number': row['number'],
+                'type': row['type'],
+                'type_description': row['type_description'],
+                'title': row['title'],
+                'author': row['author_name'],
+                'status': row['current_status'],
+                'is_completed': row['is_completed'],
+                'text_link': row['text_link'],
+                'link_type': row['link_type'],
+                'link_confidence': float(row['link_confidence']) if row['link_confidence'] else None,
+                'link_evidence': row['extracted_text']
+            })
+
+        result = {
+            'agenda_event': {
+                'event_id': agenda_row['event_id'],
+                'title': agenda_row['title'],
+                'date': agenda_row['start_date'].isoformat() if agenda_row['start_date'] else None,
+                'start_time': agenda_row['start_time'],
+                'end_time': agenda_row['end_time'],
+                'section': agenda_row['section'],
+                'committee': agenda_row['committee'],
+                'location': agenda_row['location']
+            },
+            'linked_initiatives': initiatives
+        }
+
+        cur.close()
+        conn.close()
+
+        return jsonify(result)
+
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return jsonify({'error': str(e)}), 500
+
+
 @app.route('/api/legislatures', methods=['GET'])
 def get_legislatures():
     """Get list of available legislatures with counts."""
