@@ -346,8 +346,8 @@ def get_agenda_initiatives(event_id):
                 'event_id': agenda_row['event_id'],
                 'title': agenda_row['title'],
                 'date': agenda_row['start_date'].isoformat() if agenda_row['start_date'] else None,
-                'start_time': agenda_row['start_time'],
-                'end_time': agenda_row['end_time'],
+                'start_time': str(agenda_row['start_time']) if agenda_row['start_time'] else None,
+                'end_time': str(agenda_row['end_time']) if agenda_row['end_time'] else None,
                 'section': agenda_row['section'],
                 'committee': agenda_row['committee'],
                 'location': agenda_row['location']
