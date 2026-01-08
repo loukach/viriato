@@ -1927,33 +1927,54 @@
             margin-bottom: 12px;
         }
 
-        .party-bar {
+        /* Hemicycle visualization (parliament-style) */
+        .hemicycle-container {
             display: flex;
-            height: 24px;
-            border-radius: 6px;
-            overflow: hidden;
+            justify-content: center;
             margin-bottom: 12px;
         }
 
-        .party-segment {
-            height: 100%;
+        .hemicycle {
+            width: 100%;
+            max-width: 260px;
+            aspect-ratio: 2 / 1;
+        }
+
+        .hemicycle-segment {
             transition: opacity 0.2s ease;
             cursor: default;
         }
 
-        .party-segment:hover {
-            opacity: 0.8;
+        .hemicycle-segment:hover {
+            opacity: 0.75;
+        }
+
+        .hemicycle-center {
+            fill: var(--bg-card);
         }
 
         .party-counts {
             display: flex;
             flex-wrap: wrap;
             gap: 8px;
+            justify-content: center;
         }
 
         .party-count {
             font-size: 0.75rem;
             font-weight: 600;
+        }
+
+        /* Political spectrum labels */
+        .spectrum-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+            padding: 0 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         @media (max-width: 768px) {
@@ -3179,15 +3200,15 @@
                 Object.keys(c.parties).forEach(p => allParties.add(p));
             });
 
-            // Sort parties by typical size
-            const partyOrder = ['PSD', 'PS', 'CH', 'IL', 'L', 'PCP', 'BE', 'CDS-PP', 'PAN', 'JPP'];
+            // Sort parties by political spectrum (right to left, CH at center)
+            const partyOrder = ['CDS-PP', 'IL', 'PSD', 'JPP', 'CH', 'PS', 'PAN', 'L', 'BE', 'PCP'];
             const sortedParties = [...allParties].sort((a, b) => {
                 const ai = partyOrder.indexOf(a);
                 const bi = partyOrder.indexOf(b);
                 return (ai === -1 ? 99 : ai) - (bi === -1 ? 99 : bi);
             });
 
-            // Build legend
+            // Build legend (in political order)
             let legendHtml = '<div class="comissoes-legend">';
             sortedParties.forEach(party => {
                 const color = PARTY_COLORS[party] || '#888888';
@@ -3198,6 +3219,25 @@
             });
             legendHtml += '</div>';
 
+            // Helper function to create hemicycle SVG arc path
+            function createArcPath(startAngle, endAngle, innerRadius, outerRadius, cx, cy) {
+                const startAngleRad = (startAngle - 90) * Math.PI / 180;
+                const endAngleRad = (endAngle - 90) * Math.PI / 180;
+
+                const x1 = cx + outerRadius * Math.cos(startAngleRad);
+                const y1 = cy + outerRadius * Math.sin(startAngleRad);
+                const x2 = cx + outerRadius * Math.cos(endAngleRad);
+                const y2 = cy + outerRadius * Math.sin(endAngleRad);
+                const x3 = cx + innerRadius * Math.cos(endAngleRad);
+                const y3 = cy + innerRadius * Math.sin(endAngleRad);
+                const x4 = cx + innerRadius * Math.cos(startAngleRad);
+                const y4 = cy + innerRadius * Math.sin(startAngleRad);
+
+                const largeArc = (endAngle - startAngle) > 180 ? 1 : 0;
+
+                return `M ${x1} ${y1} A ${outerRadius} ${outerRadius} 0 ${largeArc} 1 ${x2} ${y2} L ${x3} ${y3} A ${innerRadius} ${innerRadius} 0 ${largeArc} 0 ${x4} ${y4} Z`;
+            }
+
             // Build committee cards
             let html = legendHtml + '<div class="comissoes-grid">';
 
@@ -3207,17 +3247,34 @@
                     .replace('Comissão Parlamentar de Inquérito', 'Inquérito:')
                     .replace('Comissão ', '');
 
-                // Build stacked bar
-                let barHtml = '<div class="party-bar">';
+                // Build hemicycle SVG
+                const cx = 100, cy = 95;
+                const outerRadius = 90, innerRadius = 35;
+                let currentAngle = -90; // Start from left side (-90 degrees = 9 o'clock)
+
+                let segments = '';
                 sortedParties.forEach(party => {
                     const count = committee.parties[party] || 0;
                     if (count > 0) {
-                        const pct = (count / committee.total_members) * 100;
+                        const sweepAngle = (count / committee.total_members) * 180;
+                        const endAngle = currentAngle + sweepAngle;
                         const color = PARTY_COLORS[party] || '#888888';
-                        barHtml += `<div class="party-segment" style="width: ${pct}%; background-color: ${color}" title="${party}: ${count} membros"></div>`;
+                        const path = createArcPath(currentAngle, endAngle, innerRadius, outerRadius, cx, cy);
+                        segments += `<path class="hemicycle-segment" d="${path}" fill="${color}" stroke="white" stroke-width="0.5"><title>${party}: ${count} membros</title></path>`;
+                        currentAngle = endAngle;
                     }
                 });
-                barHtml += '</div>';
+
+                const hemicycleHtml = `
+                    <div class="spectrum-labels">
+                        <span>Direita</span>
+                        <span>Esquerda</span>
+                    </div>
+                    <div class="hemicycle-container">
+                        <svg class="hemicycle" viewBox="0 0 200 100" preserveAspectRatio="xMidYMax meet">
+                            ${segments}
+                        </svg>
+                    </div>`;
 
                 // Build party counts
                 let countsHtml = '<div class="party-counts">';
@@ -3234,7 +3291,7 @@
                     <div class="comissao-card">
                         <div class="comissao-name">${shortName}</div>
                         <div class="comissao-total">${committee.total_members} membros</div>
-                        ${barHtml}
+                        ${hemicycleHtml}
                         ${countsHtml}
                     </div>`;
             });
