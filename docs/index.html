@@ -3264,6 +3264,7 @@
             });
 
             container.innerHTML = html || '<p style="text-align: center; color: #6b7280;">Nenhuma iniciativa encontrada</p>';
+            container.classList.remove('loading');
         }
 
         function toggleCard(card, event) {
@@ -3472,6 +3473,7 @@
             });
 
             container.innerHTML = html || '<p style="text-align: center; color: #6b7280;">Nenhuma iniciativa encontrada</p>';
+            container.classList.remove('loading');
         }
 
         // Render Agenda - Grid Calendar Layout
