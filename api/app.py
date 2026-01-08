@@ -550,6 +550,189 @@ def search_iniciativas():
         return jsonify({'error': str(e)}), 500
 
 
+@app.route('/api/orgaos', methods=['GET'])
+def get_orgaos():
+    """
+    Get all parliamentary bodies (committees, working groups, etc.)
+
+    Query parameters:
+        type - Filter by type (comissao, grupo_trabalho, subcomissao, etc.)
+
+    Returns list of bodies with member counts by party.
+    """
+    try:
+        conn = get_db_connection()
+        cur = conn.cursor()
+
+        # Optional type filter
+        org_type = request.args.get('type')
+
+        query = """
+            SELECT
+                o.id, o.org_id, o.legislature, o.name, o.acronym, o.org_type, o.number,
+                COUNT(m.id) as member_count
+            FROM orgaos o
+            LEFT JOIN orgao_membros m ON o.id = m.orgao_id
+        """
+        params = []
+
+        if org_type:
+            query += " WHERE o.org_type = %s"
+            params.append(org_type)
+
+        query += " GROUP BY o.id ORDER BY o.org_type, o.name"
+
+        cur.execute(query, params)
+
+        orgaos = []
+        for row in cur.fetchall():
+            orgaos.append({
+                'id': row['id'],
+                'org_id': row['org_id'],
+                'legislature': row['legislature'],
+                'name': row['name'],
+                'acronym': row['acronym'],
+                'type': row['org_type'],
+                'number': row['number'],
+                'member_count': row['member_count']
+            })
+
+        cur.close()
+        conn.close()
+
+        return jsonify(orgaos)
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/orgaos/<int:org_id>', methods=['GET'])
+def get_orgao(org_id):
+    """
+    Get a single parliamentary body with its members and party breakdown.
+
+    Returns body details plus members grouped by party.
+    """
+    try:
+        conn = get_db_connection()
+        cur = conn.cursor()
+
+        # Get body details
+        cur.execute("""
+            SELECT id, org_id, legislature, name, acronym, org_type, number
+            FROM orgaos
+            WHERE org_id = %s
+        """, (org_id,))
+
+        row = cur.fetchone()
+        if not row:
+            return jsonify({'error': 'Not found'}), 404
+
+        db_id = row['id']
+
+        orgao = {
+            'id': row['id'],
+            'org_id': row['org_id'],
+            'legislature': row['legislature'],
+            'name': row['name'],
+            'acronym': row['acronym'],
+            'type': row['org_type'],
+            'number': row['number']
+        }
+
+        # Get members
+        cur.execute("""
+            SELECT dep_id, deputy_name, party, role, member_type
+            FROM orgao_membros
+            WHERE orgao_id = %s
+            ORDER BY
+                CASE WHEN role IS NOT NULL THEN 0 ELSE 1 END,
+                party, deputy_name
+        """, (db_id,))
+
+        members = []
+        party_counts = {}
+
+        for row in cur.fetchall():
+            party = row['party'] or 'Sem partido'
+            party_counts[party] = party_counts.get(party, 0) + 1
+
+            members.append({
+                'dep_id': row['dep_id'],
+                'name': row['deputy_name'],
+                'party': party,
+                'role': row['role'],
+                'member_type': row['member_type']
+            })
+
+        orgao['members'] = members
+        orgao['party_breakdown'] = party_counts
+        orgao['member_count'] = len(members)
+
+        cur.close()
+        conn.close()
+
+        return jsonify(orgao)
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/orgaos/summary', methods=['GET'])
+def get_orgaos_summary():
+    """
+    Get summary of all committees with party composition.
+
+    Returns aggregated view suitable for visualization.
+    """
+    try:
+        conn = get_db_connection()
+        cur = conn.cursor()
+
+        # Get all committees (main ones only) with party breakdown
+        cur.execute("""
+            SELECT
+                o.id, o.org_id, o.name, o.acronym, o.org_type,
+                m.party,
+                COUNT(*) as count
+            FROM orgaos o
+            JOIN orgao_membros m ON o.id = m.orgao_id
+            WHERE o.org_type = 'comissao'
+            GROUP BY o.id, o.org_id, o.name, o.acronym, o.org_type, m.party
+            ORDER BY o.name, m.party
+        """)
+
+        # Build nested structure
+        committees = {}
+        for row in cur.fetchall():
+            org_id = row['org_id']
+            if org_id not in committees:
+                committees[org_id] = {
+                    'id': row['id'],
+                    'org_id': org_id,
+                    'name': row['name'],
+                    'acronym': row['acronym'],
+                    'type': row['org_type'],
+                    'parties': {},
+                    'total_members': 0
+                }
+
+            party = row['party'] or 'Sem partido'
+            committees[org_id]['parties'][party] = row['count']
+            committees[org_id]['total_members'] += row['count']
+
+        # Convert to list and sort by name
+        result = sorted(committees.values(), key=lambda x: x['name'])
+
+        cur.close()
+        conn.close()
+
+        return jsonify(result)
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     debug = os.environ.get('FLASK_ENV') == 'development'

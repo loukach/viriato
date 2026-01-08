@@ -210,3 +210,69 @@ COMMENT ON COLUMN iniciativa_events.raw_data IS 'Full event JSON including neste
 
 COMMENT ON COLUMN agenda_events.event_id IS 'Unique identifier from Parliament API';
 COMMENT ON COLUMN agenda_events.description IS 'HTML content from InternetText field';
+
+-- =============================================================================
+-- TABLE 5: orgaos (Parliamentary Bodies - Committees, Working Groups, etc.)
+-- =============================================================================
+
+CREATE TABLE IF NOT EXISTS orgaos (
+    id SERIAL PRIMARY KEY,
+    org_id INTEGER UNIQUE NOT NULL,           -- idOrgao from API
+    legislature VARCHAR(10) NOT NULL,          -- "XVII"
+    name VARCHAR(300) NOT NULL,                -- nomeSigla (full name)
+    acronym VARCHAR(50),                       -- siglaOrgao (e.g., "CACDLG")
+    org_type VARCHAR(50) NOT NULL,             -- 'comissao', 'grupo_trabalho', 'subcomissao', etc.
+    number INTEGER,                            -- numeroOrgao
+    raw_data JSONB,                            -- Full original JSON
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Indexes for orgao queries
+CREATE INDEX IF NOT EXISTS idx_orgaos_legislature ON orgaos(legislature);
+CREATE INDEX IF NOT EXISTS idx_orgaos_type ON orgaos(org_type);
+CREATE INDEX IF NOT EXISTS idx_orgaos_name ON orgaos(name);
+
+-- Full-text search on name (Portuguese)
+CREATE INDEX IF NOT EXISTS idx_orgaos_name_fts
+    ON orgaos USING GIN(to_tsvector('portuguese', name));
+
+-- =============================================================================
+-- TABLE 6: orgao_membros (Committee Members with Party Affiliation)
+-- =============================================================================
+
+CREATE TABLE IF NOT EXISTS orgao_membros (
+    id SERIAL PRIMARY KEY,
+    orgao_id INTEGER NOT NULL REFERENCES orgaos(id) ON DELETE CASCADE,
+    dep_id INTEGER NOT NULL,                   -- depId from API
+    dep_cad_id INTEGER,                        -- depCadId (links to biographical registry)
+    deputy_name VARCHAR(200) NOT NULL,         -- depNomeParlamentar
+    party VARCHAR(20),                         -- gpSigla (e.g., "PS", "PSD", "CH")
+    role VARCHAR(100),                         -- depCargo (e.g., "Presidente", "Vice-Presidente")
+    member_type VARCHAR(50),                   -- sioTipMem (e.g., "Efetivo", "Suplente")
+    start_date DATE,                           -- gpDtInicio or sioDtInicio
+    end_date DATE,                             -- gpDtFim or sioDtFim
+    raw_data JSONB,                            -- Full member JSON
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Indexes for member queries
+CREATE INDEX IF NOT EXISTS idx_orgao_membros_orgao ON orgao_membros(orgao_id);
+CREATE INDEX IF NOT EXISTS idx_orgao_membros_party ON orgao_membros(party);
+CREATE INDEX IF NOT EXISTS idx_orgao_membros_deputy ON orgao_membros(dep_id);
+CREATE INDEX IF NOT EXISTS idx_orgao_membros_role ON orgao_membros(role);
+
+-- Unique constraint to prevent duplicate members
+CREATE UNIQUE INDEX IF NOT EXISTS idx_orgao_membros_unique
+    ON orgao_membros(orgao_id, dep_id);
+
+-- =============================================================================
+-- COMMENTS FOR ORGAOS
+-- =============================================================================
+
+COMMENT ON TABLE orgaos IS 'Parliamentary bodies: committees, working groups, subcommittees';
+COMMENT ON TABLE orgao_membros IS 'Members of parliamentary bodies with party affiliation';
+
+COMMENT ON COLUMN orgaos.org_type IS 'Type: comissao, grupo_trabalho, subcomissao, comissao_permanente, etc.';
+COMMENT ON COLUMN orgao_membros.party IS 'Parliamentary group acronym (PS, PSD, CH, IL, etc.)';
+COMMENT ON COLUMN orgao_membros.member_type IS 'Efetivo (full member) or Suplente (substitute)';

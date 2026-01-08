@@ -1846,6 +1846,130 @@
             outline-offset: 2px;
         }
 
+        /* Comissões View Styles */
+        #comissoes-view {
+            padding: 32px 0;
+        }
+
+        #comissoes-view .page-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        #comissoes-view .page-subtitle {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            margin-bottom: 32px;
+        }
+
+        .comissoes-legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 24px;
+            padding: 16px;
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-light);
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 4px;
+        }
+
+        .legend-label {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .comissoes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+        }
+
+        .comissao-card {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            border: 1px solid var(--border-light);
+            box-shadow: var(--shadow-sm);
+            transition: all 0.2s ease;
+        }
+
+        .comissao-card:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+
+        .comissao-name {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+            line-height: 1.3;
+        }
+
+        .comissao-total {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+        }
+
+        .party-bar {
+            display: flex;
+            height: 24px;
+            border-radius: 6px;
+            overflow: hidden;
+            margin-bottom: 12px;
+        }
+
+        .party-segment {
+            height: 100%;
+            transition: opacity 0.2s ease;
+            cursor: default;
+        }
+
+        .party-segment:hover {
+            opacity: 0.8;
+        }
+
+        .party-counts {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .party-count {
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .comissoes-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .comissoes-legend {
+                gap: 12px;
+            }
+
+            .legend-item {
+                flex: 0 0 auto;
+            }
+        }
+
         /* Footer */
         footer {
             text-align: center;
@@ -2588,6 +2712,7 @@
                 <a href="#/" class="nav-tab" data-view="home" role="tab" aria-selected="true">Home</a>
                 <a href="#/iniciativas" class="nav-tab" data-view="iniciativas" role="tab" aria-selected="false">Iniciativas</a>
                 <a href="#/agenda" class="nav-tab" data-view="agenda" role="tab" aria-selected="false">Agenda</a>
+                <a href="#/comissoes" class="nav-tab" data-view="comissoes" role="tab" aria-selected="false">Comissões</a>
             </div>
         </div>
     </nav>
@@ -2816,6 +2941,18 @@
         </div>
     </div>
 
+    <!-- COMISSÕES VIEW -->
+    <div id="comissoes-view" class="view" role="tabpanel" aria-labelledby="comissoes-tab">
+        <div class="container">
+            <h1 class="page-title">Comissões Parlamentares</h1>
+            <p class="page-subtitle">Composição partidária das comissões da XVII Legislatura</p>
+
+            <div id="comissoes-content" class="loading" role="status" aria-live="polite">
+                A carregar comissões...
+            </div>
+        </div>
+    </div>
+
     </main>
 
     <!-- Footer -->
@@ -2834,6 +2971,7 @@
         // Global data
         let INITIATIVES_DATA = [];
         let AGENDA_DATA = [];
+        let COMISSOES_DATA = [];
         let SEARCH_RESULTS = null;  // null = no search, array = search results
         let SELECTED_LEGISLATURE = 'XVII';  // Track selected legislature (default to current)
 
@@ -2841,7 +2979,8 @@
         const PAGE_TITLES = {
             'home': 'Viriato - Dados Abertos do Parlamento Português',
             'iniciativas': 'Iniciativas Legislativas - Viriato',
-            'agenda': 'Agenda Parlamentar - Viriato'
+            'agenda': 'Agenda Parlamentar - Viriato',
+            'comissoes': 'Comissões Parlamentares - Viriato'
         };
 
         // Router
@@ -2888,6 +3027,8 @@
                     loadInitiatives();
                 } else if (route === 'agenda' && AGENDA_DATA.length === 0) {
                     loadAgenda();
+                } else if (route === 'comissoes' && COMISSOES_DATA.length === 0) {
+                    loadComissoes();
                 }
             }
         }
@@ -2979,6 +3120,127 @@
             document.getElementById('agenda').innerHTML = '<div class="loading">A carregar agenda...</div>';
             AGENDA_DATA = [];
             loadAgenda();
+        }
+
+        // Load Comissões Data
+        async function loadComissoes() {
+            try {
+                const response = await fetch(`${API_URL}/api/orgaos/summary`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                COMISSOES_DATA = await response.json();
+                console.log(`Loaded ${COMISSOES_DATA.length} committees`);
+                renderComissoes();
+            } catch (error) {
+                console.error('Error loading comissões:', error);
+                document.getElementById('comissoes-content').innerHTML = `
+                    <div class="error" role="alert">
+                        <div class="error-title">Erro ao carregar comissões</div>
+                        <div class="error-message">O servidor pode estar a iniciar (aguarde 10-30 segundos) ou houve um problema de ligação.</div>
+                        <button class="retry-btn" onclick="retryLoadComissoes()">Tentar novamente</button>
+                    </div>`;
+            }
+        }
+
+        function retryLoadComissoes() {
+            document.getElementById('comissoes-content').innerHTML = '<div class="loading">A carregar comissões...</div>';
+            COMISSOES_DATA = [];
+            loadComissoes();
+        }
+
+        // Party colors for committee visualization (matching official colors)
+        const PARTY_COLORS = {
+            'PSD': '#FF6600',    // Safety Orange
+            'PS': '#FF66FF',     // Pink Flamingo
+            'CH': '#0093DD',     // Pacific Blue (Chega)
+            'IL': '#00ADEF',     // Cyan/Turquoise Blue
+            'L': '#32CD32',      // Lime Green (Livre)
+            'PCP': '#FF0000',    // Pure Red
+            'BE': '#1a1a1a',     // Black
+            'CDS-PP': '#4BA5E8', // Light Blue
+            'PAN': '#00A651',    // Green
+            'JPP': '#FFB800'     // Gold (JPP - Partido Popular)
+        };
+
+        // Render Comissões
+        function renderComissoes() {
+            const container = document.getElementById('comissoes-content');
+            container.classList.remove('loading');
+
+            if (COMISSOES_DATA.length === 0) {
+                container.innerHTML = '<div class="no-data">Nenhuma comissão encontrada.</div>';
+                return;
+            }
+
+            // Build legend of parties
+            const allParties = new Set();
+            COMISSOES_DATA.forEach(c => {
+                Object.keys(c.parties).forEach(p => allParties.add(p));
+            });
+
+            // Sort parties by typical size
+            const partyOrder = ['PSD', 'PS', 'CH', 'IL', 'L', 'PCP', 'BE', 'CDS-PP', 'PAN', 'JPP'];
+            const sortedParties = [...allParties].sort((a, b) => {
+                const ai = partyOrder.indexOf(a);
+                const bi = partyOrder.indexOf(b);
+                return (ai === -1 ? 99 : ai) - (bi === -1 ? 99 : bi);
+            });
+
+            // Build legend
+            let legendHtml = '<div class="comissoes-legend">';
+            sortedParties.forEach(party => {
+                const color = PARTY_COLORS[party] || '#888888';
+                legendHtml += `<div class="legend-item">
+                    <span class="legend-color" style="background-color: ${color}"></span>
+                    <span class="legend-label">${party}</span>
+                </div>`;
+            });
+            legendHtml += '</div>';
+
+            // Build committee cards
+            let html = legendHtml + '<div class="comissoes-grid">';
+
+            COMISSOES_DATA.forEach(committee => {
+                const shortName = committee.name
+                    .replace('Comissão de ', '')
+                    .replace('Comissão Parlamentar de Inquérito', 'Inquérito:')
+                    .replace('Comissão ', '');
+
+                // Build stacked bar
+                let barHtml = '<div class="party-bar">';
+                sortedParties.forEach(party => {
+                    const count = committee.parties[party] || 0;
+                    if (count > 0) {
+                        const pct = (count / committee.total_members) * 100;
+                        const color = PARTY_COLORS[party] || '#888888';
+                        barHtml += `<div class="party-segment" style="width: ${pct}%; background-color: ${color}" title="${party}: ${count} membros"></div>`;
+                    }
+                });
+                barHtml += '</div>';
+
+                // Build party counts
+                let countsHtml = '<div class="party-counts">';
+                sortedParties.forEach(party => {
+                    const count = committee.parties[party] || 0;
+                    if (count > 0) {
+                        const color = PARTY_COLORS[party] || '#888888';
+                        countsHtml += `<span class="party-count" style="color: ${color}">${party}: ${count}</span>`;
+                    }
+                });
+                countsHtml += '</div>';
+
+                html += `
+                    <div class="comissao-card">
+                        <div class="comissao-name">${shortName}</div>
+                        <div class="comissao-total">${committee.total_members} membros</div>
+                        ${barHtml}
+                        ${countsHtml}
+                    </div>`;
+            });
+
+            html += '</div>';
+            container.innerHTML = html;
         }
 
         // Render Lifecycle Funnels
