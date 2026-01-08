@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agenda Horizontal - Teste</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8fafc;
+            color: #1e293b;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 10px;
+        }
+
+        /* Header - Parlamento.pt teal color */
+        .header {
+            background: linear-gradient(135deg, #00828A 0%, #006d74 100%);
+            color: white;
+            padding: 10px 16px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .header .subtitle {
+            font-size: 0.75rem;
+            opacity: 0.9;
+        }
+
+        /* Legend */
+        .legend {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 10px;
+            font-size: 0.7rem;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .legend-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .dot-plenary { background: #10b981; }
+        .dot-committee { background: #3b82f6; }
+        .dot-groups { background: #8b5cf6; }
+        .dot-other { background: #6b7280; }
+
+        /* Horizontal Timeline */
+        .timeline-container {
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            overflow-x: auto;
+        }
+
+        .timeline {
+            display: grid;
+            min-width: 1200px;
+        }
+
+        /* Hour headers - first row */
+        .hour-headers {
+            display: grid;
+            grid-template-columns: 100px repeat(15, 1fr); /* day label + 15 hours (8-22) */
+            border-bottom: 1px solid #e2e8f0;
+            background: #f8fafc;
+        }
+
+        .hour-header {
+            padding: 6px 4px;
+            text-align: center;
+            font-size: 0.65rem;
+            font-weight: 600;
+            color: #64748b;
+            border-left: 1px solid #f1f5f9;
+        }
+
+        .hour-header:first-child {
+            border-left: none;
+        }
+
+        /* Day rows */
+        .day-row {
+            display: grid;
+            grid-template-columns: 100px repeat(15, 1fr);
+            min-height: 50px;
+            border-bottom: 1px solid #f1f5f9;
+            position: relative;
+        }
+
+        .day-row:last-child {
+            border-bottom: none;
+        }
+
+        .day-row.today {
+            background: #f0f9f9;
+        }
+
+        .day-label {
+            padding: 8px;
+            background: #fafafa;
+            border-right: 1px solid #e2e8f0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .day-name {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            color: #64748b;
+            font-weight: 600;
+        }
+
+        .day-date {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .day-row.today .day-date {
+            background: #00828A;
+            color: white;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Events container - spans the hour columns */
+        .events-area {
+            grid-column: 2 / -1;
+            position: relative;
+            min-height: 45px;
+        }
+
+        /* Hour grid lines */
+        .hour-grid {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: grid;
+            grid-template-columns: repeat(15, 1fr);
+            pointer-events: none;
+        }
+
+        .hour-line {
+            border-left: 1px solid #f1f5f9;
+        }
+
+        .hour-line:first-child {
+            border-left: none;
+        }
+
+        /* Events */
+        .event {
+            position: absolute;
+            top: 2px;
+            height: calc(100% - 4px);
+            min-height: 20px;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 0.6rem;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            cursor: default;
+            display: flex;
+            align-items: center;
+            text-align: left;
+            z-index: 1;
+        }
+
+        .event:hover {
+            z-index: 10;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            white-space: normal;
+            height: auto;
+            min-height: calc(100% - 4px);
+        }
+
+        .event.plenary {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            font-weight: 600;
+        }
+
+        .event.committee {
+            background: #dbeafe;
+            color: #1e40af;
+            border-left: 3px solid #3b82f6;
+        }
+
+        .event.groups {
+            background: #ede9fe;
+            color: #5b21b6;
+            border-left: 3px solid #8b5cf6;
+        }
+
+        .event.other {
+            background: #f1f5f9;
+            color: #475569;
+            border-left: 3px solid #6b7280;
+        }
+
+        .event.all-day {
+            background: linear-gradient(90deg, #e0e7ff 0%, #c7d2fe 100%);
+            color: #3730a3;
+            font-weight: 500;
+        }
+
+        /* Stacked events */
+        .event.stack-1 { top: 2px; }
+        .event.stack-2 { top: 24px; }
+        .event.stack-3 { top: 46px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div>
+                <h1>Agenda Parlamentar</h1>
+                <div class="subtitle">XVII Legislatura - Janeiro 2026</div>
+            </div>
+        </div>
+
+        <!-- Legend -->
+        <div class="legend">
+            <div class="legend-item">
+                <span class="legend-dot dot-plenary"></span>
+                <span>Plenário</span>
+            </div>
+            <div class="legend-item">
+                <span class="legend-dot dot-committee"></span>
+                <span>Comissões</span>
+            </div>
+            <div class="legend-item">
+                <span class="legend-dot dot-groups"></span>
+                <span>Grupos Parlamentares</span>
+            </div>
+            <div class="legend-item">
+                <span class="legend-dot dot-other"></span>
+                <span>Outros</span>
+            </div>
+        </div>
+
+        <!-- Horizontal Timeline -->
+        <div class="timeline-container">
+            <div id="timeline" class="timeline">
+                <div class="loading" style="padding: 40px; text-align: center;">
+                    A carregar agenda...
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'https://viriato-api.onrender.com';
+        const START_HOUR = 8;
+        const END_HOUR = 22;
+        const TOTAL_HOURS = END_HOUR - START_HOUR + 1;
+
+        async function loadAgenda() {
+            try {
+                const response = await fetch(`${API_URL}/api/agenda`);
+                const data = await response.json();
+                renderTimeline(data);
+            } catch (error) {
+                console.error('Error loading agenda:', error);
+                document.getElementById('timeline').innerHTML =
+                    '<div style="padding: 40px; text-align: center;">Erro ao carregar</div>';
+            }
+        }
+
+        function getEventType(section, title) {
+            if (title && (title.includes('Audiências') || title.includes('Audiência'))) return 'groups';
+            if (title && title.includes('Plenário')) return 'plenary';
+            if (section.includes('Plenário') || section.includes('Plenario')) return 'plenary';
+            if (section.includes('Grupos') || section.includes('Partidos') || section.includes('DURP')) return 'groups';
+            if (section.includes('Comiss')) return 'committee';
+            return 'committee';
+        }
+
+        function shortenTitle(title) {
+            title = title.replace('Comissão Parlamentar de Inquérito', 'CPI');
+            title = title.replace('Comissão de ', '');
+            title = title.replace('Audiências do Grupo Parlamentar', 'Audiências GP');
+            title = title.replace('Audiências do Grupo parlamentar', 'Audiências GP');
+            title = title.replace('Grupo de Trabalho', 'GT');
+            title = title.replace('Conferência de Líderes', 'Conf. Líderes');
+            return title;
+        }
+
+        function parseDate(dateStr) {
+            const [day, month, year] = dateStr.split('/');
+            return new Date(year, month - 1, day);
+        }
+
+        function getHour(timeStr) {
+            if (!timeStr) return null;
+            return parseInt(timeStr.split(':')[0]);
+        }
+
+        function getMinute(timeStr) {
+            if (!timeStr) return 0;
+            return parseInt(timeStr.split(':')[1] || 0);
+        }
+
+        function timeToPercent(hour, minute = 0) {
+            // Convert hour:minute to percentage of timeline width
+            const totalMinutes = (hour - START_HOUR) * 60 + minute;
+            const totalTimelineMinutes = TOTAL_HOURS * 60;
+            return (totalMinutes / totalTimelineMinutes) * 100;
+        }
+
+        function renderTimeline(events) {
+            // Filter out noise
+            const realEvents = events.filter(e =>
+                !e.Title.includes('Calendarização') &&
+                !e.Title.includes('Assistências') &&
+                !e.Title.includes('Visitas guiadas')
+            );
+
+            // Group by date
+            const grouped = {};
+            realEvents.forEach(event => {
+                const date = event.EventStartDate;
+                if (!grouped[date]) grouped[date] = [];
+                grouped[date].push(event);
+            });
+
+            // Get unique dates sorted
+            const dates = Object.keys(grouped).sort((a, b) => parseDate(a) - parseDate(b));
+            const displayDates = dates.slice(0, 7);
+
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            let html = '';
+
+            // Hour headers row
+            html += '<div class="hour-headers">';
+            html += '<div class="hour-header"></div>'; // Empty corner
+            for (let h = START_HOUR; h <= END_HOUR; h++) {
+                html += `<div class="hour-header">${h.toString().padStart(2, '0')}h</div>`;
+            }
+            html += '</div>';
+
+            // Day rows
+            displayDates.forEach(date => {
+                const dateObj = parseDate(date);
+                const dayName = dateObj.toLocaleDateString('pt-PT', { weekday: 'short' }).replace('.', '');
+                const dayNum = dateObj.getDate();
+                const monthNum = dateObj.getMonth() + 1;
+                const isToday = dateObj.getTime() === today.getTime();
+
+                const dayEvents = grouped[date] || [];
+
+                // Sort events by start time
+                dayEvents.sort((a, b) => {
+                    const aHour = getHour(a.EventStartTime) || 0;
+                    const bHour = getHour(b.EventStartTime) || 0;
+                    return aHour - bHour;
+                });
+
+                html += `<div class="day-row ${isToday ? 'today' : ''}">`;
+                html += `
+                    <div class="day-label">
+                        <div class="day-name">${dayName}</div>
+                        <div class="day-date">${dayNum}/${monthNum}</div>
+                    </div>
+                `;
+
+                html += '<div class="events-area">';
+
+                // Hour grid lines
+                html += '<div class="hour-grid">';
+                for (let h = START_HOUR; h <= END_HOUR; h++) {
+                    html += '<div class="hour-line"></div>';
+                }
+                html += '</div>';
+
+                // Track event positions to stack overlapping events
+                let eventStacks = [];
+
+                dayEvents.forEach((event, idx) => {
+                    const type = getEventType(event.Section, event.Title);
+                    const title = shortenTitle(event.Title);
+
+                    let startHour = getHour(event.EventStartTime);
+                    let startMin = getMinute(event.EventStartTime);
+                    let endHour = getHour(event.EventEndTime);
+                    let endMin = getMinute(event.EventEndTime);
+
+                    // Handle all-day events (no time)
+                    const isAllDay = startHour === null;
+                    if (isAllDay) {
+                        startHour = START_HOUR;
+                        startMin = 0;
+                        endHour = END_HOUR;
+                        endMin = 59;
+                    }
+
+                    // Handle events ending at 23:59 or with no end time
+                    if (endHour === null || endHour === 23) {
+                        endHour = END_HOUR;
+                        endMin = 59;
+                    }
+
+                    // Default duration: 1 hour if no end time
+                    if (endHour <= startHour && !isAllDay) {
+                        endHour = Math.min(startHour + 1, END_HOUR);
+                        endMin = 0;
+                    }
+
+                    // Calculate position and width
+                    const leftPercent = timeToPercent(startHour, startMin);
+                    const rightPercent = timeToPercent(endHour, endMin);
+                    const widthPercent = Math.max(rightPercent - leftPercent, 4); // Min 4% width
+
+                    // Find stack position (avoid overlap)
+                    let stackPos = 0;
+                    for (let s = 0; s < eventStacks.length; s++) {
+                        const canFit = eventStacks[s].every(e =>
+                            leftPercent >= e.right || (leftPercent + widthPercent) <= e.left
+                        );
+                        if (canFit) {
+                            stackPos = s;
+                            break;
+                        }
+                        stackPos = s + 1;
+                    }
+
+                    if (!eventStacks[stackPos]) eventStacks[stackPos] = [];
+                    eventStacks[stackPos].push({ left: leftPercent, right: leftPercent + widthPercent });
+
+                    const stackClass = stackPos > 0 ? `stack-${Math.min(stackPos + 1, 3)}` : '';
+                    const allDayClass = isAllDay ? 'all-day' : '';
+
+                    html += `
+                        <div class="event ${type} ${stackClass} ${allDayClass}"
+                             title="${event.Title}"
+                             style="left: ${leftPercent}%; width: ${widthPercent}%;">
+                            ${title}
+                        </div>
+                    `;
+                });
+
+                html += '</div>'; // events-area
+                html += '</div>'; // day-row
+            });
+
+            document.getElementById('timeline').innerHTML = html;
+        }
+
+        loadAgenda();
+    </script>
+</body>
+</html>

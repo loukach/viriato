@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agenda Grid - Teste</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8fafc;
+            color: #1e293b;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 10px;
+        }
+
+        /* Header - Parlamento.pt teal color */
+        .header {
+            background: linear-gradient(135deg, #00828A 0%, #006d74 100%);
+            color: white;
+            padding: 10px 16px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .header .subtitle {
+            font-size: 0.75rem;
+            opacity: 0.9;
+        }
+
+        /* Legend */
+        .legend {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 10px;
+            font-size: 0.7rem;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .legend-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .dot-plenary { background: #10b981; }
+        .dot-committee { background: #3b82f6; }
+        .dot-groups { background: #8b5cf6; }
+        .dot-other { background: #6b7280; }
+
+        /* Calendar Grid - compact for 7 days */
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: 42px repeat(7, 1fr);
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            overflow: hidden;
+            font-size: 0.65rem;
+        }
+
+        /* Header row */
+        .day-header {
+            background: #f8fafc;
+            padding: 6px 2px;
+            text-align: center;
+            border-bottom: 1px solid #e2e8f0;
+            border-left: 1px solid #f1f5f9;
+        }
+
+        .day-header:first-child {
+            border-left: none;
+        }
+
+        .day-header.today {
+            background: #e6f4f5;
+        }
+
+        .day-name {
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            color: #64748b;
+            font-weight: 600;
+        }
+
+        .day-date {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .day-header.today .day-date {
+            background: #00828A;
+            color: white;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Time column */
+        .time-label {
+            background: #fafafa;
+            padding: 1px 4px;
+            text-align: right;
+            color: #64748b;
+            font-size: 0.6rem;
+            border-bottom: 1px solid #f1f5f9;
+            height: 40px;
+            display: flex;
+            align-items: flex-start;
+            justify-content: flex-end;
+        }
+
+        /* Grid cells */
+        .grid-cell {
+            border-bottom: 1px solid #f1f5f9;
+            border-left: 1px solid #f1f5f9;
+            min-height: 40px;
+            padding: 1px;
+            position: relative;
+        }
+
+        .grid-cell.today {
+            background: #f0f9f9;
+        }
+
+        /* Events */
+        .event {
+            padding: 2px 3px;
+            border-radius: 2px;
+            font-size: 0.58rem;
+            margin-bottom: 1px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            cursor: default;
+            line-height: 1.2;
+        }
+
+        .event:hover {
+            white-space: normal;
+            position: relative;
+            z-index: 10;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+
+        .event.plenary {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            font-weight: 600;
+        }
+
+        .event.committee {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .event.groups {
+            background: #ede9fe;
+            color: #5b21b6;
+        }
+
+        .event.other {
+            background: #f1f5f9;
+            color: #475569;
+        }
+
+        /* Empty time slot indicator */
+        .time-label.empty-row {
+            color: #e2e8f0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div>
+                <h1>Agenda Parlamentar</h1>
+                <div class="subtitle">XVII Legislatura - Janeiro 2026</div>
+            </div>
+        </div>
+
+        <!-- Legend -->
+        <div class="legend">
+            <div class="legend-item">
+                <span class="legend-dot dot-plenary"></span>
+                <span>Plenário</span>
+            </div>
+            <div class="legend-item">
+                <span class="legend-dot dot-committee"></span>
+                <span>Comissões</span>
+            </div>
+            <div class="legend-item">
+                <span class="legend-dot dot-groups"></span>
+                <span>Grupos Parlamentares</span>
+            </div>
+            <div class="legend-item">
+                <span class="legend-dot dot-other"></span>
+                <span>Outros</span>
+            </div>
+        </div>
+
+        <!-- Calendar Grid -->
+        <div id="calendar" class="calendar-grid">
+            <div class="loading" style="grid-column: span 8; padding: 40px; text-align: center;">
+                A carregar agenda...
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'https://viriato-api.onrender.com';
+
+        async function loadAgenda() {
+            try {
+                const response = await fetch(`${API_URL}/api/agenda`);
+                const data = await response.json();
+                renderCalendar(data);
+            } catch (error) {
+                console.error('Error loading agenda:', error);
+                document.getElementById('calendar').innerHTML =
+                    '<div style="grid-column: span 8; padding: 40px; text-align: center;">Erro ao carregar</div>';
+            }
+        }
+
+        function getEventType(section, title) {
+            // Check title first for specific patterns
+            if (title && (title.includes('Audiências') || title.includes('Audiência'))) return 'groups';
+            if (title && title.includes('Plenário')) return 'plenary';
+            // Then check section
+            if (section.includes('Plenário') || section.includes('Plenario')) return 'plenary';
+            if (section.includes('Grupos') || section.includes('Partidos') || section.includes('DURP')) return 'groups';
+            if (section.includes('Comiss')) return 'committee';
+            return 'committee';
+        }
+
+        function shortenTitle(title) {
+            title = title.replace('Comissão Parlamentar de Inquérito', 'CPI');
+            title = title.replace('Comissão de ', '');
+            title = title.replace('Audiências do Grupo Parlamentar', 'Audiências GP');
+            title = title.replace('Grupo de Trabalho', 'GT');
+            title = title.replace('Conferência de Líderes', 'Conf. Líderes');
+            return title;
+        }
+
+        function parseDate(dateStr) {
+            const [day, month, year] = dateStr.split('/');
+            return new Date(year, month - 1, day);
+        }
+
+        function getHour(timeStr) {
+            if (!timeStr) return null;
+            const hour = parseInt(timeStr.split(':')[0]);
+            return hour;
+        }
+
+        function renderCalendar(events) {
+            // Filter events
+            const realEvents = events.filter(e =>
+                !e.Title.includes('Calendarização') &&
+                !e.Title.includes('Assistências') &&
+                !e.Title.includes('Visitas guiadas')
+            );
+
+            // Group by date
+            const grouped = {};
+            realEvents.forEach(event => {
+                const date = event.EventStartDate;
+                if (!grouped[date]) grouped[date] = [];
+                grouped[date].push(event);
+            });
+
+            // Get unique dates sorted
+            const dates = Object.keys(grouped).sort((a, b) => parseDate(a) - parseDate(b));
+
+            // Take first 7 days max
+            const displayDates = dates.slice(0, 7);
+
+            // Find time range (min/max hours)
+            let minHour = 24, maxHour = 0;
+            displayDates.forEach(date => {
+                grouped[date].forEach(event => {
+                    const hour = getHour(event.EventStartTime);
+                    if (hour !== null) {
+                        minHour = Math.min(minHour, hour);
+                        maxHour = Math.max(maxHour, hour);
+                    }
+                });
+            });
+
+            // Default range if no times
+            if (minHour > maxHour) {
+                minHour = 9;
+                maxHour = 18;
+            }
+
+            // Build grid
+            let html = '';
+
+            // Header row - empty corner + day headers
+            html += '<div class="time-label" style="border-bottom: 1px solid #e2e8f0;"></div>';
+
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            displayDates.forEach(date => {
+                const dateObj = parseDate(date);
+                const dayName = dateObj.toLocaleDateString('pt-PT', { weekday: 'short' }).replace('.', '');
+                const dayNum = dateObj.getDate();
+                const isToday = dateObj.getTime() === today.getTime();
+
+                html += `
+                    <div class="day-header ${isToday ? 'today' : ''}">
+                        <div class="day-name">${dayName}</div>
+                        <div class="day-date">${dayNum}</div>
+                    </div>
+                `;
+            });
+
+            // Time rows
+            for (let hour = minHour; hour <= maxHour; hour++) {
+                // Time label
+                html += `<div class="time-label">${hour.toString().padStart(2, '0')}:00</div>`;
+
+                // Cells for each day
+                displayDates.forEach(date => {
+                    const dateObj = parseDate(date);
+                    const isToday = dateObj.getTime() === today.getTime();
+
+                    // Get events for this hour on this day
+                    const hourEvents = (grouped[date] || []).filter(e => {
+                        const eventHour = getHour(e.EventStartTime);
+                        return eventHour === hour;
+                    });
+
+                    // Also include all-day events (no time) in first row
+                    if (hour === minHour) {
+                        const allDayEvents = (grouped[date] || []).filter(e => !e.EventStartTime);
+                        hourEvents.push(...allDayEvents);
+                    }
+
+                    html += `<div class="grid-cell ${isToday ? 'today' : ''}">`;
+
+                    hourEvents.forEach(event => {
+                        const type = getEventType(event.Section, event.Title);
+                        const title = shortenTitle(event.Title);
+                        html += `<div class="event ${type}" title="${event.Title}">${title}</div>`;
+                    });
+
+                    html += '</div>';
+                });
+            }
+
+            document.getElementById('calendar').innerHTML = html;
+        }
+
+        loadAgenda();
+    </script>
+</body>
+</html>

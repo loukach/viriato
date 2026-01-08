@@ -954,24 +954,260 @@
             transform: rotate(180deg);
         }
 
-        .timeline {
+        /* Multi-column card grid */
+        .initiatives-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        @media (max-width: 1200px) {
+            .initiatives-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .initiatives-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Card adjustments for grid */
+        .initiatives-grid .initiative-card {
+            margin-bottom: 0;
+            height: fit-content;
+        }
+
+        .initiatives-grid .initiative-card .initiative-details {
+            display: none; /* Hide inline details, shown in expansion row */
+        }
+
+        .initiatives-grid .initiative-card .expand-indicator {
+            display: none; /* Hide old indicator */
+        }
+
+        /* Selected card style */
+        .initiatives-grid .initiative-card.selected {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px var(--primary), var(--shadow-lg);
+        }
+
+        /* Full-width expansion row */
+        .expansion-row {
+            grid-column: 1 / -1;
+            background: var(--bg-card);
+            border: 2px solid var(--primary);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            margin-top: -10px;
+            box-shadow: var(--shadow-lg);
+            animation: expandIn 0.3s ease;
+        }
+
+        @keyframes expandIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .expansion-row-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .expansion-row-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            max-width: 80%;
+        }
+
+        .expansion-row-close {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-sm);
+            padding: 8px 16px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            transition: all 0.2s ease;
+        }
+
+        .expansion-row-close:hover {
+            background: var(--error-light);
+            color: var(--error-dark);
+            border-color: var(--error);
+        }
+
+        .expansion-row-meta {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .expansion-row-meta-item {
+            font-size: 0.9rem;
+        }
+
+        .expansion-row-meta-item strong {
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        /* Horizontal Timeline */
+        .horizontal-timeline {
+            margin-top: 20px;
+            padding: 20px;
+            background: var(--bg-secondary);
+            border-radius: var(--radius-md);
+            overflow-x: auto;
+        }
+
+        .horizontal-timeline-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+        }
+
+        .timeline-track-container {
+            min-width: 600px;
+            position: relative;
+        }
+
+        .timeline-dates-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            padding: 0 10px;
+        }
+
+        .timeline-track {
+            position: relative;
+            height: 60px;
+            background: linear-gradient(90deg, #e2e8f0 0%, #e2e8f0 100%);
+            border-radius: 4px;
+            margin: 8px 0;
+        }
+
+        .timeline-track-line {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: #cbd5e1;
+            transform: translateY(-50%);
+        }
+
+        .timeline-event {
+            position: absolute;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1;
+        }
+
+        .timeline-event-dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: var(--primary);
+            border: 3px solid white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .timeline-event-dot:hover {
+            transform: scale(1.3);
+        }
+
+        .timeline-event-dot.status-submitted { background: #9ca3af; }
+        .timeline-event-dot.status-announced { background: #38bdf8; }
+        .timeline-event-dot.status-discussion { background: #3b82f6; }
+        .timeline-event-dot.status-voting { background: #f97316; }
+        .timeline-event-dot.status-finalizing { background: #8b5cf6; }
+        .timeline-event-dot.status-approved { background: #10b981; }
+        .timeline-event-dot.status-rejected { background: #ef4444; }
+
+        .timeline-event-label {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            white-space: nowrap;
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            text-align: center;
+            max-width: 80px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .timeline-event-date {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            white-space: nowrap;
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .timeline-event:hover .timeline-event-label {
+            max-width: none;
+            background: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            box-shadow: var(--shadow-sm);
+            z-index: 10;
+        }
+
+        .timeline-gap-indicator {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.6rem;
+            color: var(--text-muted);
+            background: var(--bg-card);
+            padding: 2px 6px;
+            border-radius: 10px;
+            white-space: nowrap;
+        }
+
+        /* Fallback vertical timeline for cards (mobile/single column) */
+        .timeline-vertical {
             margin-top: 15px;
         }
 
-        .timeline-item {
+        .timeline-vertical .timeline-item {
             padding: 8px 0;
             border-left: 2px solid #e2e8f0;
             padding-left: 15px;
             margin-left: 5px;
         }
 
-        .timeline-date {
+        .timeline-vertical .timeline-date {
             color: #94a3b8;
             font-size: 0.85rem;
             margin-right: 10px;
         }
 
-        .timeline-phase {
+        .timeline-vertical .timeline-phase {
             color: #475569;
         }
 
@@ -3182,48 +3418,36 @@
                 ? INITIATIVES_DATA
                 : INITIATIVES_DATA.filter(ini => ini.IniTipo === filterType);
 
-            let html = '';
-            filtered.forEach(ini => {
+            let html = '<div class="initiatives-grid">';
+            filtered.forEach((ini, index) => {
                 const status = getCurrentStatus(ini);
                 const statusInfo = getStatusCategory(status);
-                const authors = getAuthors(ini);
                 const typeClass = `type-${ini.IniTipo}`;
                 const events = ini.IniEventos || [];
-                const sortedEvents = events.slice().sort((a, b) =>
-                    (a.DataFase || '').localeCompare(b.DataFase || '')
-                );
-
-                const timeline = sortedEvents.map(evt => `
-                    <div class="timeline-item">
-                        <span class="timeline-date">${formatDate(evt.DataFase)}</span>
-                        <span class="timeline-phase">${evt.Fase || 'N/A'}</span>
-                    </div>
-                `).join('');
 
                 html += `
-                    <article class="initiative-card" onclick="toggleCard(this, event)" onkeydown="handleInitiativeKeydown(event, this)" tabindex="0" role="button" aria-expanded="false" aria-label="${ini.IniTitulo}">
+                    <article class="initiative-card"
+                             data-ini-id="${ini.IniId}"
+                             data-index="${index}"
+                             onclick="toggleCardExpansion(this, event)"
+                             onkeydown="handleInitiativeKeydown(event, this)"
+                             tabindex="0"
+                             role="button"
+                             aria-expanded="false"
+                             aria-label="${ini.IniTitulo}">
                         <div class="initiative-header">
                             <span class="initiative-badge ${typeClass}" aria-label="Tipo ${ini.IniDescTipo}">${getTypeLabel(ini.IniTipo)}</span>
                             <span class="initiative-number">${ini.IniNr}/${ini.IniTipo}</span>
                         </div>
                         <div class="initiative-title">${ini.IniTitulo}</div>
                         <div class="initiative-meta">
-                            <span aria-label="Data de início"><span aria-hidden="true">📅</span> ${formatDate(ini.DataInicioleg)}</span>
+                            <span aria-label="Data de inicio"><span aria-hidden="true">📅</span> ${formatDate(ini.DataInicioleg)}</span>
                             <span aria-label="${events.length} fases"><span aria-hidden="true">📊</span> ${events.length} fases</span>
                         </div>
                         <div class="initiative-status ${statusInfo.cssClass}" title="${status}">
                             <span class="status-category-label">${statusInfo.label}</span>
                         </div>
-                        <div class="initiative-details" aria-hidden="true">
-                            <strong>Tipo:</strong> ${ini.IniDescTipo}<br>
-                            <strong>Autores:</strong> ${authors}<br>
-                            <strong>Legislatura:</strong> ${ini.IniLeg}<br>
-                            ${ini.IniLinkTexto ? `<strong>Texto:</strong> <a href="${ini.IniLinkTexto}" target="_blank" rel="noopener">PDF</a><br>` : ''}
-                            <div class="timeline">
-                                <strong>Ciclo de vida (${events.length} eventos):</strong>
-                                ${timeline}
-                            </div>
-                        </div>
+                        <div class="initiative-details" aria-hidden="true"></div>
                         <div class="expand-indicator">
                             <span class="expand-icon" aria-hidden="true">▼</span>
                             <span class="expand-text">Clique para ver ciclo de vida</span>
@@ -3231,9 +3455,227 @@
                     </article>
                 `;
             });
+            html += '</div>';
 
-            container.innerHTML = html || '<p style="text-align: center; color: #6b7280;">Nenhuma iniciativa encontrada</p>';
+            container.innerHTML = filtered.length > 0 ? html : '<p style="text-align: center; color: #6b7280;">Nenhuma iniciativa encontrada</p>';
             container.classList.remove('loading');
+        }
+
+        // Store current filtered data for expansion row access
+        let CURRENT_FILTERED_DATA = [];
+
+        function toggleCardExpansion(card, event) {
+            // Prevent toggle if clicking on a link inside the card
+            if (event && event.target.tagName === 'A') {
+                return;
+            }
+
+            const grid = card.closest('.initiatives-grid');
+            if (!grid) {
+                // Fallback to old behavior if not in grid
+                card.classList.toggle('expanded');
+                return;
+            }
+
+            const iniId = card.dataset.iniId;
+            const existingExpansion = grid.querySelector('.expansion-row');
+            const wasSelected = card.classList.contains('selected');
+
+            // Remove any existing expansion row and selection
+            if (existingExpansion) {
+                existingExpansion.remove();
+            }
+            grid.querySelectorAll('.initiative-card.selected').forEach(c => {
+                c.classList.remove('selected');
+                c.setAttribute('aria-expanded', 'false');
+            });
+
+            // If clicking the same card, just close (toggle off)
+            if (wasSelected) {
+                return;
+            }
+
+            // Find the initiative data
+            const ini = INITIATIVES_DATA.find(i => i.IniId === iniId);
+            if (!ini) return;
+
+            // Mark card as selected
+            card.classList.add('selected');
+            card.setAttribute('aria-expanded', 'true');
+
+            // Create expansion row
+            const expansionRow = createExpansionRow(ini);
+
+            // Insert after the card (but grid will position it correctly)
+            card.insertAdjacentElement('afterend', expansionRow);
+
+            // Scroll to show the expansion row
+            setTimeout(() => {
+                expansionRow.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }, 100);
+        }
+
+        function createExpansionRow(ini) {
+            const authors = getAuthors(ini);
+            const events = ini.IniEventos || [];
+            const status = getCurrentStatus(ini);
+            const statusInfo = getStatusCategory(status);
+
+            const div = document.createElement('div');
+            div.className = 'expansion-row';
+            div.innerHTML = `
+                <div class="expansion-row-header">
+                    <div class="expansion-row-title">${ini.IniTitulo}</div>
+                    <button class="expansion-row-close" onclick="closeExpansionRow(event)">Fechar</button>
+                </div>
+                <div class="expansion-row-meta">
+                    <div class="expansion-row-meta-item">
+                        <strong>Tipo:</strong> ${ini.IniDescTipo}
+                    </div>
+                    <div class="expansion-row-meta-item">
+                        <strong>Autores:</strong> ${authors}
+                    </div>
+                    <div class="expansion-row-meta-item">
+                        <strong>Legislatura:</strong> ${ini.IniLeg}
+                    </div>
+                    <div class="expansion-row-meta-item">
+                        <strong>Estado:</strong> <span class="initiative-status ${statusInfo.cssClass}">${statusInfo.label}</span>
+                    </div>
+                    ${ini.IniLinkTexto ? `
+                    <div class="expansion-row-meta-item">
+                        <strong>Documento:</strong> <a href="${ini.IniLinkTexto}" target="_blank" rel="noopener">Ver PDF</a>
+                    </div>
+                    ` : ''}
+                </div>
+                <div class="horizontal-timeline">
+                    <div class="horizontal-timeline-title">Ciclo de Vida (${events.length} eventos)</div>
+                    ${renderHorizontalTimeline(events)}
+                </div>
+            `;
+            return div;
+        }
+
+        function closeExpansionRow(event) {
+            event.stopPropagation();
+            const grid = document.querySelector('.initiatives-grid');
+            if (!grid) return;
+
+            const expansionRow = grid.querySelector('.expansion-row');
+            if (expansionRow) {
+                expansionRow.remove();
+            }
+            grid.querySelectorAll('.initiative-card.selected').forEach(c => {
+                c.classList.remove('selected');
+                c.setAttribute('aria-expanded', 'false');
+            });
+        }
+
+        function renderHorizontalTimeline(events) {
+            if (!events || events.length === 0) {
+                return '<p style="color: var(--text-muted); font-size: 0.9rem;">Sem eventos registados</p>';
+            }
+
+            // Sort events by date
+            const sortedEvents = events.slice().sort((a, b) =>
+                (a.DataFase || '').localeCompare(b.DataFase || '')
+            );
+
+            // Parse dates and filter valid ones
+            const eventsWithDates = sortedEvents
+                .map(evt => ({
+                    ...evt,
+                    date: evt.DataFase ? new Date(evt.DataFase) : null
+                }))
+                .filter(evt => evt.date && !isNaN(evt.date.getTime()));
+
+            if (eventsWithDates.length === 0) {
+                // Fallback to vertical timeline if no valid dates
+                return `<div class="timeline-vertical">${sortedEvents.map(evt => `
+                    <div class="timeline-item">
+                        <span class="timeline-date">${formatDate(evt.DataFase)}</span>
+                        <span class="timeline-phase">${evt.Fase || 'N/A'}</span>
+                    </div>
+                `).join('')}</div>`;
+            }
+
+            const firstDate = eventsWithDates[0].date;
+            const lastDate = eventsWithDates[eventsWithDates.length - 1].date;
+            const totalDays = Math.max(1, (lastDate - firstDate) / (1000 * 60 * 60 * 24));
+
+            // Calculate positions based on time
+            let html = '<div class="timeline-track-container">';
+            html += `<div class="timeline-dates-header">
+                <span>${formatDate(eventsWithDates[0].DataFase)}</span>
+                <span>${formatDate(eventsWithDates[eventsWithDates.length - 1].DataFase)}</span>
+            </div>`;
+            html += '<div class="timeline-track">';
+            html += '<div class="timeline-track-line"></div>';
+
+            eventsWithDates.forEach((evt, idx) => {
+                const daysFromStart = (evt.date - firstDate) / (1000 * 60 * 60 * 24);
+                const position = totalDays > 0 ? (daysFromStart / totalDays) * 100 : 50;
+
+                // Clamp position between 2% and 98% to keep dots visible
+                const clampedPosition = Math.max(2, Math.min(98, position));
+
+                // Get status category for coloring
+                const statusInfo = getStatusCategory(evt.Fase);
+
+                html += `
+                    <div class="timeline-event" style="left: ${clampedPosition}%;" title="${evt.Fase}: ${formatDate(evt.DataFase)}">
+                        <div class="timeline-event-dot ${statusInfo.cssClass}"></div>
+                        <div class="timeline-event-label">${shortenPhaseName(evt.Fase)}</div>
+                        <div class="timeline-event-date">${formatShortDate(evt.DataFase)}</div>
+                    </div>
+                `;
+
+                // Add gap indicator between events if significant time passed
+                if (idx < eventsWithDates.length - 1) {
+                    const nextEvt = eventsWithDates[idx + 1];
+                    const gapDays = (nextEvt.date - evt.date) / (1000 * 60 * 60 * 24);
+                    if (gapDays > 30) {
+                        const gapPosition = clampedPosition + ((nextEvt.date - firstDate) / (1000 * 60 * 60 * 24) / totalDays * 100 - clampedPosition) / 2;
+                        const gapText = gapDays > 365 ? `${Math.round(gapDays/365)}a` :
+                                       gapDays > 30 ? `${Math.round(gapDays/30)}m` : `${Math.round(gapDays)}d`;
+                        html += `<div class="timeline-gap-indicator" style="left: ${gapPosition}%;">${gapText}</div>`;
+                    }
+                }
+            });
+
+            html += '</div></div>';
+            return html;
+        }
+
+        function shortenPhaseName(phase) {
+            if (!phase) return '';
+            // Shorten common phase names
+            const shortcuts = {
+                'Entrada': 'Ent.',
+                'Admissao': 'Adm.',
+                'Anuncio': 'Anun.',
+                'Baixa comissao para nova apreciacao': 'Baixa',
+                'Discussao na generalidade': 'Disc.',
+                'Votacao na generalidade': 'Vot.Gen.',
+                'Votacao final global': 'Vot.Final',
+                'Envio para promulgacao': 'Env.Prom.',
+                'Promulgacao': 'Prom.',
+                'Referenda': 'Ref.',
+                'Publicacao': 'Pub.'
+            };
+            for (const [full, short] of Object.entries(shortcuts)) {
+                if (phase.toLowerCase().includes(full.toLowerCase())) {
+                    return short;
+                }
+            }
+            // Default: first 8 chars
+            return phase.length > 8 ? phase.substring(0, 8) + '.' : phase;
+        }
+
+        function formatShortDate(dateStr) {
+            if (!dateStr) return '';
+            const date = new Date(dateStr);
+            if (isNaN(date.getTime())) return dateStr;
+            return `${date.getDate()}/${date.getMonth() + 1}`;
         }
 
         function toggleCard(card, event) {
@@ -3391,48 +3833,36 @@
                 ? matchedInitiatives
                 : matchedInitiatives.filter(ini => ini.IniTipo === filterType);
 
-            let html = '';
-            filtered.forEach(ini => {
+            let html = '<div class="initiatives-grid">';
+            filtered.forEach((ini, index) => {
                 const status = getCurrentStatus(ini);
                 const statusInfo = getStatusCategory(status);
-                const authors = getAuthors(ini);
                 const typeClass = `type-${ini.IniTipo}`;
                 const events = ini.IniEventos || [];
-                const sortedEvents = events.slice().sort((a, b) =>
-                    (a.DataFase || '').localeCompare(b.DataFase || '')
-                );
-
-                const timeline = sortedEvents.map(evt => `
-                    <div class="timeline-item">
-                        <span class="timeline-date">${formatDate(evt.DataFase)}</span>
-                        <span class="timeline-phase">${evt.Fase || 'N/A'}</span>
-                    </div>
-                `).join('');
 
                 html += `
-                    <article class="initiative-card" onclick="toggleCard(this, event)" onkeydown="handleInitiativeKeydown(event, this)" tabindex="0" role="button" aria-expanded="false" aria-label="${ini.IniTitulo}">
+                    <article class="initiative-card"
+                             data-ini-id="${ini.IniId}"
+                             data-index="${index}"
+                             onclick="toggleCardExpansion(this, event)"
+                             onkeydown="handleInitiativeKeydown(event, this)"
+                             tabindex="0"
+                             role="button"
+                             aria-expanded="false"
+                             aria-label="${ini.IniTitulo}">
                         <div class="initiative-header">
                             <span class="initiative-badge ${typeClass}" aria-label="Tipo ${ini.IniDescTipo}">${getTypeLabel(ini.IniTipo)}</span>
                             <span class="initiative-number">${ini.IniNr}/${ini.IniTipo}</span>
                         </div>
                         <div class="initiative-title">${ini.IniTitulo}</div>
                         <div class="initiative-meta">
-                            <span aria-label="Data de início"><span aria-hidden="true">📅</span> ${formatDate(ini.DataInicioleg)}</span>
+                            <span aria-label="Data de inicio"><span aria-hidden="true">📅</span> ${formatDate(ini.DataInicioleg)}</span>
                             <span aria-label="${events.length} fases"><span aria-hidden="true">📊</span> ${events.length} fases</span>
                         </div>
                         <div class="initiative-status ${statusInfo.cssClass}" title="${status}">
                             <span class="status-category-label">${statusInfo.label}</span>
                         </div>
-                        <div class="initiative-details" aria-hidden="true">
-                            <strong>Tipo:</strong> ${ini.IniDescTipo}<br>
-                            <strong>Autores:</strong> ${authors}<br>
-                            <strong>Legislatura:</strong> ${ini.IniLeg}<br>
-                            ${ini.IniLinkTexto ? `<strong>Texto:</strong> <a href="${ini.IniLinkTexto}" target="_blank" rel="noopener">PDF</a><br>` : ''}
-                            <div class="timeline">
-                                <strong>Ciclo de vida (${events.length} eventos):</strong>
-                                ${timeline}
-                            </div>
-                        </div>
+                        <div class="initiative-details" aria-hidden="true"></div>
                         <div class="expand-indicator">
                             <span class="expand-icon" aria-hidden="true">▼</span>
                             <span class="expand-text">Clique para ver ciclo de vida</span>
@@ -3440,8 +3870,9 @@
                     </article>
                 `;
             });
+            html += '</div>';
 
-            container.innerHTML = html || '<p style="text-align: center; color: #6b7280;">Nenhuma iniciativa encontrada</p>';
+            container.innerHTML = filtered.length > 0 ? html : '<p style="text-align: center; color: #6b7280;">Nenhuma iniciativa encontrada</p>';
             container.classList.remove('loading');
         }
 
