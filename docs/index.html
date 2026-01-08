@@ -2398,11 +2398,11 @@
 
             <div class="funnels">
                 <div class="funnel-container">
-                    <div class="funnel-title">Laws Lifecycle</div>
+                    <div class="funnel-title">Leis - Estado Atual</div>
                     <div id="laws-funnel" class="funnel-chart"></div>
                 </div>
                 <div class="funnel-container">
-                    <div class="funnel-title">Resolutions Lifecycle</div>
+                    <div class="funnel-title">Resoluções - Estado Atual</div>
                     <div id="resolutions-funnel" class="funnel-chart"></div>
                 </div>
             </div>
@@ -2757,44 +2757,38 @@
                 ini.IniTipo === 'R'
             );
 
-            // Use computed data if available, fallback to hardcoded for now
+            // Use simplified status categories for funnels
             let lawsPhases, resolutionsPhases;
 
             if (INITIATIVES_DATA.length > 0) {
-                // Compute from data - simplified approach using event counting
-                lawsPhases = computeFunnelFromData(lawsInitiatives, 'laws');
-                resolutionsPhases = computeFunnelFromData(resolutionsInitiatives, 'resolutions');
+                // Compute from data using simplified status categories
+                lawsPhases = computeSimplifiedFunnel(lawsInitiatives);
+                resolutionsPhases = computeSimplifiedFunnel(resolutionsInitiatives);
             } else {
-                // Fallback to hardcoded values
+                // Fallback to hardcoded values (simplified categories)
                 lawsPhases = [
-                    { name: 'Entrada', count: 322 },
-                    { name: 'Admissão', count: 309 },
-                    { name: 'Anúncio', count: 304 },
-                    { name: 'Discussão', count: 95 },
-                    { name: 'Votação generalidade', count: 180 },
-                    { name: 'Comissão especialidade', count: 146 },
-                    { name: 'Votação final', count: 74 },
-                    { name: 'Envio promulgação', count: 20 },
-                    { name: 'Promulgação', count: 14 },
-                    { name: 'Referenda', count: 14 },
-                    { name: 'Lei (DR)', count: 14 }
+                    { name: 'Submetida', count: 50, color: '#9ca3af' },
+                    { name: 'Anunciada', count: 180, color: '#38bdf8' },
+                    { name: 'Em discussão', count: 45, color: '#3b82f6' },
+                    { name: 'Em votação', count: 30, color: '#f97316' },
+                    { name: 'A finalizar', count: 10, color: '#8b5cf6' },
+                    { name: 'Aprovada', count: 14, color: '#10b981' },
+                    { name: 'Rejeitada', count: 5, color: '#ef4444' }
                 ];
 
                 resolutionsPhases = [
-                    { name: 'Entrada', count: 457 },
-                    { name: 'Admissão', count: 440 },
-                    { name: 'Anúncio', count: 433 },
-                    { name: 'Discussão', count: 120 },
-                    { name: 'Votação generalidade', count: 203 },
-                    { name: 'Votação deliberação', count: 95 },
-                    { name: 'Redação final', count: 79 },
-                    { name: 'Resolução (DAR)', count: 83 },
-                    { name: 'Resolução (DR)', count: 81 }
+                    { name: 'Submetida', count: 80, color: '#9ca3af' },
+                    { name: 'Anunciada', count: 250, color: '#38bdf8' },
+                    { name: 'Em discussão', count: 60, color: '#3b82f6' },
+                    { name: 'Em votação', count: 40, color: '#f97316' },
+                    { name: 'A finalizar', count: 15, color: '#8b5cf6' },
+                    { name: 'Aprovada', count: 81, color: '#10b981' },
+                    { name: 'Rejeitada', count: 8, color: '#ef4444' }
                 ];
             }
 
-            renderFunnelChart('laws-funnel', lawsPhases, '#2563eb');
-            renderFunnelChart('resolutions-funnel', resolutionsPhases, '#16a34a');
+            renderFunnelChart('laws-funnel', lawsPhases, '#3b82f6');
+            renderFunnelChart('resolutions-funnel', resolutionsPhases, '#10b981');
         }
 
         function computeFunnelFromData(initiatives, type) {
@@ -2842,7 +2836,38 @@
             return counts;
         }
 
-        function renderFunnelChart(containerId, phases, color) {
+        // Compute simplified funnel using status categories
+        function computeSimplifiedFunnel(initiatives) {
+            // Define the category order and colors
+            const categoryConfig = [
+                { category: 'submitted', label: 'Submetida', color: '#9ca3af' },
+                { category: 'announced', label: 'Anunciada', color: '#38bdf8' },
+                { category: 'discussion', label: 'Em discussão', color: '#3b82f6' },
+                { category: 'voting', label: 'Em votação', color: '#f97316' },
+                { category: 'finalizing', label: 'A finalizar', color: '#8b5cf6' },
+                { category: 'approved', label: 'Aprovada', color: '#10b981' },
+                { category: 'rejected', label: 'Rejeitada', color: '#ef4444' }
+            ];
+
+            // Count initiatives by category
+            const counts = {};
+            categoryConfig.forEach(c => counts[c.category] = 0);
+
+            initiatives.forEach(ini => {
+                const status = ini._currentStatus || 'Desconhecido';
+                const { category } = getStatusCategory(status);
+                counts[category]++;
+            });
+
+            // Return array with counts and colors
+            return categoryConfig.map(c => ({
+                name: c.label,
+                count: counts[c.category],
+                color: c.color
+            }));
+        }
+
+        function renderFunnelChart(containerId, phases, defaultColor) {
             const container = document.getElementById(containerId);
             const maxCount = Math.max(...phases.map(p => p.count));
 
@@ -2850,10 +2875,11 @@
             phases.forEach(phase => {
                 const heightPercent = (phase.count / maxCount) * 100;
                 const height = Math.max(heightPercent * 2, 40);
+                const barColor = phase.color || defaultColor;
 
                 html += `
                     <div class="phase-step">
-                        <div class="phase-bar" style="height: ${height}px; background: ${color};">
+                        <div class="phase-bar" style="height: ${height}px; background: ${barColor};">
                             <div class="phase-count">${phase.count}</div>
                         </div>
                         <div class="phase-name">${phase.name}</div>
