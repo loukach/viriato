@@ -1,6 +1,6 @@
 # Project Status - Viriato
 
-**Last Updated:** January 7, 2026
+**Last Updated:** January 8, 2026
 **Current Phase:** Production (Phase 3)
 
 ## Quick Overview
@@ -114,10 +114,22 @@ All documentation uses:
   - Event detail modal with description (InternetText field)
   - Shows all days from first to last event (no arbitrary cutoff)
   - Better day separation with thicker borders
+- ✅ **Simplified Status Categories (January 2026):**
+  - Maps 60+ legislative phases to 7 user-friendly categories
+  - Applied to both initiative cards and lifecycle funnels
+  - Categories with color coding:
+    - Submetida (gray) - Entrada, Publicação, Admissão
+    - Anunciada (light blue) - Anúncio, Baixa comissão
+    - Em discussão (blue) - Discussão, Apreciação, Parecer
+    - Em votação (orange) - Votação generalidade/final
+    - A finalizar (purple) - Promulgação, Referenda
+    - Aprovada (green) - Lei/Resolução publicada
+    - Rejeitada (red) - Rejeitado, Retirado, Caducado
+  - Addresses pain point: "Legislative process is incomprehensible"
 
 **Deployment Status:**
-- ✅ API changes pushed to GitHub (will auto-deploy on Render.com)
-- ⏳ Frontend changes pushed to GitHub (GitHub Pages deployment in progress, 1-10 minutes)
+- ✅ All changes deployed to GitHub Pages
+- ✅ Live at https://loukach.github.io/viriato/
 
 **Potential features to consider:**
 - Deputy profiles and voting records
