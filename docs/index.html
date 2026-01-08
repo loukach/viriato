@@ -2748,13 +2748,13 @@
             }
 
             // Filter initiatives by type for funnel calculation
-            // Laws: P (Projeto de Lei) and L (Proposta de Lei)
-            // Resolutions: R (Projeto de Resolução)
+            // Laws: J (Projeto de Lei) and P (Proposta de Lei)
+            // Resolutions: R (Projeto de Resolução) and S (Proposta de Resolução)
             const lawsInitiatives = INITIATIVES_DATA.filter(ini =>
-                ini.IniTipo === 'P' || ini.IniTipo === 'L'
+                ini.IniTipo === 'J' || ini.IniTipo === 'P'
             );
             const resolutionsInitiatives = INITIATIVES_DATA.filter(ini =>
-                ini.IniTipo === 'R'
+                ini.IniTipo === 'R' || ini.IniTipo === 'S'
             );
 
             // Use simplified status categories for funnels
