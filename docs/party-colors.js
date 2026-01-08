@@ -31,10 +31,10 @@ const PARTY_COLORS = {
     },
     'IL': {
         name: 'Iniciativa Liberal',
-        color: '#00ADEF',
-        rgb: 'rgb(0, 173, 239)',
-        description: 'Cyan / Turquoise Blue',
-        source: 'Wikidata',
+        color: '#00abe4',
+        rgb: 'rgb(0, 171, 228)',
+        description: 'Light Blue / Cyan',
+        source: 'Official party color',
         confirmed: true
     },
     'BE': {
@@ -49,29 +49,27 @@ const PARTY_COLORS = {
     // Commonly used colors (not officially confirmed)
     'PSD': {
         name: 'Partido Social Democrata',
-        color: '#FF6600',
-        rgb: 'rgb(255, 102, 0)',
-        description: 'Safety Orange / Cadmium Orange',
-        source: 'Common election visualizations',
-        confirmed: false,
-        alternative: '#FF9933' // Alternative orange shade
+        color: '#FF6500',
+        rgb: 'rgb(255, 101, 0)',
+        description: 'Orange',
+        source: 'Official party color',
+        confirmed: true
     },
     'Chega': {
         name: 'Chega',
-        color: '#0093DD',
-        rgb: 'rgb(0, 147, 221)',
-        description: 'Pacific Blue',
-        source: 'Election maps (blue)',
-        confirmed: false,
-        alternative: '#4169E1' // Royal Blue alternative
+        color: '#0f3468',
+        rgb: 'rgb(15, 52, 104)',
+        description: 'Dark Blue',
+        source: 'Official party color',
+        confirmed: true
     },
     'CDS-PP': {
         name: 'CDS - Partido Popular',
-        color: '#4BA5E8',
-        rgb: 'rgb(75, 165, 232)',
-        description: 'Light/Celestial Blue',
-        source: 'Common usage',
-        confirmed: false
+        color: '#0071BC',
+        rgb: 'rgb(0, 113, 188)',
+        description: 'Blue',
+        source: 'Official party color',
+        confirmed: true
     },
     'PAN': {
         name: 'Pessoas-Animais-Natureza',
@@ -83,26 +81,27 @@ const PARTY_COLORS = {
     },
     'Livre': {
         name: 'Livre',
-        color: '#32CD32',
-        rgb: 'rgb(50, 205, 50)',
-        description: 'Lime Green',
-        source: 'Common usage (green background)',
-        confirmed: false,
-        secondary: '#DC143C' // Red for poppy symbol
+        color: '#C4D600',
+        rgb: 'rgb(196, 214, 0)',
+        description: 'Lime / Chartreuse',
+        source: 'Official party color',
+        confirmed: true
     }
 };
 
 // Simplified map for quick lookups (just the hex colors)
 const PARTY_COLOR_MAP = {
     'PS': '#FF66FF',
-    'PSD': '#FF6600',
-    'Chega': '#0093DD',
-    'IL': '#00ADEF',
+    'PSD': '#FF6500',
+    'Chega': '#0f3468',
+    'CH': '#0f3468',
+    'IL': '#00abe4',
     'BE': '#000000',
     'PCP': '#FF0000',
-    'CDS-PP': '#4BA5E8',
+    'CDS-PP': '#0071BC',
     'PAN': '#00A651',
-    'Livre': '#32CD32'
+    'Livre': '#C4D600',
+    'L': '#C4D600'
 };
 
 // Get party color with fallback

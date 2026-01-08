@@ -743,17 +743,17 @@
             color: var(--text-muted);
         }
 
-        /* Party Colors - Official colors from party-colors.js
-           Sources: Wikipedia RGBpol template, Wikidata, election visualizations */
-        .party-PS { background: linear-gradient(135deg, #FF66FF, #E44DE4); }     /* Pink Flamingo/Magenta */
-        .party-PSD { background: linear-gradient(135deg, #FF6600, #E05500); }    /* Safety Orange */
-        .party-CH { background: linear-gradient(135deg, #0093DD, #0078B5); }     /* Pacific Blue (Chega) */
-        .party-IL { background: linear-gradient(135deg, #00ADEF, #008ECF); }     /* Cyan/Turquoise Blue */
-        .party-BE { background: linear-gradient(135deg, #1a1a1a, #000000); }     /* Black (with gradient) */
-        .party-PCP { background: linear-gradient(135deg, #FF0000, #D50000); }    /* Pure Red */
-        .party-CDS-PP { background: linear-gradient(135deg, #4BA5E8, #3A8FD0); } /* Light/Celestial Blue */
-        .party-PAN { background: linear-gradient(135deg, #00A651, #008841); }    /* Green (Pigment) */
-        .party-L { background: linear-gradient(135deg, #32CD32, #28A428); }      /* Lime Green (Livre) */
+        /* Party Colors - Official colors
+           Updated: 2026-01-08 */
+        .party-PS { background: linear-gradient(135deg, #FF66FF, #E44DE4); }     /* Pink */
+        .party-PSD { background: linear-gradient(135deg, #FF6500, #E05400); }    /* Orange */
+        .party-CH { background: linear-gradient(135deg, #0f3468, #0a2550); }     /* Dark Blue (Chega) */
+        .party-IL { background: linear-gradient(135deg, #00abe4, #008dc0); }     /* Light Blue */
+        .party-BE { background: linear-gradient(135deg, #1a1a1a, #000000); }     /* Black */
+        .party-PCP { background: linear-gradient(135deg, #FF0000, #D50000); }    /* Red */
+        .party-CDS-PP { background: linear-gradient(135deg, #0071BC, #005a96); } /* Blue */
+        .party-PAN { background: linear-gradient(135deg, #00A651, #008841); }    /* Green */
+        .party-L { background: linear-gradient(135deg, #C4D600, #9fb300); }      /* Lime/Chartreuse (Livre) */
         .party-GOV { background: linear-gradient(135deg, #6b7280, #4b5563); }    /* Government grey */
         .party-default { background: linear-gradient(135deg, #94a3b8, #64748b); }
 
@@ -3170,18 +3170,18 @@
             loadComissoes();
         }
 
-        // Party colors for committee visualization (matching official colors)
+        // Party colors for committee visualization (official colors)
         const PARTY_COLORS = {
-            'PSD': '#FF6600',    // Safety Orange
-            'PS': '#FF66FF',     // Pink Flamingo
-            'CH': '#0093DD',     // Pacific Blue (Chega)
-            'IL': '#00ADEF',     // Cyan/Turquoise Blue
-            'L': '#32CD32',      // Lime Green (Livre)
-            'PCP': '#FF0000',    // Pure Red
+            'PSD': '#FF6500',    // Orange
+            'PS': '#FF66FF',     // Pink
+            'CH': '#0f3468',     // Dark Blue (Chega)
+            'IL': '#00abe4',     // Light Blue
+            'L': '#C4D600',      // Lime/Chartreuse (Livre)
+            'PCP': '#FF0000',    // Red
             'BE': '#1a1a1a',     // Black
-            'CDS-PP': '#4BA5E8', // Light Blue
+            'CDS-PP': '#0071BC', // Blue
             'PAN': '#00A651',    // Green
-            'JPP': '#FFB800'     // Gold (JPP - Partido Popular)
+            'JPP': '#FFB800'     // Gold (JPP)
         };
 
         // Render Comissões
