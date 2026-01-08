@@ -371,6 +371,48 @@
             letter-spacing: 0.5px;
         }
 
+        /* Sidebar + Main Content Layout */
+        .iniciativas-layout {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 32px;
+            margin-top: 32px;
+        }
+
+        .filters-sidebar {
+            position: sticky;
+            top: 20px;
+            height: fit-content;
+            background: var(--bg-card);
+            padding: 24px;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border-light);
+        }
+
+        .filters-sidebar h2 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--border-light);
+        }
+
+        .iniciativas-main {
+            min-width: 0; /* Prevent grid blowout */
+        }
+
+        @media (max-width: 1024px) {
+            .iniciativas-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .filters-sidebar {
+                position: static;
+            }
+        }
+
         .filters {
             background: var(--bg-card);
             padding: 24px;
@@ -386,6 +428,32 @@
 
         .filter-group:last-child {
             margin-bottom: 0;
+        }
+
+        /* Sidebar filter buttons - vertical stack */
+        .filters-sidebar .filter-buttons {
+            flex-direction: column;
+        }
+
+        .filters-sidebar .filter-btn {
+            width: 100%;
+            text-align: left;
+            padding: 10px 16px;
+            font-size: 0.85rem;
+        }
+
+        /* Search section above cards */
+        .search-section {
+            background: var(--bg-card);
+            padding: 20px 24px;
+            border-radius: var(--radius-lg);
+            margin-bottom: 24px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border-light);
+        }
+
+        .search-section .filter-label {
+            margin-bottom: 12px;
         }
 
         .filter-label {
@@ -675,17 +743,18 @@
             color: var(--text-muted);
         }
 
-        /* Party Colors */
-        .party-PAN { background: linear-gradient(135deg, #2d8f4e, #1a5f2a); }
-        .party-CH { background: linear-gradient(135deg, #1e3a5f, #0d1f33); }
-        .party-PCP { background: linear-gradient(135deg, #dc2626, #b91c1c); }
-        .party-L { background: linear-gradient(135deg, #16a34a, #15803d); }
-        .party-PS { background: linear-gradient(135deg, #ec4899, #db2777); }
-        .party-BE { background: linear-gradient(135deg, #7c3aed, #6d28d9); }
-        .party-IL { background: linear-gradient(135deg, #06b6d4, #0891b2); }
-        .party-CDS-PP { background: linear-gradient(135deg, #3b82f6, #2563eb); }
-        .party-PSD { background: linear-gradient(135deg, #f97316, #ea580c); }
-        .party-GOV { background: linear-gradient(135deg, #6b7280, #4b5563); }
+        /* Party Colors - Official colors from party-colors.js
+           Sources: Wikipedia RGBpol template, Wikidata, election visualizations */
+        .party-PS { background: linear-gradient(135deg, #FF66FF, #E44DE4); }     /* Pink Flamingo/Magenta */
+        .party-PSD { background: linear-gradient(135deg, #FF6600, #E05500); }    /* Safety Orange */
+        .party-CH { background: linear-gradient(135deg, #0093DD, #0078B5); }     /* Pacific Blue (Chega) */
+        .party-IL { background: linear-gradient(135deg, #00ADEF, #008ECF); }     /* Cyan/Turquoise Blue */
+        .party-BE { background: linear-gradient(135deg, #1a1a1a, #000000); }     /* Black (with gradient) */
+        .party-PCP { background: linear-gradient(135deg, #FF0000, #D50000); }    /* Pure Red */
+        .party-CDS-PP { background: linear-gradient(135deg, #4BA5E8, #3A8FD0); } /* Light/Celestial Blue */
+        .party-PAN { background: linear-gradient(135deg, #00A651, #008841); }    /* Green (Pigment) */
+        .party-L { background: linear-gradient(135deg, #32CD32, #28A428); }      /* Lime Green (Livre) */
+        .party-GOV { background: linear-gradient(135deg, #6b7280, #4b5563); }    /* Government grey */
         .party-default { background: linear-gradient(135deg, #94a3b8, #64748b); }
 
         /* Timeline Chart */
@@ -2600,81 +2669,90 @@
                 </div>
             </div>
 
-            <div class="filters">
-                <div class="filter-group">
-                    <label class="filter-label" id="legislature-label">Legislatura:</label>
-                    <div class="filter-buttons" role="group" aria-labelledby="legislature-label">
-                        <button class="filter-btn" data-legislature="all">Todas</button>
-                        <button class="filter-btn active" data-legislature="XVII">XVII (2025-presente)</button>
-                        <button class="filter-btn" data-legislature="XVI">XVI (2024-2025)</button>
-                        <button class="filter-btn" data-legislature="XV">XV (2022-2024)</button>
-                        <button class="filter-btn" data-legislature="XIV">XIV (2019-2022)</button>
+            <div class="iniciativas-layout">
+                <!-- Sidebar with filters -->
+                <aside class="filters-sidebar">
+                    <h2>Filtros</h2>
+                    <div class="filter-group">
+                        <label class="filter-label" id="legislature-label">Legislatura</label>
+                        <div class="filter-buttons" role="group" aria-labelledby="legislature-label">
+                            <button class="filter-btn" data-legislature="all">Todas</button>
+                            <button class="filter-btn active" data-legislature="XVII">XVII (2025-presente)</button>
+                            <button class="filter-btn" data-legislature="XVI">XVI (2024-2025)</button>
+                            <button class="filter-btn" data-legislature="XV">XV (2022-2024)</button>
+                            <button class="filter-btn" data-legislature="XIV">XIV (2019-2022)</button>
+                        </div>
                     </div>
-                </div>
-                <div class="filter-group">
-                    <label class="filter-label" id="search-label">Pesquisar Iniciativas:</label>
-                    <div class="search-container" role="search">
-                        <input type="text" id="search-input" class="search-input" placeholder="Pesquisar por título (ex: 'saúde', 'educação', 'ambiente')..." aria-label="Pesquisar iniciativas" />
-                        <button id="search-btn" class="search-btn" onclick="performSearch()" aria-label="Pesquisar">Pesquisar</button>
-                        <button id="clear-search-btn" class="clear-search-btn" onclick="clearSearch()" aria-label="Limpar pesquisa">Limpar</button>
+                    <div class="filter-group">
+                        <label class="filter-label" id="filter-label">Tipo de Iniciativa</label>
+                        <div class="filter-buttons" role="group" aria-labelledby="filter-label">
+                            <button class="filter-btn active" data-type="all">Todos</button>
+                            <button class="filter-btn" data-type="P">Projetos de Lei</button>
+                            <button class="filter-btn" data-type="R">Projetos de Resolução</button>
+                            <button class="filter-btn" data-type="L">Propostas de Lei</button>
+                            <button class="filter-btn" data-type="D">Deliberações</button>
+                        </div>
                     </div>
-                    <div id="search-results-info" class="search-results-info"></div>
-                </div>
-                <div class="filter-group">
-                    <label class="filter-label" id="filter-label">Filtrar por Tipo:</label>
-                    <div class="filter-buttons" role="group" aria-labelledby="filter-label">
-                        <button class="filter-btn active" data-type="all">Todos</button>
-                        <button class="filter-btn" data-type="P">Projetos de Lei</button>
-                        <button class="filter-btn" data-type="R">Projetos de Resolução</button>
-                        <button class="filter-btn" data-type="L">Propostas de Lei</button>
-                        <button class="filter-btn" data-type="D">Deliberações</button>
+                </aside>
+
+                <!-- Main content -->
+                <div class="iniciativas-main">
+                    <div class="funnels">
+                        <div class="funnel-container">
+                            <div class="funnel-title">Leis - Estado Atual</div>
+                            <div id="laws-funnel" class="funnel-chart"></div>
+                        </div>
+                        <div class="funnel-container">
+                            <div class="funnel-title">Resoluções - Estado Atual</div>
+                            <div id="resolutions-funnel" class="funnel-chart"></div>
+                        </div>
                     </div>
+
+                    <!-- Analytics Widgets -->
+                    <div class="analytics-grid" id="analytics-widgets">
+                        <div class="widget">
+                            <div class="widget-title">
+                                <span class="widget-title-icon" aria-hidden="true">📊</span>
+                                Por Tipo
+                            </div>
+                            <div id="type-widget" class="type-grid">
+                                <!-- Populated by JS -->
+                            </div>
+                        </div>
+                        <div class="widget">
+                            <div class="widget-title">
+                                <span class="widget-title-icon" aria-hidden="true">📅</span>
+                                Por Mês
+                            </div>
+                            <div id="month-widget" class="timeline-chart" style="margin-bottom: 30px;">
+                                <!-- Populated by JS -->
+                            </div>
+                        </div>
+                        <div class="widget">
+                            <div class="widget-title">
+                                <span class="widget-title-icon" aria-hidden="true">👤</span>
+                                Por Autor
+                            </div>
+                            <div id="author-widget" class="bar-chart">
+                                <!-- Populated by JS -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Search section (just above cards) -->
+                    <div class="search-section">
+                        <label class="filter-label" id="search-label">Pesquisar Iniciativas</label>
+                        <div class="search-container" role="search">
+                            <input type="text" id="search-input" class="search-input" placeholder="Pesquisar por título (ex: 'saúde', 'educação', 'ambiente')..." aria-label="Pesquisar iniciativas" />
+                            <button id="search-btn" class="search-btn" onclick="performSearch()" aria-label="Pesquisar">Pesquisar</button>
+                            <button id="clear-search-btn" class="clear-search-btn" onclick="clearSearch()" aria-label="Limpar pesquisa">Limpar</button>
+                        </div>
+                        <div id="search-results-info" class="search-results-info"></div>
+                    </div>
+
+                    <div id="initiatives" class="loading" role="status" aria-live="polite">A carregar iniciativas...</div>
                 </div>
             </div>
-
-            <div class="funnels">
-                <div class="funnel-container">
-                    <div class="funnel-title">Leis - Estado Atual</div>
-                    <div id="laws-funnel" class="funnel-chart"></div>
-                </div>
-                <div class="funnel-container">
-                    <div class="funnel-title">Resoluções - Estado Atual</div>
-                    <div id="resolutions-funnel" class="funnel-chart"></div>
-                </div>
-            </div>
-
-            <!-- Analytics Widgets -->
-            <div class="analytics-grid" id="analytics-widgets">
-                <div class="widget">
-                    <div class="widget-title">
-                        <span class="widget-title-icon" aria-hidden="true">📊</span>
-                        Por Tipo
-                    </div>
-                    <div id="type-widget" class="type-grid">
-                        <!-- Populated by JS -->
-                    </div>
-                </div>
-                <div class="widget">
-                    <div class="widget-title">
-                        <span class="widget-title-icon" aria-hidden="true">📅</span>
-                        Por Mês
-                    </div>
-                    <div id="month-widget" class="timeline-chart" style="margin-bottom: 30px;">
-                        <!-- Populated by JS -->
-                    </div>
-                </div>
-                <div class="widget">
-                    <div class="widget-title">
-                        <span class="widget-title-icon" aria-hidden="true">👤</span>
-                        Por Autor
-                    </div>
-                    <div id="author-widget" class="bar-chart">
-                        <!-- Populated by JS -->
-                    </div>
-                </div>
-            </div>
-
-            <div id="initiatives" class="loading" role="status" aria-live="polite">A carregar iniciativas...</div>
         </div>
     </div>
 
