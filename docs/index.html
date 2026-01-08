@@ -3058,6 +3058,20 @@
             return initiative._currentStatus || 'Desconhecido';
         }
 
+        // Map type codes to short human-readable labels
+        function getTypeLabel(typeCode) {
+            const labels = {
+                'J': 'Proj. Lei',
+                'P': 'Prop. Lei',
+                'R': 'Proj. Res.',
+                'S': 'Prop. Res.',
+                'D': 'Deliberação',
+                'I': 'Inquérito',
+                'A': 'Apreciação'
+            };
+            return labels[typeCode] || typeCode;
+        }
+
         // Map 60+ phases to 7 simplified categories
         function getStatusCategory(status) {
             if (!status || status === 'Desconhecido') {
@@ -3189,7 +3203,7 @@
                 html += `
                     <article class="initiative-card" onclick="toggleCard(this, event)" onkeydown="handleInitiativeKeydown(event, this)" tabindex="0" role="button" aria-expanded="false" aria-label="${ini.IniTitulo}">
                         <div class="initiative-header">
-                            <span class="initiative-badge ${typeClass}" aria-label="Tipo ${ini.IniTipo}">${ini.IniTipo}</span>
+                            <span class="initiative-badge ${typeClass}" aria-label="Tipo ${ini.IniDescTipo}">${getTypeLabel(ini.IniTipo)}</span>
                             <span class="initiative-number">${ini.IniNr}/${ini.IniTipo}</span>
                         </div>
                         <div class="initiative-title">${ini.IniTitulo}</div>
@@ -3398,7 +3412,7 @@
                 html += `
                     <article class="initiative-card" onclick="toggleCard(this, event)" onkeydown="handleInitiativeKeydown(event, this)" tabindex="0" role="button" aria-expanded="false" aria-label="${ini.IniTitulo}">
                         <div class="initiative-header">
-                            <span class="initiative-badge ${typeClass}" aria-label="Tipo ${ini.IniTipo}">${ini.IniTipo}</span>
+                            <span class="initiative-badge ${typeClass}" aria-label="Tipo ${ini.IniDescTipo}">${getTypeLabel(ini.IniTipo)}</span>
                             <span class="initiative-number">${ini.IniNr}/${ini.IniTipo}</span>
                         </div>
                         <div class="initiative-title">${ini.IniTitulo}</div>
