@@ -3894,8 +3894,8 @@
             clearBtn.classList.remove('visible');
             resultsInfo.classList.remove('visible');
 
-            // Re-render with current filter
-            const activeFilter = document.querySelector('.filter-btn.active');
+            // Re-render with current filter (use [data-type] to avoid matching legislature buttons)
+            const activeFilter = document.querySelector('.filter-btn.active[data-type]');
             const type = activeFilter ? activeFilter.dataset.type : 'all';
             renderInitiatives(type);
         }
@@ -3903,8 +3903,8 @@
         function renderSearchResults(matchedInitiatives) {
             const container = document.getElementById('initiatives');
 
-            // Apply current type filter to search results
-            const activeFilter = document.querySelector('.filter-btn.active');
+            // Apply current type filter to search results (use [data-type] to avoid matching legislature buttons)
+            const activeFilter = document.querySelector('.filter-btn.active[data-type]');
             const filterType = activeFilter ? activeFilter.dataset.type : 'all';
 
             let filtered = filterType === 'all'
