@@ -2429,19 +2429,10 @@
                 </div>
                 <div class="widget">
                     <div class="widget-title">
-                        <span class="widget-title-icon" aria-hidden="true">🏛️</span>
-                        Por Grupo Parlamentar
-                    </div>
-                    <div id="party-widget" class="bar-chart">
-                        <!-- Populated by JS -->
-                    </div>
-                </div>
-                <div class="widget">
-                    <div class="widget-title">
                         <span class="widget-title-icon" aria-hidden="true">👤</span>
-                        Por Origem
+                        Por Autor
                     </div>
-                    <div id="origin-widget" class="bar-chart">
+                    <div id="author-widget" class="bar-chart">
                         <!-- Populated by JS -->
                     </div>
                 </div>
@@ -2894,8 +2885,7 @@
         function renderAnalyticsWidgets() {
             renderTypeWidget();
             renderMonthWidget();
-            renderPartyWidget();
-            renderOriginWidget();
+            renderAuthorWidget();
         }
 
         function renderTypeWidget() {
@@ -2981,8 +2971,16 @@
             container.innerHTML = html;
         }
 
-        function renderPartyWidget() {
-            const container = document.getElementById('party-widget');
+        function renderAuthorWidget() {
+            const container = document.getElementById('author-widget');
+
+            // Count government initiatives
+            let governmentCount = 0;
+            INITIATIVES_DATA.forEach(ini => {
+                if (ini.IniAutorOutros && ini.IniAutorOutros.nome === 'Governo') {
+                    governmentCount++;
+                }
+            });
 
             // Count by parliamentary group
             const partyCounts = {};
@@ -2999,12 +2997,21 @@
                 }
             });
 
-            // Sort by count descending and take top 8
+            // Sort parties by count descending
             const sortedParties = Object.entries(partyCounts)
                 .sort((a, b) => b[1] - a[1])
                 .slice(0, 8);
 
-            const maxCount = sortedParties.length > 0 ? sortedParties[0][1] : 1;
+            // Build combined list: Government first, then parties
+            const authors = [];
+            if (governmentCount > 0) {
+                authors.push(['Governo', governmentCount, 'government']);
+            }
+            sortedParties.forEach(([party, count]) => {
+                authors.push([party, count, 'party']);
+            });
+
+            const maxCount = authors.length > 0 ? Math.max(...authors.map(a => a[1])) : 1;
 
             // Party color classes
             const partyColors = {
@@ -3020,74 +3027,22 @@
             };
 
             let html = '';
-            sortedParties.forEach(([party, count]) => {
+            authors.forEach(([name, count, type]) => {
                 const widthPercent = (count / maxCount) * 100;
-                const colorClass = partyColors[party] || 'party-default';
+                let barStyle = '';
+                let colorClass = '';
 
-                html += `
-                    <div class="bar-item">
-                        <span class="bar-label">${party}</span>
-                        <div class="bar-track">
-                            <div class="bar-fill ${colorClass}" style="width: ${widthPercent}%">
-                                <span class="bar-value">${count}</span>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            });
-
-            container.innerHTML = html || '<p style="color: var(--text-muted); text-align: center;">Sem dados</p>';
-        }
-
-        function renderOriginWidget() {
-            const container = document.getElementById('origin-widget');
-
-            // Count by origin (Government vs Parliament)
-            const originCounts = {
-                'Parlamento': 0,
-                'Governo': 0,
-                'Outro': 0
-            };
-
-            INITIATIVES_DATA.forEach(ini => {
-                if (ini.IniAutorOutros && ini.IniAutorOutros.nome) {
-                    const nome = ini.IniAutorOutros.nome;
-                    if (nome === 'Governo') {
-                        originCounts['Governo']++;
-                    } else {
-                        originCounts['Outro']++;
-                    }
-                } else if (ini.IniAutorGruposParlamentares) {
-                    originCounts['Parlamento']++;
+                if (type === 'government') {
+                    barStyle = 'background: linear-gradient(135deg, #6b7280, #4b5563)';
                 } else {
-                    originCounts['Outro']++;
+                    colorClass = partyColors[name] || 'party-default';
                 }
-            });
-
-            // Sort by count descending, filter out zeros
-            const sortedOrigins = Object.entries(originCounts)
-                .filter(([_, count]) => count > 0)
-                .sort((a, b) => b[1] - a[1]);
-
-            const maxCount = sortedOrigins.length > 0 ? sortedOrigins[0][1] : 1;
-
-            // Origin colors
-            const originColors = {
-                'Parlamento': 'linear-gradient(135deg, #667eea, #5a67d8)',
-                'Governo': 'linear-gradient(135deg, #6b7280, #4b5563)',
-                'Outro': 'linear-gradient(135deg, #94a3b8, #64748b)'
-            };
-
-            let html = '';
-            sortedOrigins.forEach(([origin, count]) => {
-                const widthPercent = (count / maxCount) * 100;
-                const color = originColors[origin] || originColors['Outro'];
 
                 html += `
                     <div class="bar-item">
-                        <span class="bar-label">${origin}</span>
+                        <span class="bar-label">${name}</span>
                         <div class="bar-track">
-                            <div class="bar-fill" style="width: ${widthPercent}%; background: ${color}">
+                            <div class="bar-fill ${colorClass}" style="width: ${widthPercent}%${barStyle ? '; ' + barStyle : ''}">
                                 <span class="bar-value">${count}</span>
                             </div>
                         </div>
