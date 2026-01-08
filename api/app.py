@@ -669,6 +669,31 @@ def get_orgao(org_id):
         orgao['party_breakdown'] = party_counts
         orgao['member_count'] = len(members)
 
+        # Get agenda events for this committee (by name match)
+        cur.execute("""
+            SELECT event_id, title, subtitle, start_date, start_time,
+                   location, description, meeting_number
+            FROM agenda_events
+            WHERE committee ILIKE %s
+            ORDER BY start_date DESC, start_time DESC
+            LIMIT 20
+        """, (f"%{orgao['name']}%",))
+
+        agenda_events = []
+        for row in cur.fetchall():
+            agenda_events.append({
+                'event_id': row['event_id'],
+                'title': row['title'],
+                'subtitle': row['subtitle'],
+                'date': row['start_date'].isoformat() if row['start_date'] else None,
+                'time': row['start_time'].strftime('%H:%M') if row['start_time'] else None,
+                'location': row['location'],
+                'description': row['description'],
+                'meeting_number': row['meeting_number']
+            })
+
+        orgao['agenda_events'] = agenda_events
+
         cur.close()
         conn.close()
 

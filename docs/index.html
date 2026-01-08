@@ -1978,6 +1978,123 @@
             letter-spacing: 0.5px;
         }
 
+        /* Clickable committee card */
+        .comissao-card {
+            cursor: pointer;
+        }
+
+        /* Committee Detail Modal */
+        .committee-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .committee-modal {
+            background: var(--bg-card);
+            border-radius: var(--radius-xl);
+            max-width: 700px;
+            width: 100%;
+            max-height: 80vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            box-shadow: var(--shadow-xl);
+        }
+
+        .committee-modal-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 16px;
+        }
+
+        .committee-modal-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            line-height: 1.3;
+        }
+
+        .committee-modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 4px;
+            line-height: 1;
+        }
+
+        .committee-modal-close:hover {
+            color: var(--text-primary);
+        }
+
+        .committee-modal-body {
+            padding: 24px;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .committee-agenda-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .committee-agenda-item {
+            padding: 16px;
+            background: var(--bg-primary);
+            border-radius: var(--radius-md);
+            border-left: 4px solid var(--primary);
+        }
+
+        .committee-agenda-date {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 4px;
+        }
+
+        .committee-agenda-title {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .committee-agenda-desc {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .committee-agenda-desc p {
+            margin: 0 0 8px 0;
+        }
+
+        .committee-no-agenda {
+            text-align: center;
+            color: var(--text-muted);
+            padding: 40px;
+        }
+
+        .committee-loading {
+            text-align: center;
+            color: var(--text-muted);
+            padding: 40px;
+        }
+
         @media (max-width: 768px) {
             .comissoes-grid {
                 grid-template-columns: 1fr;
@@ -1989,6 +2106,10 @@
 
             .legend-item {
                 flex: 0 0 auto;
+            }
+
+            .committee-modal {
+                max-height: 90vh;
             }
         }
 
@@ -3289,7 +3410,7 @@
                 countsHtml += '</div>';
 
                 html += `
-                    <div class="comissao-card">
+                    <div class="comissao-card" onclick="showCommitteeDetails(${committee.org_id}, '${committee.name.replace(/'/g, "\\'")}')">
                         <div class="comissao-name">${shortName}</div>
                         <div class="comissao-total">${committee.total_members} membros</div>
                         ${hemicycleHtml}
@@ -3300,6 +3421,103 @@
             html += '</div>';
             container.innerHTML = html;
         }
+
+        // Show committee details modal
+        async function showCommitteeDetails(orgId, committeeName) {
+            // Create modal overlay
+            const overlay = document.createElement('div');
+            overlay.className = 'committee-modal-overlay';
+            overlay.onclick = (e) => {
+                if (e.target === overlay) closeCommitteeModal();
+            };
+
+            overlay.innerHTML = `
+                <div class="committee-modal">
+                    <div class="committee-modal-header">
+                        <div class="committee-modal-title">${committeeName}</div>
+                        <button class="committee-modal-close" onclick="closeCommitteeModal()">&times;</button>
+                    </div>
+                    <div class="committee-modal-body">
+                        <div class="committee-loading">A carregar reunioes...</div>
+                    </div>
+                </div>
+            `;
+
+            document.body.appendChild(overlay);
+            document.body.style.overflow = 'hidden';
+
+            // Fetch committee details with agenda
+            try {
+                const response = await fetch(`${API_BASE}/api/orgaos/${orgId}`);
+                if (!response.ok) throw new Error('Failed to fetch');
+                const data = await response.json();
+
+                const modalBody = overlay.querySelector('.committee-modal-body');
+
+                if (!data.agenda_events || data.agenda_events.length === 0) {
+                    modalBody.innerHTML = '<div class="committee-no-agenda">Sem reunioes agendadas ou registadas.</div>';
+                    return;
+                }
+
+                let agendaHtml = '<div class="committee-agenda-list">';
+                data.agenda_events.forEach(event => {
+                    const dateStr = event.date ? new Date(event.date).toLocaleDateString('pt-PT', {
+                        day: 'numeric', month: 'short', year: 'numeric'
+                    }) : '';
+                    const timeStr = event.time || '';
+
+                    // Clean HTML from description
+                    let desc = event.description || '';
+                    // Simple HTML to text conversion
+                    desc = desc.replace(/<br\s*\/?>/gi, '\n')
+                              .replace(/<\/p>/gi, '\n')
+                              .replace(/<[^>]+>/g, '')
+                              .replace(/&nbsp;/g, ' ')
+                              .replace(/&amp;/g, '&')
+                              .replace(/&lt;/g, '<')
+                              .replace(/&gt;/g, '>')
+                              .replace(/&quot;/g, '"')
+                              .replace(/&#39;/g, "'")
+                              .replace(/&aacute;/gi, 'a')
+                              .replace(/&atilde;/gi, 'a')
+                              .replace(/&eacute;/gi, 'e')
+                              .replace(/&iacute;/gi, 'i')
+                              .replace(/&oacute;/gi, 'o')
+                              .replace(/&otilde;/gi, 'o')
+                              .replace(/&uacute;/gi, 'u')
+                              .replace(/&ccedil;/gi, 'c')
+                              .trim();
+
+                    agendaHtml += `
+                        <div class="committee-agenda-item">
+                            <div class="committee-agenda-date">${dateStr} ${timeStr ? '- ' + timeStr : ''} ${event.location ? '- ' + event.location : ''}</div>
+                            <div class="committee-agenda-title">${event.subtitle || 'Reuniao ' + (event.meeting_number || '')}</div>
+                            ${desc ? `<div class="committee-agenda-desc">${desc}</div>` : ''}
+                        </div>
+                    `;
+                });
+                agendaHtml += '</div>';
+
+                modalBody.innerHTML = agendaHtml;
+
+            } catch (error) {
+                const modalBody = overlay.querySelector('.committee-modal-body');
+                modalBody.innerHTML = '<div class="committee-no-agenda">Erro ao carregar dados.</div>';
+            }
+        }
+
+        function closeCommitteeModal() {
+            const overlay = document.querySelector('.committee-modal-overlay');
+            if (overlay) {
+                overlay.remove();
+                document.body.style.overflow = '';
+            }
+        }
+
+        // Close modal on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeCommitteeModal();
+        });
 
         // Render Lifecycle Funnels
         function renderLifecycleFunnels() {
