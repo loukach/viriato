@@ -3448,7 +3448,7 @@
 
             // Fetch committee details with agenda
             try {
-                const response = await fetch(`${API_BASE}/api/orgaos/${orgId}`);
+                const response = await fetch(`${API_URL}/api/orgaos/${orgId}`);
                 if (!response.ok) throw new Error('Failed to fetch');
                 const data = await response.json();
 
