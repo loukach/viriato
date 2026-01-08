@@ -670,6 +670,8 @@ def get_orgao(org_id):
         orgao['member_count'] = len(members)
 
         # Get agenda events for this committee (by name match)
+        # Strip name to handle trailing spaces in data
+        committee_name = orgao['name'].strip()
         cur.execute("""
             SELECT event_id, title, subtitle, start_date, start_time,
                    location, description, meeting_number
@@ -677,7 +679,7 @@ def get_orgao(org_id):
             WHERE committee ILIKE %s
             ORDER BY start_date DESC, start_time DESC
             LIMIT 20
-        """, (f"%{orgao['name']}%",))
+        """, (f"%{committee_name}%",))
 
         agenda_events = []
         for row in cur.fetchall():
