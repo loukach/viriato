@@ -21,6 +21,46 @@ Adicionar a capacidade de filtrar e pesquisar iniciativas legislativas pelo part
 
 ---
 
+## 2. Tracker Parlamentar - "O Que Andam a Fazer na Assembleia"
+
+**Pedido:**
+> Seria interessante poder utilizar estes dados para mostrar de forma "fácil" e "atraente" informações de interesse público. Estatísticas, criação de posters bonitos, onde está a ser alocado o nosso dinheiro, livro de ponto (presenças). Ou seja, ser como uma espécie de tracker do que andam a fazer estes caralhos na assembleia.
+
+**Descrição:**
+Transformar dados parlamentares em visualizações acessíveis e atraentes para o cidadão comum. Uma espécie de "dashboard cidadão" que responda às perguntas que as pessoas realmente querem saber.
+
+**Componentes sugeridos:**
+
+### 2.1 Estatísticas
+- Número de iniciativas por partido/deputado
+- Taxa de aprovação de propostas
+- Comparações entre legislaturas
+
+### 2.2 Posters/Resumos Visuais
+- Infográficos partilháveis nas redes sociais
+- Resumos semanais/mensais do trabalho parlamentar
+- Design atraente que simplifique informação complexa
+
+### 2.3 Alocação de Dinheiro Público
+- Visualização do Orçamento de Estado
+- Onde vai o dinheiro dos impostos
+- Comparação entre orçamentado vs executado
+
+### 2.4 Livro de Ponto (Presenças)
+- Registo de presenças dos deputados
+- Participação em votações
+- Assiduidade nas comissões
+
+**Benefício:**
+- Democratiza o acesso à informação parlamentar
+- Cria accountability - os cidadãos podem ver quem trabalha e quem não trabalha
+- Formato visual torna a política mais acessível
+- Potencial viral nas redes sociais aumenta o alcance
+
+**Estado:** Proposto
+
+---
+
 ## Como Submeter um Pedido
 
 Se tens uma sugestão para melhorar o Viriato, podes:
