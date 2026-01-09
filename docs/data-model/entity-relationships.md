@@ -263,9 +263,90 @@ When multiple initiatives are discussed/voted together.
 
 ---
 
-## 4. Agenda → Initiative Relationships
+## 4. Initiative → Author Relationships
 
-### 4.1 BID References in Agenda HTML
+### 4.1 Deputy Authors (ID-Based Matching)
+
+**Source:** `IniAutorDeputados[]`
+
+```json
+"IniAutorDeputados": [{
+    "idCadastro": "6864",
+    "nome": "Inês de Sousa Real",
+    "GP": "PAN"
+}]
+```
+
+| Field | Description | Matching |
+|-------|-------------|----------|
+| idCadastro | Deputy cadastre ID | **Matches orgao_membros.dep_cad_id (98.7%)** |
+| nome | Deputy name | Display/fallback |
+| GP | Party at authorship time | Stored for historical accuracy |
+
+**Link Type:** `deputy`
+**Frequency:** 6,522 (XVII)
+**Match Rate:** 100% ID match
+
+---
+
+### 4.2 Parliamentary Group Authors
+
+**Source:** `IniAutorGruposParlamentares[]`
+
+```json
+"IniAutorGruposParlamentares": [{"GP": "PAN"}]
+```
+
+**Link Type:** `group`
+**Frequency:** 733 (XVII)
+
+---
+
+### 4.3 Government Authors
+
+**Source:** `IniAutorOutros` where `sigla = 'V'`
+
+```json
+"IniAutorOutros": {"nome": "Governo", "sigla": "V"}
+```
+
+**Link Type:** `government`
+**Frequency:** 27 (XVII)
+
+---
+
+### 4.4 Committee Authors
+
+**Source:** `IniAutorOutros` where `sigla = 'C'`
+
+```json
+"IniAutorOutros": {
+    "sigla": "C",
+    "nome": "Comissões",
+    "iniAutorComissao": "Comissão de Assuntos Europeus"
+}
+```
+
+**Link Type:** `committee`
+**Frequency:** 4 (XVII)
+**Matching:** Name-based to orgaos table (100% match)
+
+---
+
+### 4.5 Other Author Types
+
+| Sigla | Type | Entity | Count (XVII) |
+|-------|------|--------|--------------|
+| R | `parliament` | PAR (Parliament) | 37 |
+| M | `regional` | Madeira Regional Assembly | 8 |
+| A | `regional` | Azores Regional Assembly | 3 |
+| Z | `citizen` | Cidadãos (Citizens) | 3 |
+
+---
+
+## 5. Agenda → Initiative Relationships
+
+### 5.1 BID References in Agenda HTML
 
 **Source:** `agenda_events.description` (HTML content)
 
@@ -281,7 +362,7 @@ The agenda description field contains HTML that sometimes references initiatives
 **Confidence:** HIGH (1.00) - Direct link
 **Limitation:** Only available for next 7-10 days of agenda
 
-### 4.2 Committee + Date Matching
+### 5.2 Committee + Date Matching
 
 **Source:** Cross-reference agenda_events with iniciativa_events
 
@@ -366,15 +447,23 @@ agenda_initiative_links (
 
 ## 8. Current Data Statistics
 
-As of 2026-01-08:
+As of 2026-01-09:
 
-| Relationship Type | Count |
-|------------------|-------|
-| Committee Links | 2,526 |
-| Joint Initiative Links | 3,028 |
-| Committee Memberships | 843 |
-| Initiatives | 6,748 |
-| Parliamentary Bodies | 40 |
+| Relationship Type | Count | Match Rate |
+|------------------|-------|------------|
+| **Authorship** | | |
+| - Deputy authors | 6,522 | 100% ID match |
+| - Group authors | 733 | - |
+| - Parliament authors | 37 | - |
+| - Government authors | 27 | - |
+| - Regional authors | 11 | - |
+| - Committee authors | 4 | 100% orgao match |
+| - Citizen authors | 3 | - |
+| **Committee Links** | 833 | 100% orgao match |
+| **Joint Initiative Links** | 3,028 | - |
+| **Committee Memberships** | 843 | - |
+| **Initiatives** | 6,748 | - |
+| **Parliamentary Bodies** | 40 | - |
 
 ---
 

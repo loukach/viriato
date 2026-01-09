@@ -358,12 +358,55 @@ CREATE INDEX IF NOT EXISTS idx_ini_conj_related ON iniciativa_conjunta(related_i
 CREATE INDEX IF NOT EXISTS idx_ini_conj_phase ON iniciativa_conjunta(phase_code);
 
 -- =============================================================================
+-- TABLE 9: iniciativa_autores (Initiative Authorship)
+-- =============================================================================
+
+CREATE TABLE IF NOT EXISTS iniciativa_autores (
+    id SERIAL PRIMARY KEY,
+    iniciativa_id INTEGER NOT NULL REFERENCES iniciativas(id) ON DELETE CASCADE,
+
+    -- Author type
+    author_type VARCHAR(20) NOT NULL,        -- 'deputy', 'group', 'government', 'committee'
+
+    -- For deputies (ID-based matching: 98.7% match rate)
+    dep_cad_id INTEGER,                       -- idCadastro -> orgao_membros.dep_cad_id
+    deputy_name VARCHAR(200),                 -- nome (display/fallback)
+
+    -- For parliamentary groups and deputy party affiliation
+    party VARCHAR(20),                        -- GP field (PS, PSD, CH, etc.)
+
+    -- For committees (name-based matching)
+    orgao_id INTEGER REFERENCES orgaos(id),  -- Linked via name matching
+
+    -- For government and other entities
+    entity_name VARCHAR(200),                 -- nome (Governo, Comissões)
+    entity_code VARCHAR(10),                  -- sigla (V=Government, C=Committee)
+
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Indexes for author queries
+CREATE INDEX IF NOT EXISTS idx_ini_autores_iniciativa ON iniciativa_autores(iniciativa_id);
+CREATE INDEX IF NOT EXISTS idx_ini_autores_type ON iniciativa_autores(author_type);
+CREATE INDEX IF NOT EXISTS idx_ini_autores_deputy ON iniciativa_autores(dep_cad_id) WHERE dep_cad_id IS NOT NULL;
+CREATE INDEX IF NOT EXISTS idx_ini_autores_party ON iniciativa_autores(party) WHERE party IS NOT NULL;
+CREATE INDEX IF NOT EXISTS idx_ini_autores_orgao ON iniciativa_autores(orgao_id) WHERE orgao_id IS NOT NULL;
+
+-- Unique constraint using index (allows COALESCE for NULL handling)
+CREATE UNIQUE INDEX IF NOT EXISTS idx_ini_autores_unique
+    ON iniciativa_autores(iniciativa_id, author_type,
+        COALESCE(dep_cad_id, 0), COALESCE(party, ''), COALESCE(entity_code, ''));
+
+-- =============================================================================
 -- COMMENTS FOR RELATIONSHIPS
 -- =============================================================================
 
 COMMENT ON TABLE iniciativa_comissao IS 'Links between initiatives and committees at each workflow phase';
 COMMENT ON TABLE iniciativa_conjunta IS 'Links between initiatives processed jointly';
+COMMENT ON TABLE iniciativa_autores IS 'Authors of initiatives: deputies, parliamentary groups, government, committees';
 
 COMMENT ON COLUMN iniciativa_comissao.link_type IS 'author=committee authored it, lead=primary reviewer (Competente=S), secondary=opinion only (Competente=N)';
 COMMENT ON COLUMN iniciativa_comissao.phase_code IS '180=initial, 181=discussion, 240=re-evaluation, 270=speciality, 348=final text';
 COMMENT ON COLUMN iniciativa_conjunta.related_ini_id IS 'IniId - may reference initiative not yet in our database';
+COMMENT ON COLUMN iniciativa_autores.author_type IS 'deputy=individual deputy, group=parliamentary group, government=executive, committee=parliamentary committee';
+COMMENT ON COLUMN iniciativa_autores.dep_cad_id IS 'idCadastro from API - matches orgao_membros.dep_cad_id for 98.7% of deputy authors';
