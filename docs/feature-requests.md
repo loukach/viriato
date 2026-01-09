@@ -66,10 +66,13 @@ Transformar dados parlamentares em visualizações acessíveis e atraentes para 
 **Pedido:**
 > Para quem gosta mais de "politics" do que de "policies", pode ser interessante a hipótese de aceder rapidamente às iniciativas de um grupo parlamentar em específico... Não vá alguém querer saber o que o CHEGA andou a propor.
 
+> Uma sugestão é procurar uma palavra específica no título ou no texto das diversas iniciativas parlamentares... Por exemplo, o que é que fizeram sobre taxas em vinho?
+
 **Descrição:**
 Pesquisa de iniciativas por tema ou palavras-chave no título/conteúdo. Diferente do filtro por autor (#1), esta funcionalidade permite encontrar iniciativas sobre temas específicos independentemente de quem as propôs.
 
 **Exemplos de uso:**
+- Pesquisar "taxas vinho" → o que legislaram sobre taxas em vinho?
 - Pesquisar "imigração" → ver todas as propostas sobre o tema
 - Pesquisar "IRS" → encontrar iniciativas fiscais
 - Pesquisar "habitação" → acompanhar a crise da habitação no parlamento
