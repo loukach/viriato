@@ -209,9 +209,9 @@
 
         .viewers {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-            gap: 32px;
-            max-width: 1000px;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 24px;
+            max-width: 1200px;
             margin: 0 auto;
             position: relative;
         }
@@ -3162,6 +3162,24 @@
                         <div class="stat">
                             <span class="stat-value">7</span>
                             <div class="stat-label">Tipos</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="viewer-card" onclick="navigateTo('#/comissoes')" onkeydown="handleCardKeydown(event, '#/comissoes')" tabindex="0" role="button" aria-label="Ver Comissões Parlamentares">
+                    <div class="viewer-icon" aria-hidden="true">🏛️</div>
+                    <div class="viewer-title">Comissões Parlamentares</div>
+                    <div class="viewer-description">
+                        Consulte a composição partidária e o trabalho das comissões parlamentares.
+                    </div>
+                    <div class="viewer-stats">
+                        <div class="stat">
+                            <span class="stat-value" id="home-comissoes-count">18</span>
+                            <div class="stat-label">Comissões</div>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value">XVII</span>
+                            <div class="stat-label">Legislatura</div>
                         </div>
                     </div>
                 </div>
