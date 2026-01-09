@@ -5539,7 +5539,7 @@
             submitBtn.innerHTML = '<span class="spinner"></span> A enviar...';
 
             try {
-                const response = await fetch(`${API_BASE}/api/feedback`, {
+                const response = await fetch(`${API_URL}/api/feedback`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
