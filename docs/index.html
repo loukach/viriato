@@ -2895,6 +2895,136 @@
             opacity: 0.5;
         }
 
+        /* FEEDBACK FORM */
+        .feedback-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-group label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .form-group label .optional {
+            font-weight: 400;
+            color: var(--text-tertiary);
+            font-size: 0.85rem;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            padding: 12px 14px;
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-md);
+            font-size: 0.95rem;
+            font-family: inherit;
+            transition: all 0.2s;
+            background: white;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        }
+
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: var(--text-tertiary);
+        }
+
+        .feedback-submit {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 14px 24px;
+            border-radius: var(--radius-md);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .feedback-submit:hover:not(:disabled) {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        .feedback-submit:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .feedback-submit .spinner {
+            width: 18px;
+            height: 18px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        .feedback-success {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .feedback-success-icon {
+            font-size: 4rem;
+            margin-bottom: 16px;
+        }
+
+        .feedback-success h3 {
+            font-size: 1.3rem;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .feedback-success p {
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+        }
+
+        .feedback-error {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #dc2626;
+            padding: 12px 16px;
+            border-radius: var(--radius-md);
+            font-size: 0.9rem;
+            margin-bottom: 16px;
+        }
+
+        /* Honeypot field - hidden from users, visible to bots */
+        .ohnohoney {
+            opacity: 0;
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 0;
+            width: 0;
+            z-index: -1;
+        }
+
         .event-description {
             background: var(--bg-secondary);
             border-left: 3px solid var(--primary);
@@ -3371,7 +3501,8 @@
         <p>
             Fonte de dados: <a href="https://www.parlamento.pt" target="_blank">Parlamento.pt</a> |
             XVII Legislatura (2025-presente) |
-            API: <a href="https://viriato-api.onrender.com/api/health" target="_blank">viriato-api.onrender.com</a>
+            API: <a href="https://viriato-api.onrender.com/api/health" target="_blank">viriato-api.onrender.com</a> |
+            <a href="javascript:void(0)" onclick="openFeedbackModal()" style="cursor: pointer;">Enviar Feedback</a>
         </p>
     </footer>
 
@@ -5354,6 +5485,106 @@
             modal.classList.remove('active');
         }
 
+        // ===== FEEDBACK MODAL FUNCTIONS =====
+
+        function openFeedbackModal() {
+            const modal = document.getElementById('feedback-modal');
+            modal.classList.add('active');
+
+            // Reset form
+            document.getElementById('feedback-form').reset();
+            document.getElementById('feedback-error').style.display = 'none';
+            document.getElementById('feedback-submit-btn').disabled = false;
+            document.getElementById('feedback-submit-btn').innerHTML = 'Enviar Feedback';
+
+            // Restore form if it was replaced with success message
+            const form = document.getElementById('feedback-form');
+            if (form) form.style.display = 'flex';
+
+            const successDiv = document.querySelector('.feedback-success');
+            if (successDiv) successDiv.remove();
+
+            // Focus on title field
+            setTimeout(() => {
+                document.getElementById('feedback-title').focus();
+            }, 100);
+        }
+
+        function closeFeedbackModal(event) {
+            // If called from overlay click, only close if clicking the overlay itself
+            if (event && event.target !== event.currentTarget) return;
+
+            const modal = document.getElementById('feedback-modal');
+            modal.classList.remove('active');
+        }
+
+        async function submitFeedback(event) {
+            event.preventDefault();
+
+            const form = event.target;
+            const submitBtn = document.getElementById('feedback-submit-btn');
+            const errorDiv = document.getElementById('feedback-error');
+
+            // Get form values
+            const title = document.getElementById('feedback-title').value.trim();
+            const description = document.getElementById('feedback-description').value.trim();
+            const email = document.getElementById('feedback-email').value.trim();
+            const honeypot = form.querySelector('[name="honeypot"]').value;
+
+            // Hide previous errors
+            errorDiv.style.display = 'none';
+
+            // Show loading state
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="spinner"></span> A enviar...';
+
+            try {
+                const response = await fetch(`${API_BASE}/api/feedback`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        title: title,
+                        description: description,
+                        email: email,
+                        page: window.location.hash || '/',
+                        honeypot: honeypot
+                    })
+                });
+
+                const result = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(result.error || 'Erro ao enviar feedback');
+                }
+
+                // Success - show thank you message
+                const form = document.getElementById('feedback-form');
+                form.style.display = 'none';
+
+                const modalBody = document.getElementById('feedback-modal-body');
+                const successDiv = document.createElement('div');
+                successDiv.className = 'feedback-success';
+                successDiv.innerHTML = `
+                    <div class="feedback-success-icon">✓</div>
+                    <h3>Obrigado pelo seu feedback!</h3>
+                    <p>A sua sugestao foi registada e sera analisada pela equipa.</p>
+                    <button class="feedback-submit" onclick="closeFeedbackModal()">Fechar</button>
+                `;
+                modalBody.appendChild(successDiv);
+
+            } catch (error) {
+                // Show error
+                errorDiv.textContent = error.message;
+                errorDiv.style.display = 'block';
+
+                // Reset button
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = 'Enviar Feedback';
+            }
+        }
+
         // Close modal on overlay click
         document.addEventListener('click', function(e) {
             if (e.target.classList.contains('modal-overlay')) {
@@ -5365,6 +5596,7 @@
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
                 closeAgendaModal();
+                closeFeedbackModal();
             }
         });
 
@@ -5385,6 +5617,51 @@
             </div>
             <div class="modal-body" id="modal-initiatives-body">
                 <!-- Content loaded dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Feedback Modal -->
+    <div id="feedback-modal" class="modal-overlay" onclick="closeFeedbackModal(event)">
+        <div class="modal-content" style="max-width: 550px;" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <div class="modal-header-content">
+                    <div class="modal-title">Enviar Feedback</div>
+                    <div class="modal-subtitle">Ajude-nos a melhorar o Viriato</div>
+                </div>
+                <button class="modal-close" onclick="closeFeedbackModal()" aria-label="Fechar">×</button>
+            </div>
+            <div class="modal-body" id="feedback-modal-body">
+                <form id="feedback-form" class="feedback-form" onsubmit="submitFeedback(event)">
+                    <div id="feedback-error" class="feedback-error" style="display: none;"></div>
+
+                    <div class="form-group">
+                        <label for="feedback-title">Titulo</label>
+                        <input type="text" id="feedback-title" name="title"
+                               placeholder="Ex: Sugestao de nova funcionalidade"
+                               required minlength="5" maxlength="200">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="feedback-description">Descricao</label>
+                        <textarea id="feedback-description" name="description"
+                                  placeholder="Descreva a sua sugestao, problema encontrado ou ideia de melhoria..."
+                                  required minlength="10" maxlength="5000"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="feedback-email">Email <span class="optional">(opcional)</span></label>
+                        <input type="email" id="feedback-email" name="email"
+                               placeholder="Para recebermos resposta">
+                    </div>
+
+                    <!-- Honeypot field - hidden from users, catches bots -->
+                    <input type="text" name="honeypot" class="ohnohoney" tabindex="-1" autocomplete="off">
+
+                    <button type="submit" class="feedback-submit" id="feedback-submit-btn">
+                        Enviar Feedback
+                    </button>
+                </form>
             </div>
         </div>
     </div>

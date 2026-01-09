@@ -8,6 +8,9 @@ Provides REST API endpoints for the frontend to query PostgreSQL database.
 
 import os
 import json
+import urllib.request
+import urllib.error
+from datetime import datetime, timedelta
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 import psycopg2
@@ -887,6 +890,145 @@ def get_orgaos_summary():
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+
+# Simple in-memory rate limiter for feedback
+feedback_rate_limit = {}
+FEEDBACK_RATE_LIMIT_MINUTES = 5
+FEEDBACK_RATE_LIMIT_MAX = 3  # Max 3 submissions per 5 minutes per IP
+
+
+@app.route('/api/feedback', methods=['POST'])
+def submit_feedback():
+    """
+    Submit user feedback, creating a GitHub issue.
+
+    Expected JSON body:
+    {
+        "title": "Feedback title",
+        "description": "Detailed feedback",
+        "email": "optional@email.com",
+        "page": "/iniciativas",
+        "honeypot": ""  # Must be empty (bot trap)
+    }
+    """
+    try:
+        # Check for GitHub token
+        github_token = os.environ.get('GITHUB_TOKEN')
+        if not github_token:
+            return jsonify({'error': 'Feedback system not configured'}), 503
+
+        # Get request data
+        data = request.get_json()
+        if not data:
+            return jsonify({'error': 'No data provided'}), 400
+
+        # Honeypot check (bot trap - this field should be empty)
+        if data.get('honeypot'):
+            # Silently accept but don't create issue (it's a bot)
+            return jsonify({'success': True, 'message': 'Feedback received'})
+
+        # Validate required fields
+        title = data.get('title', '').strip()
+        description = data.get('description', '').strip()
+
+        if not title or len(title) < 5:
+            return jsonify({'error': 'Title must be at least 5 characters'}), 400
+
+        if not description or len(description) < 10:
+            return jsonify({'error': 'Description must be at least 10 characters'}), 400
+
+        if len(title) > 200:
+            return jsonify({'error': 'Title too long (max 200 characters)'}), 400
+
+        if len(description) > 5000:
+            return jsonify({'error': 'Description too long (max 5000 characters)'}), 400
+
+        # Rate limiting by IP
+        client_ip = request.headers.get('X-Forwarded-For', request.remote_addr)
+        if client_ip:
+            client_ip = client_ip.split(',')[0].strip()
+
+        now = datetime.now()
+        cutoff = now - timedelta(minutes=FEEDBACK_RATE_LIMIT_MINUTES)
+
+        # Clean old entries and check rate limit
+        if client_ip in feedback_rate_limit:
+            feedback_rate_limit[client_ip] = [
+                t for t in feedback_rate_limit[client_ip] if t > cutoff
+            ]
+            if len(feedback_rate_limit[client_ip]) >= FEEDBACK_RATE_LIMIT_MAX:
+                return jsonify({
+                    'error': f'Too many submissions. Please wait {FEEDBACK_RATE_LIMIT_MINUTES} minutes.'
+                }), 429
+        else:
+            feedback_rate_limit[client_ip] = []
+
+        # Record this submission
+        feedback_rate_limit[client_ip].append(now)
+
+        # Optional fields
+        email = data.get('email', '').strip() or 'Anonymous'
+        page = data.get('page', '').strip() or 'Unknown'
+        user_agent = request.headers.get('User-Agent', 'Unknown')[:200]
+
+        # Build issue body
+        issue_body = f"""## User Feedback
+
+**From:** {email}
+**Page:** {page}
+**Date:** {now.strftime('%Y-%m-%d %H:%M UTC')}
+**Browser:** {user_agent}
+
+---
+
+### Description
+
+{description}
+
+---
+*Submitted via Viriato feedback form*
+"""
+
+        # Create GitHub issue via API
+        issue_data = {
+            'title': f'[Feedback] {title}',
+            'body': issue_body,
+            'labels': ['user-feedback']
+        }
+
+        github_repo = os.environ.get('GITHUB_REPO', 'loukach/viriato')
+        github_url = f'https://api.github.com/repos/{github_repo}/issues'
+
+        req = urllib.request.Request(
+            github_url,
+            data=json.dumps(issue_data).encode('utf-8'),
+            headers={
+                'Authorization': f'token {github_token}',
+                'Accept': 'application/vnd.github.v3+json',
+                'Content-Type': 'application/json',
+                'User-Agent': 'Viriato-Feedback-Bot'
+            },
+            method='POST'
+        )
+
+        try:
+            with urllib.request.urlopen(req, timeout=10) as response:
+                result = json.loads(response.read().decode('utf-8'))
+                issue_number = result.get('number')
+                return jsonify({
+                    'success': True,
+                    'message': 'Feedback submitted successfully',
+                    'issue_number': issue_number
+                })
+        except urllib.error.HTTPError as e:
+            error_body = e.read().decode('utf-8') if e.fp else str(e)
+            print(f"GitHub API error: {e.code} - {error_body}")
+            return jsonify({'error': 'Failed to submit feedback'}), 500
+
+    except Exception as e:
+        print(f"Feedback error: {e}")
+        return jsonify({'error': 'Internal server error'}), 500
 
 
 if __name__ == '__main__':
