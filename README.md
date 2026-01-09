@@ -115,7 +115,8 @@ viriato/
 ├── docs/ (markdown)          # Documentation
 │   ├── iniciativas-lifecycle.md      # 60 phases explained
 │   ├── database-implementation-plan.md  # DB design
-│   └── deployment-guide.md           # Render.com deployment
+│   ├── deployment-guide.md           # Render.com deployment
+│   └── feature-requests.md           # Community feature requests
 ├── requirements.txt          # Python dependencies
 └── render.yaml              # Render.com configuration
 ```
@@ -199,3 +200,12 @@ Based on ideas from [adamastor](https://github.com/bcamarneiro/adamastor).
 3. **Embrace complexity** - Show real legislative process, not simplified version
 4. **Progressive enhancement** - Start simple, add features based on feedback
 5. **Performance** - Lazy load data, cache in memory, minimal API calls
+
+## Feature Requests
+
+Have ideas for improving Viriato? Check out the [feature requests](docs/feature-requests.md) page for planned enhancements and community suggestions, including:
+- Search initiatives by party/author
+- Parliamentary activity tracker with statistics and attendance
+- Keyword search across initiative titles and content
+
+To submit a feature request, [open an issue](https://github.com/loukach/viriato/issues) on GitHub.
