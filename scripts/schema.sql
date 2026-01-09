@@ -276,3 +276,94 @@ COMMENT ON TABLE orgao_membros IS 'Members of parliamentary bodies with party af
 COMMENT ON COLUMN orgaos.org_type IS 'Type: comissao, grupo_trabalho, subcomissao, comissao_permanente, etc.';
 COMMENT ON COLUMN orgao_membros.party IS 'Parliamentary group acronym (PS, PSD, CH, IL, etc.)';
 COMMENT ON COLUMN orgao_membros.member_type IS 'Efetivo (full member) or Suplente (substitute)';
+
+-- =============================================================================
+-- TABLE 7: iniciativa_comissao (Committee-Initiative Relationships)
+-- =============================================================================
+
+CREATE TABLE IF NOT EXISTS iniciativa_comissao (
+    id SERIAL PRIMARY KEY,
+    iniciativa_id INTEGER NOT NULL REFERENCES iniciativas(id) ON DELETE CASCADE,
+    orgao_id INTEGER REFERENCES orgaos(id),          -- NULL if committee not in orgaos table
+
+    -- Committee identification (from API)
+    committee_name VARCHAR(200) NOT NULL,            -- Nome (trimmed)
+    committee_api_id VARCHAR(20),                    -- IdComissao
+
+    -- Link type and role
+    link_type VARCHAR(20) NOT NULL,                  -- 'author', 'lead', 'secondary'
+
+    -- Phase/workflow context
+    phase_code VARCHAR(10),                          -- CodigoFase (180, 181, 240, 270, 348)
+    phase_name VARCHAR(200),                         -- Fase description
+
+    -- Dates
+    distribution_date DATE,                          -- DataDistribuicao
+    event_date DATE,                                 -- DataFase
+
+    -- Enrichment flags (for quick filtering)
+    has_rapporteur BOOLEAN DEFAULT FALSE,
+    has_vote BOOLEAN DEFAULT FALSE,
+    vote_result VARCHAR(50),                         -- 'Aprovado', 'Rejeitado', etc.
+    vote_date DATE,
+    has_documents BOOLEAN DEFAULT FALSE,
+    document_count INTEGER DEFAULT 0,
+
+    -- Full data for details
+    raw_data JSONB,                                  -- Full Comissao object
+
+    created_at TIMESTAMP DEFAULT NOW(),
+
+    -- Same initiative can go to same committee at different phases
+    UNIQUE(iniciativa_id, committee_name, link_type, phase_code)
+);
+
+-- Indexes for common queries
+CREATE INDEX IF NOT EXISTS idx_ini_com_iniciativa ON iniciativa_comissao(iniciativa_id);
+CREATE INDEX IF NOT EXISTS idx_ini_com_committee ON iniciativa_comissao(committee_name);
+CREATE INDEX IF NOT EXISTS idx_ini_com_orgao ON iniciativa_comissao(orgao_id);
+CREATE INDEX IF NOT EXISTS idx_ini_com_type ON iniciativa_comissao(link_type);
+CREATE INDEX IF NOT EXISTS idx_ini_com_phase ON iniciativa_comissao(phase_code);
+CREATE INDEX IF NOT EXISTS idx_ini_com_vote ON iniciativa_comissao(has_vote) WHERE has_vote = TRUE;
+
+-- =============================================================================
+-- TABLE 8: iniciativa_conjunta (Initiative-to-Initiative Links)
+-- =============================================================================
+
+CREATE TABLE IF NOT EXISTS iniciativa_conjunta (
+    id SERIAL PRIMARY KEY,
+    iniciativa_id INTEGER NOT NULL REFERENCES iniciativas(id) ON DELETE CASCADE,
+
+    -- Related initiative (may not exist in our DB yet)
+    related_ini_id VARCHAR(20) NOT NULL,             -- IniId of related initiative
+    related_ini_nr VARCHAR(20),                      -- Nr (e.g., "331")
+    related_ini_leg VARCHAR(10),                     -- Legislature
+    related_ini_tipo VARCHAR(10),                    -- tipo (J, P, R)
+    related_ini_desc_tipo VARCHAR(100),              -- descTipo
+    related_ini_titulo TEXT,                         -- titulo
+
+    -- Context where joint processing occurred
+    phase_code VARCHAR(10),
+    phase_name VARCHAR(200),
+    event_date DATE,
+
+    created_at TIMESTAMP DEFAULT NOW(),
+
+    UNIQUE(iniciativa_id, related_ini_id, phase_code)
+);
+
+-- Indexes
+CREATE INDEX IF NOT EXISTS idx_ini_conj_iniciativa ON iniciativa_conjunta(iniciativa_id);
+CREATE INDEX IF NOT EXISTS idx_ini_conj_related ON iniciativa_conjunta(related_ini_id);
+CREATE INDEX IF NOT EXISTS idx_ini_conj_phase ON iniciativa_conjunta(phase_code);
+
+-- =============================================================================
+-- COMMENTS FOR RELATIONSHIPS
+-- =============================================================================
+
+COMMENT ON TABLE iniciativa_comissao IS 'Links between initiatives and committees at each workflow phase';
+COMMENT ON TABLE iniciativa_conjunta IS 'Links between initiatives processed jointly';
+
+COMMENT ON COLUMN iniciativa_comissao.link_type IS 'author=committee authored it, lead=primary reviewer (Competente=S), secondary=opinion only (Competente=N)';
+COMMENT ON COLUMN iniciativa_comissao.phase_code IS '180=initial, 181=discussion, 240=re-evaluation, 270=speciality, 348=final text';
+COMMENT ON COLUMN iniciativa_conjunta.related_ini_id IS 'IniId - may reference initiative not yet in our database';
