@@ -1187,7 +1187,9 @@
             transform: translateY(-50%);
         }
 
-        .timeline-event {
+        /* Initiative timeline events (in cards/modals) - center on their position */
+        .timeline-horizontal .timeline-event,
+        .timeline-track .timeline-event {
             position: absolute;
             top: 50%;
             transform: translate(-50%, -50%);
