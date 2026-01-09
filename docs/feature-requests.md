@@ -61,6 +61,30 @@ Transformar dados parlamentares em visualizações acessíveis e atraentes para 
 
 ---
 
+## 3. Pesquisa por Tema/Palavras-chave
+
+**Pedido:**
+> Para quem gosta mais de "politics" do que de "policies", pode ser interessante a hipótese de aceder rapidamente às iniciativas de um grupo parlamentar em específico... Não vá alguém querer saber o que o CHEGA andou a propor.
+
+**Descrição:**
+Pesquisa de iniciativas por tema ou palavras-chave no título/conteúdo. Diferente do filtro por autor (#1), esta funcionalidade permite encontrar iniciativas sobre temas específicos independentemente de quem as propôs.
+
+**Exemplos de uso:**
+- Pesquisar "imigração" → ver todas as propostas sobre o tema
+- Pesquisar "IRS" → encontrar iniciativas fiscais
+- Pesquisar "habitação" → acompanhar a crise da habitação no parlamento
+- Pesquisar "CHEGA" → ver iniciativas que mencionem o partido
+
+**Benefício:**
+- Permite acompanhar temas de interesse pessoal
+- Facilita investigação jornalística e académica
+- Útil para quem quer seguir a "política" (drama partidário) além das "policies" (propostas concretas)
+- Complementa a pesquisa por autor com pesquisa por conteúdo
+
+**Estado:** Proposto
+
+---
+
 ## Como Submeter um Pedido
 
 Se tens uma sugestão para melhorar o Viriato, podes:
