@@ -6,10 +6,11 @@ Visualização de dados abertos do Parlamento Português. Tornando a democracia 
 
 ## O Que É
 
-Duas ferramentas interativas construídas com dados abertos do Parlamento Português:
+Quatro ferramentas interativas construídas com dados abertos do Parlamento Português:
 
 1. **Agenda Parlamentar** - Calendário diário de todas as atividades parlamentares
 2. **Iniciativas Legislativas** - Acompanhamento de 6,748 propostas através do processo legislativo
+3. **Comissões Parlamentares** - Composição e trabalho das 18 comissões da XVII Legislatura
 
 ## Idioma
 
@@ -23,16 +24,19 @@ Duas ferramentas interativas construídas com dados abertos do Parlamento Portug
 - ✅ Data discovery (17 datasets mapped and documented)
 - ✅ Legislative process analysis (60 phases documented)
 - ✅ PostgreSQL database backend deployed on Render.com
-- ✅ REST API with 8 endpoints
+- ✅ REST API with 10+ endpoints
 - ✅ Single Page Application (SPA) with hash routing
 - ✅ Full production deployment on GitHub Pages + Render.com
+- ✅ Committee composition and initiative tracking
+- ✅ Simplified status categories (60+ phases → 7 labels)
 
 **Built:**
-- Single Page Application with three views (Home, Iniciativas, Agenda)
+- Single Page Application with four views (Home, Iniciativas, Agenda, Comissões)
 - PostgreSQL database with 6,748 iniciativas (XIV-XVII), 57,078 events, 34 agenda items
 - Flask REST API backend with multi-legislature support
 - Automatic data loading from API
 - Responsive design for all screen sizes
+- Committee-initiative relationships with status tracking
 
 ## Quick Start
 
@@ -41,14 +45,17 @@ Duas ferramentas interativas construídas com dados abertos do Parlamento Portug
 https://loukach.github.io/viriato/               # Home
 https://loukach.github.io/viriato/#/iniciativas  # Initiatives
 https://loukach.github.io/viriato/#/agenda       # Agenda
+https://loukach.github.io/viriato/#/comissoes    # Committees
 ```
 
 **API endpoints:**
 ```
-https://viriato-api.onrender.com/api/health      # Health check
-https://viriato-api.onrender.com/api/iniciativas # All initiatives
-https://viriato-api.onrender.com/api/agenda      # Agenda events
-https://viriato-api.onrender.com/api/stats       # Statistics
+https://viriato-api.onrender.com/api/health        # Health check
+https://viriato-api.onrender.com/api/iniciativas   # All initiatives
+https://viriato-api.onrender.com/api/agenda        # Agenda events
+https://viriato-api.onrender.com/api/stats         # Statistics
+https://viriato-api.onrender.com/api/orgaos/summary # Committees with stats
+https://viriato-api.onrender.com/api/orgaos/{id}   # Committee details
 ```
 
 **Local development:**
@@ -69,19 +76,19 @@ No build process needed - Single Page Application with API data loading.
 ```
 ┌─────────────────┐
 │  GitHub Pages   │  Single Page App (docs/index.html)
-│  (Frontend)     │  → Calls API via HTTPS
+│  (Frontend)     │  4 views: Home, Iniciativas, Agenda, Comissões
 └────────┬────────┘
          │
          ↓ HTTPS
 ┌─────────────────┐
 │   Render.com    │  Flask REST API (api/app.py)
-│   (API Backend) │  → Queries PostgreSQL
+│   (API Backend) │  10+ endpoints for data access
 └────────┬────────┘
          │
          ↓ SQL
 ┌─────────────────┐
 │   Render.com    │  PostgreSQL Database
-│   (Database)    │  808 iniciativas, 4,888 events, 34 agenda items
+│   (Database)    │  6,748 iniciativas, 57,078 events, 40 orgaos
 └─────────────────┘
 ```
 
@@ -93,10 +100,13 @@ viriato/
 │   ├── index.html           # Single Page Application
 │   └── archive/             # Legacy standalone pages
 ├── api/                      # Flask REST API
-│   └── app.py               # 8 endpoints for data access
+│   └── app.py               # 10+ endpoints for data access
 ├── scripts/                  # Database & data utilities
 │   ├── download_datasets.py # Fetch from parlamento.pt
-│   ├── load_to_postgres.py  # ETL: JSON → PostgreSQL
+│   ├── load_to_postgres.py  # ETL: JSON → PostgreSQL (initiatives)
+│   ├── load_orgaos.py       # ETL: Committee composition data
+│   ├── load_comissao_links.py # Committee-initiative relationships
+│   ├── load_authors.py      # Initiative authorship (deputies, parties)
 │   ├── schema.sql           # Database schema
 │   └── apply_schema.py      # Schema deployment
 ├── data/                     # Source data
@@ -133,8 +143,24 @@ viriato/
 - 808 initiatives across 7 types
 - Full lifecycle timeline for each initiative
 - Filter by type (laws, resolutions, deliberations, etc.)
+- **Simplified status categories** - 60+ legislative phases mapped to 7 user-friendly labels:
+  - Submetida, Anunciada, Em discussão, Em votação, A finalizar, Aprovada, Rejeitada
 
 **Design principle:** "It's important to not hide the complexity of running a democracy" - all 60 phases are visible and explained.
+
+### Parliamentary Committees (Comissões)
+- **18 committees** of the XVII Legislature with party composition
+- **Hemicycle visualization** showing party representation in each committee
+- **Initiative statistics** on each card:
+  - A (Authored) - initiatives authored by the committee
+  - E (Em análise) - initiatives in progress
+  - + (Approved) - completed and approved
+  - - (Rejected) - rejected, withdrawn, or lapsed
+- **Committee detail modal** with:
+  - Status bar chart showing initiative distribution by lifecycle phase
+  - List of initiatives under review (lead and secondary)
+  - Vote results and rapporteur assignments
+  - Upcoming committee meetings from agenda
 
 ## Data Sources
 
