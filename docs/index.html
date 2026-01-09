@@ -2237,6 +2237,55 @@
             font-size: 0.9rem;
         }
 
+        /* Committee status bar chart */
+        .committee-status-chart {
+            display: flex;
+            align-items: flex-end;
+            gap: 6px;
+            height: 120px;
+            padding: 16px 0;
+            margin-bottom: 16px;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .committee-status-bar {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .committee-status-bar-fill {
+            width: 100%;
+            min-height: 4px;
+            border-radius: 4px 4px 0 0;
+            transition: height 0.3s ease;
+        }
+
+        .committee-status-bar-count {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .committee-status-bar-label {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
+            color: var(--text-muted);
+            text-align: center;
+            line-height: 1.2;
+        }
+
+        .committee-status-bar-fill.status-submitted { background: #9ca3af; }
+        .committee-status-bar-fill.status-announced { background: #38bdf8; }
+        .committee-status-bar-fill.status-discussion { background: #3b82f6; }
+        .committee-status-bar-fill.status-voting { background: #f97316; }
+        .committee-status-bar-fill.status-finalizing { background: #8b5cf6; }
+        .committee-status-bar-fill.status-approved { background: #10b981; }
+        .committee-status-bar-fill.status-rejected { background: #ef4444; }
+
         @media (max-width: 768px) {
             .comissoes-grid {
                 grid-template-columns: 1fr;
@@ -3603,12 +3652,53 @@
                 const secondaryInits = initiatives.filter(i => i.link_type === 'secondary');
 
                 if (initiatives.length > 0) {
+                    // Build status chart for lead initiatives (Competente)
+                    const statusOrder = [
+                        { key: 'submitted', label: 'Submetida', cssClass: 'status-submitted' },
+                        { key: 'announced', label: 'Anunciada', cssClass: 'status-announced' },
+                        { key: 'discussion', label: 'Em discussao', cssClass: 'status-discussion' },
+                        { key: 'voting', label: 'Em votacao', cssClass: 'status-voting' },
+                        { key: 'finalizing', label: 'A finalizar', cssClass: 'status-finalizing' },
+                        { key: 'approved', label: 'Aprovada', cssClass: 'status-approved' },
+                        { key: 'rejected', label: 'Rejeitada', cssClass: 'status-rejected' }
+                    ];
+
+                    // Count lead initiatives by status category
+                    const statusCounts = {};
+                    statusOrder.forEach(s => statusCounts[s.key] = 0);
+
+                    leadInits.forEach(item => {
+                        const ini = item.initiative;
+                        const statusInfo = getStatusCategory(ini.current_status);
+                        statusCounts[statusInfo.category]++;
+                    });
+
+                    // Find max for scaling
+                    const maxCount = Math.max(...Object.values(statusCounts), 1);
+                    const maxBarHeight = 80; // pixels
+
+                    // Build bar chart HTML
+                    let chartHtml = '<div class="committee-status-chart">';
+                    statusOrder.forEach(status => {
+                        const count = statusCounts[status.key];
+                        const barHeight = count > 0 ? Math.max((count / maxCount) * maxBarHeight, 8) : 4;
+                        chartHtml += `
+                            <div class="committee-status-bar">
+                                <div class="committee-status-bar-fill ${status.cssClass}" style="height: ${barHeight}px"></div>
+                                <span class="committee-status-bar-count">${count}</span>
+                                <span class="committee-status-bar-label">${status.label}</span>
+                            </div>
+                        `;
+                    });
+                    chartHtml += '</div>';
+
                     contentHtml += `
                         <div class="committee-section">
                             <div class="committee-section-header">
                                 <span class="committee-section-title">Iniciativas em analise</span>
                                 <span class="committee-section-count">${initiatives.length}</span>
                             </div>
+                            ${leadInits.length > 0 ? chartHtml : ''}
                             <div class="committee-initiatives-list">
                     `;
 
