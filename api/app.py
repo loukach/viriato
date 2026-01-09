@@ -696,6 +696,64 @@ def get_orgao(org_id):
 
         orgao['agenda_events'] = agenda_events
 
+        # Get initiatives linked to this committee (from iniciativa_comissao)
+        cur.execute("""
+            SELECT
+                ic.id,
+                ic.link_type,
+                ic.phase_code,
+                ic.phase_name,
+                ic.has_vote,
+                ic.vote_result,
+                ic.vote_date,
+                ic.has_rapporteur,
+                ic.distribution_date,
+                i.id as ini_db_id,
+                i.ini_id,
+                i.number,
+                i.type,
+                i.type_description,
+                i.title,
+                i.current_status,
+                i.is_completed,
+                i.author_name
+            FROM iniciativa_comissao ic
+            JOIN iniciativas i ON ic.iniciativa_id = i.id
+            WHERE ic.orgao_id = %s
+            ORDER BY
+                CASE ic.link_type WHEN 'lead' THEN 1 WHEN 'secondary' THEN 2 ELSE 3 END,
+                i.is_completed ASC,
+                ic.distribution_date DESC NULLS LAST
+        """, (db_id,))
+
+        initiatives = []
+        for row in cur.fetchall():
+            initiatives.append({
+                'link_id': row['id'],
+                'link_type': row['link_type'],
+                'phase_code': row['phase_code'],
+                'phase_name': row['phase_name'],
+                'has_vote': row['has_vote'],
+                'vote_result': row['vote_result'],
+                'vote_date': row['vote_date'].isoformat() if row['vote_date'] else None,
+                'has_rapporteur': row['has_rapporteur'],
+                'distribution_date': row['distribution_date'].isoformat() if row['distribution_date'] else None,
+                'initiative': {
+                    'id': row['ini_db_id'],
+                    'ini_id': row['ini_id'],
+                    'number': row['number'],
+                    'type': row['type'],
+                    'type_description': row['type_description'],
+                    'title': row['title'],
+                    'current_status': row['current_status'],
+                    'is_completed': row['is_completed'],
+                    'author_name': row['author_name']
+                }
+            })
+
+        orgao['initiatives'] = initiatives
+        orgao['initiative_count'] = len(initiatives)
+
         cur.close()
         conn.close()
 

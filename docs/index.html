@@ -2095,6 +2095,148 @@
             padding: 40px;
         }
 
+        /* Committee Modal Sections */
+        .committee-section {
+            margin-bottom: 24px;
+        }
+
+        .committee-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .committee-section-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .committee-section-title {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .committee-section-count {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            background: var(--bg-primary);
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+
+        /* Initiative Items in Committee Modal */
+        .committee-initiatives-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .committee-ini-item {
+            padding: 12px;
+            background: var(--bg-primary);
+            border-radius: var(--radius-md);
+            border-left: 3px solid var(--primary);
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .committee-ini-item:hover {
+            background: var(--bg-card);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .committee-ini-item.secondary {
+            border-left-color: var(--text-muted);
+        }
+
+        .committee-ini-item.completed {
+            opacity: 0.7;
+        }
+
+        .committee-ini-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 4px;
+        }
+
+        .committee-ini-type {
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--primary);
+            background: rgba(37, 99, 235, 0.1);
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        .committee-ini-role {
+            font-size: 0.65rem;
+            font-weight: 600;
+            color: white;
+            background: var(--primary);
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        .committee-ini-role.secondary {
+            background: var(--text-muted);
+        }
+
+        .committee-ini-status {
+            font-size: 0.65rem;
+            font-weight: 600;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-left: auto;
+        }
+
+        .committee-ini-status.voted {
+            color: white;
+            background: var(--success);
+        }
+
+        .committee-ini-status.rejected {
+            color: white;
+            background: var(--danger);
+        }
+
+        .committee-ini-status.pending {
+            color: var(--text-secondary);
+            background: var(--bg-card);
+        }
+
+        .committee-ini-title {
+            font-size: 0.85rem;
+            color: var(--text-primary);
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .committee-ini-meta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 6px;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .committee-empty {
+            text-align: center;
+            color: var(--text-muted);
+            padding: 20px;
+            font-size: 0.9rem;
+        }
+
         @media (max-width: 768px) {
             .comissoes-grid {
                 grid-template-columns: 1fr;
@@ -3438,7 +3580,7 @@
                         <button class="committee-modal-close" onclick="closeCommitteeModal()">&times;</button>
                     </div>
                     <div class="committee-modal-body">
-                        <div class="committee-loading">A carregar reunioes...</div>
+                        <div class="committee-loading">A carregar dados...</div>
                     </div>
                 </div>
             `;
@@ -3446,63 +3588,117 @@
             document.body.appendChild(overlay);
             document.body.style.overflow = 'hidden';
 
-            // Fetch committee details with agenda
+            // Fetch committee details with initiatives and agenda
             try {
                 const response = await fetch(`${API_URL}/api/orgaos/${orgId}`);
                 if (!response.ok) throw new Error('Failed to fetch');
                 const data = await response.json();
 
                 const modalBody = overlay.querySelector('.committee-modal-body');
+                let contentHtml = '';
 
-                if (!data.agenda_events || data.agenda_events.length === 0) {
-                    modalBody.innerHTML = '<div class="committee-no-agenda">Sem reunioes agendadas ou registadas.</div>';
-                    return;
+                // Section 1: Initiatives (main content now!)
+                const initiatives = data.initiatives || [];
+                const leadInits = initiatives.filter(i => i.link_type === 'lead');
+                const secondaryInits = initiatives.filter(i => i.link_type === 'secondary');
+
+                if (initiatives.length > 0) {
+                    contentHtml += `
+                        <div class="committee-section">
+                            <div class="committee-section-header">
+                                <span class="committee-section-title">Iniciativas em analise</span>
+                                <span class="committee-section-count">${initiatives.length}</span>
+                            </div>
+                            <div class="committee-initiatives-list">
+                    `;
+
+                    // Show lead initiatives first (competente)
+                    for (const item of leadInits) {
+                        const ini = item.initiative;
+                        const typeLabel = ini.type_description || ini.type;
+                        const statusClass = item.has_vote
+                            ? (item.vote_result === 'Aprovado' ? 'voted' : 'rejected')
+                            : 'pending';
+                        const statusLabel = item.has_vote
+                            ? item.vote_result
+                            : (ini.current_status ? ini.current_status.substring(0, 25) : 'Em analise');
+
+                        contentHtml += `
+                            <div class="committee-ini-item ${ini.is_completed ? 'completed' : ''}"
+                                 onclick="window.open('https://www.parlamento.pt/ActividadeParlamentar/Paginas/DetalheIniciativa.aspx?BID=${ini.ini_id}', '_blank')">
+                                <div class="committee-ini-header">
+                                    <span class="committee-ini-type">${typeLabel} ${ini.number || ''}/XVII</span>
+                                    <span class="committee-ini-role">Competente</span>
+                                    <span class="committee-ini-status ${statusClass}">${statusLabel}</span>
+                                </div>
+                                <div class="committee-ini-title">${ini.title}</div>
+                                <div class="committee-ini-meta">
+                                    <span>${ini.author_name || ''}</span>
+                                    ${item.has_rapporteur ? '<span>Com relator</span>' : ''}
+                                </div>
+                            </div>
+                        `;
+                    }
+
+                    // Then secondary initiatives (parecer)
+                    for (const item of secondaryInits) {
+                        const ini = item.initiative;
+                        const typeLabel = ini.type_description || ini.type;
+
+                        contentHtml += `
+                            <div class="committee-ini-item secondary ${ini.is_completed ? 'completed' : ''}"
+                                 onclick="window.open('https://www.parlamento.pt/ActividadeParlamentar/Paginas/DetalheIniciativa.aspx?BID=${ini.ini_id}', '_blank')">
+                                <div class="committee-ini-header">
+                                    <span class="committee-ini-type">${typeLabel} ${ini.number || ''}/XVII</span>
+                                    <span class="committee-ini-role secondary">Parecer</span>
+                                </div>
+                                <div class="committee-ini-title">${ini.title}</div>
+                            </div>
+                        `;
+                    }
+
+                    contentHtml += '</div></div>';
                 }
 
-                let agendaHtml = '<div class="committee-agenda-list">';
-                data.agenda_events.forEach(event => {
-                    const dateStr = event.date ? new Date(event.date).toLocaleDateString('pt-PT', {
-                        day: 'numeric', month: 'short', year: 'numeric'
-                    }) : '';
-                    const timeStr = event.time || '';
-
-                    // Clean HTML from description
-                    let desc = event.description || '';
-                    // Simple HTML to text conversion
-                    desc = desc.replace(/<br\s*\/?>/gi, '\n')
-                              .replace(/<\/p>/gi, '\n')
-                              .replace(/<[^>]+>/g, '')
-                              .replace(/&nbsp;/g, ' ')
-                              .replace(/&amp;/g, '&')
-                              .replace(/&lt;/g, '<')
-                              .replace(/&gt;/g, '>')
-                              .replace(/&quot;/g, '"')
-                              .replace(/&#39;/g, "'")
-                              .replace(/&aacute;/gi, 'a')
-                              .replace(/&atilde;/gi, 'a')
-                              .replace(/&eacute;/gi, 'e')
-                              .replace(/&iacute;/gi, 'i')
-                              .replace(/&oacute;/gi, 'o')
-                              .replace(/&otilde;/gi, 'o')
-                              .replace(/&uacute;/gi, 'u')
-                              .replace(/&ccedil;/gi, 'c')
-                              .trim();
-
-                    agendaHtml += `
-                        <div class="committee-agenda-item">
-                            <div class="committee-agenda-date">${dateStr} ${timeStr ? '- ' + timeStr : ''} ${event.location ? '- ' + event.location : ''}</div>
-                            <div class="committee-agenda-title">${event.subtitle || 'Reuniao ' + (event.meeting_number || '')}</div>
-                            ${desc ? `<div class="committee-agenda-desc">${desc}</div>` : ''}
-                        </div>
+                // Section 2: Upcoming Agenda Events
+                const agendaEvents = data.agenda_events || [];
+                if (agendaEvents.length > 0) {
+                    contentHtml += `
+                        <div class="committee-section">
+                            <div class="committee-section-header">
+                                <span class="committee-section-title">Proximas reunioes</span>
+                                <span class="committee-section-count">${agendaEvents.length}</span>
+                            </div>
+                            <div class="committee-agenda-list">
                     `;
-                });
-                agendaHtml += '</div>';
 
-                modalBody.innerHTML = agendaHtml;
+                    agendaEvents.forEach(event => {
+                        const dateStr = event.date ? new Date(event.date).toLocaleDateString('pt-PT', {
+                            day: 'numeric', month: 'short', year: 'numeric'
+                        }) : '';
+                        const timeStr = event.time || '';
+
+                        contentHtml += `
+                            <div class="committee-agenda-item">
+                                <div class="committee-agenda-date">${dateStr} ${timeStr ? '- ' + timeStr : ''} ${event.location ? '- ' + event.location : ''}</div>
+                                <div class="committee-agenda-title">${event.subtitle || 'Reuniao ' + (event.meeting_number || '')}</div>
+                            </div>
+                        `;
+                    });
+
+                    contentHtml += '</div></div>';
+                }
+
+                // If nothing to show
+                if (initiatives.length === 0 && agendaEvents.length === 0) {
+                    contentHtml = '<div class="committee-empty">Sem iniciativas ou reunioes registadas.</div>';
+                }
+
+                modalBody.innerHTML = contentHtml;
 
             } catch (error) {
                 const modalBody = overlay.querySelector('.committee-modal-body');
-                modalBody.innerHTML = '<div class="committee-no-agenda">Erro ao carregar dados.</div>';
+                modalBody.innerHTML = '<div class="committee-empty">Erro ao carregar dados.</div>';
             }
         }
 
