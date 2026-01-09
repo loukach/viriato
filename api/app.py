@@ -799,12 +799,83 @@ def get_orgaos_summary():
                     'acronym': row['acronym'],
                     'type': row['org_type'],
                     'parties': {},
-                    'total_members': 0
+                    'total_members': 0,
+                    'ini_authored': 0,
+                    'ini_in_progress': 0,
+                    'ini_approved': 0,
+                    'ini_rejected': 0
                 }
 
             party = row['party'] or 'Sem partido'
             committees[org_id]['parties'][party] = row['count']
             committees[org_id]['total_members'] += row['count']
+
+        # Get initiative statistics for each committee
+        # 1. Authored initiatives (rare - committees as authors)
+        cur.execute("""
+            SELECT orgao_id, COUNT(*) as count
+            FROM iniciativa_autores
+            WHERE author_type = 'committee' AND orgao_id IS NOT NULL
+            GROUP BY orgao_id
+        """)
+        for row in cur.fetchall():
+            db_id = row['orgao_id']
+            # Find committee by db id
+            for c in committees.values():
+                if c['id'] == db_id:
+                    c['ini_authored'] = row['count']
+                    break
+
+        # 2. Lead initiatives in progress (not completed)
+        cur.execute("""
+            SELECT ic.orgao_id, COUNT(*) as count
+            FROM iniciativa_comissao ic
+            JOIN iniciativas i ON ic.iniciativa_id = i.id
+            WHERE ic.link_type = 'lead' AND i.is_completed = FALSE
+            GROUP BY ic.orgao_id
+        """)
+        for row in cur.fetchall():
+            db_id = row['orgao_id']
+            for c in committees.values():
+                if c['id'] == db_id:
+                    c['ini_in_progress'] = row['count']
+                    break
+
+        # 3. Approved initiatives (lead only)
+        cur.execute("""
+            SELECT ic.orgao_id, COUNT(*) as count
+            FROM iniciativa_comissao ic
+            JOIN iniciativas i ON ic.iniciativa_id = i.id
+            WHERE ic.link_type = 'lead'
+              AND i.is_completed = TRUE
+              AND i.current_status ILIKE '%publicação%'
+            GROUP BY ic.orgao_id
+        """)
+        for row in cur.fetchall():
+            db_id = row['orgao_id']
+            for c in committees.values():
+                if c['id'] == db_id:
+                    c['ini_approved'] = row['count']
+                    break
+
+        # 4. Rejected initiatives (lead only)
+        cur.execute("""
+            SELECT ic.orgao_id, COUNT(*) as count
+            FROM iniciativa_comissao ic
+            JOIN iniciativas i ON ic.iniciativa_id = i.id
+            WHERE ic.link_type = 'lead'
+              AND i.is_completed = TRUE
+              AND (i.current_status ILIKE '%rejeitad%'
+                   OR i.current_status ILIKE '%retirad%'
+                   OR i.current_status ILIKE '%caducad%')
+            GROUP BY ic.orgao_id
+        """)
+        for row in cur.fetchall():
+            db_id = row['orgao_id']
+            for c in committees.values():
+                if c['id'] == db_id:
+                    c['ini_rejected'] = row['count']
+                    break
 
         # Convert to list and sort by name
         result = sorted(committees.values(), key=lambda x: x['name'])

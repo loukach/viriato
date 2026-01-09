@@ -1966,21 +1966,60 @@
             font-weight: 600;
         }
 
-        /* Political spectrum labels */
-        .spectrum-labels {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.65rem;
-            color: var(--text-muted);
-            margin-bottom: 4px;
-            padding: 0 20px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
         /* Clickable committee card */
         .comissao-card {
             cursor: pointer;
+        }
+
+        /* Committee card header with stats */
+        .comissao-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        .comissao-stats {
+            display: flex;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+
+        .comissao-stat {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            padding: 2px 5px;
+            border-radius: 4px;
+            background: var(--bg-secondary);
+        }
+
+        .comissao-stat .stat-icon {
+            font-size: 0.6rem;
+            font-weight: 700;
+            opacity: 0.7;
+        }
+
+        .comissao-stat.authored {
+            background: #dbeafe;
+            color: #1d4ed8;
+        }
+
+        .comissao-stat.in-progress {
+            background: #fef3c7;
+            color: #b45309;
+        }
+
+        .comissao-stat.approved {
+            background: #d1fae5;
+            color: #047857;
+        }
+
+        .comissao-stat.rejected {
+            background: #fee2e2;
+            color: #b91c1c;
         }
 
         /* Committee Detail Modal */
@@ -3579,10 +3618,6 @@
                 });
 
                 const hemicycleHtml = `
-                    <div class="spectrum-labels">
-                        <span>Direita</span>
-                        <span>Esquerda</span>
-                    </div>
                     <div class="hemicycle-container">
                         <svg class="hemicycle" viewBox="0 0 200 100" preserveAspectRatio="xMidYMax meet">
                             ${segments}
@@ -3600,9 +3635,22 @@
                 });
                 countsHtml += '</div>';
 
+                // Build initiative stats (top right corner)
+                const hasAuthored = committee.ini_authored > 0;
+                const statsHtml = `
+                    <div class="comissao-stats">
+                        ${hasAuthored ? `<span class="comissao-stat authored" title="Iniciativas de autoria"><span class="stat-icon">A</span>${committee.ini_authored}</span>` : ''}
+                        <span class="comissao-stat in-progress" title="Em analise"><span class="stat-icon">E</span>${committee.ini_in_progress}</span>
+                        <span class="comissao-stat approved" title="Aprovadas"><span class="stat-icon">+</span>${committee.ini_approved}</span>
+                        <span class="comissao-stat rejected" title="Rejeitadas"><span class="stat-icon">-</span>${committee.ini_rejected}</span>
+                    </div>`;
+
                 html += `
                     <div class="comissao-card" onclick="showCommitteeDetails(${committee.org_id}, '${committee.name.replace(/'/g, "\\'")}')">
-                        <div class="comissao-name">${shortName}</div>
+                        <div class="comissao-header">
+                            <div class="comissao-name">${shortName}</div>
+                            ${statsHtml}
+                        </div>
                         <div class="comissao-total">${committee.total_members} membros</div>
                         ${hemicycleHtml}
                         ${countsHtml}
