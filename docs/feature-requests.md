@@ -1,6 +1,12 @@
 # Feature Requests
 
-Pedidos de funcionalidades para o Viriato - sugestões da comunidade para melhorar a plataforma.
+> **⚠️ DEPRECATED**: This file is no longer maintained. Feature requests are now tracked in GitHub Issues:
+>
+> **👉 https://github.com/loukach/viriato/issues**
+
+---
+
+*The content below is archived for historical reference only.*
 
 ---
 

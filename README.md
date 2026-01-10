@@ -203,9 +203,4 @@ Based on ideas from [adamastor](https://github.com/bcamarneiro/adamastor).
 
 ## Feature Requests
 
-Have ideas for improving Viriato? Check out the [feature requests](docs/feature-requests.md) page for planned enhancements and community suggestions, including:
-- Search initiatives by party/author
-- Parliamentary activity tracker with statistics and attendance
-- Keyword search across initiative titles and content
-
-To submit a feature request, [open an issue](https://github.com/loukach/viriato/issues) on GitHub.
+Have ideas for improving Viriato? Check the [GitHub Issues](https://github.com/loukach/viriato/issues) for planned enhancements and to submit your own suggestions.
