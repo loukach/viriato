@@ -20,8 +20,28 @@ services:
         value: production
     healthCheckPath: /api/health
 
-  # Static Frontend (GitHub Pages already deployed)
-  # Frontend will call API at: https://viriato-api.onrender.com
+  # Static Frontend
+  - type: web
+    name: viriato-frontend
+    runtime: static
+    region: frankfurt
+    branch: master
+    buildCommand: npm install && npm run build
+    staticPublishPath: ./dist
+    envVars:
+      - key: API_URL
+        value: https://viriato-api.onrender.com
+    headers:
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff
+      - path: /*
+        name: X-Frame-Options
+        value: SAMEORIGIN
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
 
 databases:
   - name: viriato

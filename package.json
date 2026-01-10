@@ -1,0 +1,17 @@
+{
+  "name": "viriato",
+  "version": "1.0.0",
+  "description": "Visualizacao de dados abertos do Parlamento Portugues",
+  "private": true,
+  "scripts": {
+    "build": "node scripts/build.js",
+    "dev": "node scripts/build.js --dev && npx serve dist",
+    "test": "echo \"Tests will be added\" && exit 0"
+  },
+  "devDependencies": {
+    "esbuild": "^0.20.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
