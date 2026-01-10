@@ -70,7 +70,7 @@ The SPA has 5 views accessible via hash routing:
 ### `/doc-review`
 Systematic documentation health check. Reviews all key docs for staleness, inconsistencies, and missing content. Run weekly or after major features.
 
-See: `.claude/skills/doc-review.md`
+See: `.claude/skills/doc-review/SKILL.md`
 
 ## Data Pipeline
 
