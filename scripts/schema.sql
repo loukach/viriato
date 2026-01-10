@@ -412,26 +412,26 @@ COMMENT ON COLUMN iniciativa_autores.author_type IS 'deputy=individual deputy, g
 COMMENT ON COLUMN iniciativa_autores.dep_cad_id IS 'idCadastro from API - matches orgao_membros.dep_cad_id for 98.7% of deputy authors';
 
 -- =============================================================================
--- TABLE 10: deputados (Deputies with biographical data)
+-- TABLE 10: deputados (Core deputy data from InformacaoBase)
 -- =============================================================================
+-- Source: data/raw/InformacaoBaseXVII_json.txt (1,446 records)
+-- This table stores core identity and parliamentary status data.
+-- Biographical data is stored separately in deputados_bio.
 
 CREATE TABLE IF NOT EXISTS deputados (
     id SERIAL PRIMARY KEY,
     dep_id INTEGER UNIQUE NOT NULL,            -- DepId from InformacaoBase API
-    dep_cad_id INTEGER,                        -- DepCadId (links to biographical registry)
+    dep_cad_id INTEGER,                        -- DepCadId (links to deputados_bio)
     legislature VARCHAR(10) NOT NULL,          -- "XVII"
     name VARCHAR(200) NOT NULL,                -- DepNomeParlamentar
     full_name VARCHAR(300),                    -- DepNomeCompleto
     party VARCHAR(20),                         -- Current party (gpSigla)
     circulo_id INTEGER,                        -- DepCPId (electoral district ID)
     circulo VARCHAR(100),                      -- DepCPDes (electoral district name)
-    gender VARCHAR(1),                         -- CadSexo from RegistoBiografico (M/F)
-    birth_date DATE,                           -- CadDtNascimento from RegistoBiografico
-    profession VARCHAR(200),                   -- CadProfissao from RegistoBiografico
     situation VARCHAR(50),                     -- sioDes (Efetivo, Suspenso, etc.)
     situation_start DATE,                      -- sioDtInicio
     situation_end DATE,                        -- sioDtFim
-    raw_data JSONB,                            -- Full original JSON
+    raw_data JSONB,                            -- Full original JSON from InformacaoBase
     created_at TIMESTAMP DEFAULT NOW(),
     updated_at TIMESTAMP DEFAULT NOW()
 );
@@ -439,20 +439,49 @@ CREATE TABLE IF NOT EXISTS deputados (
 -- Indexes for deputy queries
 CREATE INDEX IF NOT EXISTS idx_deputados_party ON deputados(party);
 CREATE INDEX IF NOT EXISTS idx_deputados_circulo ON deputados(circulo);
-CREATE INDEX IF NOT EXISTS idx_deputados_gender ON deputados(gender);
 CREATE INDEX IF NOT EXISTS idx_deputados_legislature ON deputados(legislature);
 CREATE INDEX IF NOT EXISTS idx_deputados_cad_id ON deputados(dep_cad_id);
+CREATE INDEX IF NOT EXISTS idx_deputados_situation ON deputados(situation);
 
 -- Full-text search on name
 CREATE INDEX IF NOT EXISTS idx_deputados_name_fts
     ON deputados USING GIN(to_tsvector('portuguese', name));
 
 -- =============================================================================
+-- TABLE 11: deputados_bio (Biographical data from RegistoBiografico)
+-- =============================================================================
+-- Source: data/raw/RegistoBiograficoXVII_json.txt (330 records)
+-- This table stores biographical enrichment data.
+-- Linked to deputados via cad_id = deputados.dep_cad_id
+
+CREATE TABLE IF NOT EXISTS deputados_bio (
+    id SERIAL PRIMARY KEY,
+    cad_id INTEGER UNIQUE NOT NULL,            -- CadId (links to deputados.dep_cad_id)
+    full_name VARCHAR(300),                    -- CadNomeCompleto
+    gender VARCHAR(1),                         -- CadSexo: 'M' or 'F'
+    birth_date DATE,                           -- CadDtNascimento
+    profession VARCHAR(500),                   -- CadProfissao
+    education VARCHAR(1000),                   -- CadHabilitacoes
+    published_works TEXT,                      -- CadObrasPublicadas
+    awards TEXT,                               -- CadCondecoracoes
+    titles TEXT,                               -- CadTitulos
+    raw_data JSONB,                            -- Full original JSON from RegistoBiografico
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Indexes for biographical queries
+CREATE INDEX IF NOT EXISTS idx_deputados_bio_gender ON deputados_bio(gender);
+
+-- =============================================================================
 -- COMMENTS FOR DEPUTADOS
 -- =============================================================================
 
-COMMENT ON TABLE deputados IS 'Deputies with biographical and electoral data';
+COMMENT ON TABLE deputados IS 'Deputies from InformacaoBase - core identity and parliamentary status';
+COMMENT ON TABLE deputados_bio IS 'Deputy biographical data from RegistoBiografico';
 COMMENT ON COLUMN deputados.dep_id IS 'Deputy ID from Parliament API (DepId)';
-COMMENT ON COLUMN deputados.dep_cad_id IS 'Cadastro ID linking to biographical registry';
+COMMENT ON COLUMN deputados.dep_cad_id IS 'Cadastro ID linking to deputados_bio';
 COMMENT ON COLUMN deputados.circulo IS 'Electoral district (círculo eleitoral)';
-COMMENT ON COLUMN deputados.gender IS 'M=Male, F=Female from RegistoBiografico';
+COMMENT ON COLUMN deputados.situation IS 'Parliamentary status: Efetivo, Efetivo Temporário, Efetivo Definitivo, Suspenso(Eleito), Suplente, etc.';
+COMMENT ON COLUMN deputados_bio.cad_id IS 'Cadastro ID linking to deputados.dep_cad_id';
+COMMENT ON COLUMN deputados_bio.gender IS 'M=Male, F=Female';

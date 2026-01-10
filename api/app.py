@@ -901,10 +901,17 @@ def get_deputados():
         legislature - Filter by legislature (default: XVII)
         party - Filter by party
         circulo - Filter by electoral district
-        situation - Filter by situation (Efetivo, Suspenso, etc.)
+        serving - Filter by serving status: 'true' (default), 'false', or 'all'
+                  'true' = Efetivo + Efetivo Temporário + Efetivo Definitivo (230 deputies)
+                  'false' = all non-serving (substitutes, suspended, etc.)
+                  'all' = no filter
+        situation - Filter by exact situation (overrides 'serving' if provided)
 
     Returns list of deputies with party composition summary.
     """
+    # Business logic: which situations count as "serving"
+    SERVING_SITUATIONS = ('Efetivo', 'Efetivo Temporário', 'Efetivo Definitivo')
+
     try:
         conn = get_db_connection()
         cur = conn.cursor()
@@ -913,17 +920,18 @@ def get_deputados():
         legislature = request.args.get('legislature', 'XVII')
         party = request.args.get('party')
         circulo = request.args.get('circulo')
-        # Default to 'Efetivo' - also handle empty string case
-        situation = request.args.get('situation', 'Efetivo') or 'Efetivo'
+        serving = request.args.get('serving', 'true')  # Default: only serving deputies
+        situation = request.args.get('situation')  # Explicit situation filter
 
-        # Build query
+        # Build query - JOIN with deputados_bio for biographical data
         query = """
             SELECT
                 d.id, d.dep_id, d.dep_cad_id, d.legislature,
                 d.name, d.full_name, d.party, d.circulo_id, d.circulo,
-                d.gender, d.birth_date, d.profession,
+                b.gender, b.birth_date, b.profession,
                 d.situation, d.situation_start, d.situation_end
             FROM deputados d
+            LEFT JOIN deputados_bio b ON d.dep_cad_id = b.cad_id
             WHERE d.legislature = %s
         """
         params = [legislature]
@@ -936,9 +944,20 @@ def get_deputados():
             query += " AND d.circulo = %s"
             params.append(circulo)
 
+        # Apply situation filter
         if situation:
+            # Explicit situation filter overrides 'serving' parameter
             query += " AND d.situation = %s"
             params.append(situation)
+        elif serving == 'true':
+            # Default: only serving deputies (230 seats)
+            query += " AND d.situation IN %s"
+            params.append(SERVING_SITUATIONS)
+        elif serving == 'false':
+            # Non-serving only
+            query += " AND (d.situation IS NULL OR d.situation NOT IN %s)"
+            params.append(SERVING_SITUATIONS)
+        # serving == 'all' means no filter
 
         query += " ORDER BY d.party, d.name"
 
@@ -1007,15 +1026,28 @@ def get_deputados():
             for dep in deputados:
                 dep['comissoes'] = comissoes_by_dep.get(dep['dep_cad_id'], [])
 
+        # Build summary filter to match main query
+        if situation:
+            summary_filter = "d.situation = %s"
+            summary_params = [legislature, situation]
+        elif serving == 'true':
+            summary_filter = "d.situation IN %s"
+            summary_params = [legislature, SERVING_SITUATIONS]
+        elif serving == 'false':
+            summary_filter = "(d.situation IS NULL OR d.situation NOT IN %s)"
+            summary_params = [legislature, SERVING_SITUATIONS]
+        else:
+            summary_filter = "1=1"
+            summary_params = [legislature]
+
         # Get party composition summary (for hemicycle)
-        # Use same situation filter as main query for consistency
-        cur.execute("""
-            SELECT party, COUNT(*) as count
-            FROM deputados
-            WHERE legislature = %s AND situation = %s
-            GROUP BY party
+        cur.execute(f"""
+            SELECT d.party, COUNT(*) as count
+            FROM deputados d
+            WHERE d.legislature = %s AND {summary_filter}
+            GROUP BY d.party
             ORDER BY count DESC
-        """, (legislature, situation))
+        """, summary_params)
 
         party_composition = {}
         total_deputados = 0
@@ -1024,26 +1056,27 @@ def get_deputados():
             party_composition[party_name] = row['count']
             total_deputados += row['count']
 
-        # Get gender breakdown
-        cur.execute("""
-            SELECT gender, COUNT(*) as count
-            FROM deputados
-            WHERE legislature = %s AND situation = %s
-            GROUP BY gender
-        """, (legislature, situation))
+        # Get gender breakdown (from bio table)
+        cur.execute(f"""
+            SELECT b.gender, COUNT(*) as count
+            FROM deputados d
+            LEFT JOIN deputados_bio b ON d.dep_cad_id = b.cad_id
+            WHERE d.legislature = %s AND {summary_filter}
+            GROUP BY b.gender
+        """, summary_params)
 
         gender_breakdown = {}
         for row in cur.fetchall():
             gender_breakdown[row['gender'] or 'Unknown'] = row['count']
 
         # Get circulo breakdown
-        cur.execute("""
-            SELECT circulo, COUNT(*) as count
-            FROM deputados
-            WHERE legislature = %s AND situation = %s
-            GROUP BY circulo
+        cur.execute(f"""
+            SELECT d.circulo, COUNT(*) as count
+            FROM deputados d
+            WHERE d.legislature = %s AND {summary_filter}
+            GROUP BY d.circulo
             ORDER BY count DESC
-        """, (legislature, situation))
+        """, summary_params)
 
         circulo_breakdown = {}
         for row in cur.fetchall():

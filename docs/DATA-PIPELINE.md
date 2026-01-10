@@ -51,13 +51,13 @@
 │                         POSTGRESQL DATABASE                                  │
 │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐     │
 │  │ iniciativas  │  │  deputados   │  │    orgaos    │  │ agenda_events│     │
-│  │  (808 rows)  │  │  (230 rows)  │  │  (122 rows)  │  │  (34 rows)   │     │
+│  │  (808 rows)  │  │ (1,446 rows) │  │  (122 rows)  │  │  (34 rows)   │     │
 │  └──────────────┘  └──────────────┘  └──────────────┘  └──────────────┘     │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐                       │
-│  │iniciativa_   │  │orgao_membros │  │iniciativa_   │                       │
-│  │  events      │  │ (1200 rows)  │  │  comissao    │                       │
-│  │ (5000 rows)  │  │              │  │ (1500 rows)  │                       │
-│  └──────────────┘  └──────────────┘  └──────────────┘                       │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐     │
+│  │iniciativa_   │  │deputados_bio │  │orgao_membros │  │iniciativa_   │     │
+│  │  events      │  │  (330 rows)  │  │ (1200 rows)  │  │  comissao    │     │
+│  │ (5000 rows)  │  │              │  │              │  │ (1500 rows)  │     │
+│  └──────────────┘  └──────────────┘  └──────────────┘  └──────────────┘     │
 └─────────────────────────────────────────────────────────────────────────────┘
                                     │
                                     │ api/app.py (Flask)
@@ -84,8 +84,8 @@
 | Dataset | Raw File | Size | Loader Script | Target Table(s) | Status |
 |---------|----------|------|---------------|-----------------|--------|
 | **Iniciativas XVII** | `IniciativasXVII_json.txt` | 35 MB | `load_to_postgres.py` | `iniciativas`, `iniciativa_events`, `iniciativa_comissao` | ✅ Loaded |
-| **Informacao Base XVII** | `InformacaoBaseXVII_json.txt` | 546 KB | `load_deputados.py` | `deputados` | ✅ Loaded |
-| **Registo Biografico XVII** | `RegistoBiograficoXVII_json.txt` | 653 KB | `load_deputados.py` | `deputados` (enrichment) | ✅ Loaded |
+| **Informacao Base XVII** | `InformacaoBaseXVII_json.txt` | 546 KB | `load_deputados.py` | `deputados` (1,446 rows) | ✅ Loaded |
+| **Registo Biografico XVII** | `RegistoBiograficoXVII_json.txt` | 653 KB | `load_deputados.py` | `deputados_bio` (330 rows) | ✅ Loaded |
 | **Orgao Composicao XVII** | `OrgaoComposicaoXVII_json.txt` | 2.2 MB | `load_orgaos.py` | `orgaos`, `orgao_membros` | ✅ Loaded |
 | **Agenda Parlamentar** | `AgendaParlamentar_json.txt` | 134 KB | `load_to_postgres.py` | `agenda_events` | ✅ Loaded |
 | **Iniciativas XIV-XVI** | `IniciativasXIV/XV/XVI_json.txt` | 152 MB | `load_to_postgres.py` | `iniciativas`, `iniciativa_events` | ✅ Loaded |
@@ -308,25 +308,25 @@ python scripts/load_authors.py
 
 ```
                     ┌───────────────────┐
-                    │    deputados      │
-                    │  (230 deputies)   │
+                    │    deputados      │  ← InformacaoBase (1,446 rows)
+                    │ (core identity)   │     dep_id, name, party, situation
                     └─────────┬─────────┘
                               │ dep_cad_id
           ┌───────────────────┼───────────────────┐
           │                   │                   │
           ▼                   ▼                   ▼
 ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐
-│ orgao_membros   │  │iniciativa_      │  │(future:         │
-│ (1200 members)  │  │  autores        │  │ intervencoes)   │
-└────────┬────────┘  └────────┬────────┘  └─────────────────┘
-         │                    │
-         │ orgao_id           │ iniciativa_id
-         ▼                    ▼
-┌─────────────────┐  ┌─────────────────┐
-│     orgaos      │  │   iniciativas   │
-│ (122 committees)│  │ (808 initiatives)│
-└────────┬────────┘  └────────┬────────┘
-         │                    │
+│ deputados_bio   │  │ orgao_membros   │  │iniciativa_      │
+│  (330 rows)     │  │ (1200 members)  │  │  autores        │
+│ ← RegistoBio    │  └────────┬────────┘  └────────┬────────┘
+└─────────────────┘           │                    │
+                              │ orgao_id           │ iniciativa_id
+                              ▼                    ▼
+                    ┌─────────────────┐  ┌─────────────────┐
+                    │     orgaos      │  │   iniciativas   │
+                    │ (122 committees)│  │ (808 initiatives)│
+                    └────────┬────────┘  └────────┬────────┘
+                             │                    │
          │                    ├──────────────────┐
          │                    │                  │
          ▼                    ▼                  ▼
@@ -351,7 +351,8 @@ python scripts/load_authors.py
 | `iniciativa_comissao` | ~1,500 | Initiative-committee relationships |
 | `iniciativa_conjunta` | ~200 | Joint initiative links |
 | `iniciativa_autores` | ~1,000 | Author (party/deputy) relationships |
-| `deputados` | 230 | Deputies with biographical data |
+| `deputados` | 1,446 | All deputies from InformacaoBase (230 serving) |
+| `deputados_bio` | 330 | Biographical data from RegistoBiografico |
 | `orgaos` | 122 | Committees, working groups |
 | `orgao_membros` | ~1,200 | Committee membership |
 | `agenda_events` | 34 | Parliamentary calendar |
@@ -394,24 +395,36 @@ python scripts/load_authors.py
 | (array index) | `order_index` | 0, 1, 2, ... |
 | (entire event) | `raw_data` | Full event JSON as JSONB |
 
-### Deputados: JSON → Database
+### Deputados (from InformacaoBase): JSON → Database
 
-| Source JSON Field | Database Column | Source File |
-|-------------------|-----------------|-------------|
-| `DepId` | `dep_id` | InformacaoBase |
-| `DepCadId` | `dep_cad_id` | InformacaoBase |
-| `DepNomeParlamentar` | `name` | InformacaoBase |
-| `DepNomeCompleto` | `full_name` | InformacaoBase |
-| `DepGP[0].gpSigla` | `party` | InformacaoBase (current party) |
-| `DepCPId` | `circulo_id` | InformacaoBase |
-| `DepCPDes` | `circulo` | InformacaoBase |
-| `DepSituacao[0].sioDes` | `situation` | InformacaoBase |
-| `DepSituacao[0].sioDtInicio` | `situation_start` | InformacaoBase |
-| `DepSituacao[0].sioDtFim` | `situation_end` | InformacaoBase |
-| `CadSexo` | `gender` | RegistoBiografico |
-| `CadDtNascimento` | `birth_date` | RegistoBiografico |
-| `CadProfissao` | `profession` | RegistoBiografico |
-| (entire record) | `raw_data` | InformacaoBase |
+| Source JSON Field | Database Column | Notes |
+|-------------------|-----------------|-------|
+| `DepId` | `dep_id` | Unique deputy ID |
+| `DepCadId` | `dep_cad_id` | Links to `deputados_bio.cad_id` |
+| `DepNomeParlamentar` | `name` | Parliamentary name |
+| `DepNomeCompleto` | `full_name` | Full legal name |
+| `DepGP[0].gpSigla` | `party` | Current party (active GP entry) |
+| `DepCPId` | `circulo_id` | Electoral district ID |
+| `DepCPDes` | `circulo` | Electoral district name |
+| `DepSituacao[0].sioDes` | `situation` | Efetivo, Suplente, Suspenso(Eleito), etc. |
+| `DepSituacao[0].sioDtInicio` | `situation_start` | Situation start date |
+| `DepSituacao[0].sioDtFim` | `situation_end` | Situation end date (NULL if current) |
+| (entire record) | `raw_data` | Full JSON as JSONB |
+
+### Deputados_bio (from RegistoBiografico): JSON → Database
+
+| Source JSON Field | Database Column | Notes |
+|-------------------|-----------------|-------|
+| `CadId` | `cad_id` | Links to `deputados.dep_cad_id` |
+| `CadNomeCompleto` | `full_name` | Full legal name |
+| `CadSexo` | `gender` | 'M' or 'F' |
+| `CadDtNascimento` | `birth_date` | Date of birth |
+| `CadProfissao` | `profession` | Professional background |
+| `CadHabilitacoes` | `education` | Educational qualifications |
+| `CadObrasPublicadas` | `published_works` | Published works |
+| `CadCondecoracoes` | `awards` | Awards and honors |
+| `CadTitulos` | `titles` | Titles held |
+| (entire record) | `raw_data` | Full JSON as JSONB |
 
 ### Orgaos (Committees): JSON → Database
 
@@ -458,20 +471,28 @@ ORDER BY start_date DESC;
 
 ### `/api/deputados`
 
+**Query Parameters:**
+- `serving=true` (default) - Returns 230 serving deputies (Efetivo + Efetivo Temporário + Efetivo Definitivo)
+- `serving=false` - Returns non-serving deputies (Suplente, Suspenso, etc.)
+- `serving=all` - Returns all 1,446 deputies
+- `situation=X` - Filter by exact situation (overrides `serving`)
+
 **Database Query:**
 ```sql
-SELECT id, dep_id, name, full_name, party, circulo, gender,
-       birth_date, profession, situation
-FROM deputados
-WHERE legislature = 'XVII'
-  AND situation = 'Efetivo'
-ORDER BY name;
+SELECT d.id, d.dep_id, d.name, d.full_name, d.party, d.circulo,
+       b.gender, b.birth_date, b.profession, d.situation
+FROM deputados d
+LEFT JOIN deputados_bio b ON d.dep_cad_id = b.cad_id
+WHERE d.legislature = 'XVII'
+  AND d.situation IN ('Efetivo', 'Efetivo Temporário', 'Efetivo Definitivo')
+ORDER BY d.party, d.name;
 ```
 
 **Response includes:**
-- Deputy metadata
+- Deputy metadata (joined from both tables)
 - Party summary counts
 - Gender distribution
+- Committee memberships
 
 ### `/api/comissoes`
 
