@@ -2,15 +2,16 @@
 # Install with: pip install -r requirements.txt
 
 # PostgreSQL adapter
-psycopg2-binary>=2.9.9
+psycopg2-binary==2.9.10
 
 # Flask API
-Flask>=3.0.0
-Flask-CORS>=4.0.0
-gunicorn>=21.2.0  # Production WSGI server
+Flask==3.1.0
+Flask-CORS==5.0.0
+gunicorn==23.0.0  # Production WSGI server
 
 # HTTP requests (for download_datasets.py)
-requests>=2.31.0
+requests==2.32.3
 
-# Optional: For development and testing
-python-dotenv>=1.0.0  # Load DATABASE_URL from .env file
+# Development and testing
+python-dotenv==1.0.1  # Load DATABASE_URL from .env file
+pytest==8.3.5  # Testing framework

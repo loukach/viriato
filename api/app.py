@@ -8,8 +8,10 @@ Provides REST API endpoints for the frontend to query PostgreSQL database.
 
 import os
 import json
+import logging
 import urllib.request
 import urllib.error
+from contextlib import contextmanager
 from datetime import datetime, timedelta
 from flask import Flask, jsonify, request
 from flask_cors import CORS
@@ -22,6 +24,15 @@ try:
 except ImportError:
     pass
 
+# Configure logging
+log_level = os.environ.get('LOG_LEVEL', 'INFO').upper()
+logging.basicConfig(
+    level=getattr(logging, log_level, logging.INFO),
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S'
+)
+logger = logging.getLogger('viriato-api')
+
 app = Flask(__name__)
 CORS(app)  # Enable CORS for frontend access
 
@@ -29,27 +40,49 @@ def get_db_connection():
     """Get database connection from environment."""
     database_url = os.environ.get('DATABASE_URL')
     if not database_url:
+        logger.error("DATABASE_URL environment variable not set")
         raise Exception("DATABASE_URL environment variable not set")
 
     return psycopg2.connect(database_url, cursor_factory=RealDictCursor)
+
+
+@contextmanager
+def db_connection():
+    """
+    Context manager for database connections.
+
+    Automatically closes connection and cursor on exit, even if an exception occurs.
+    Usage:
+        with db_connection() as (conn, cur):
+            cur.execute("SELECT ...")
+            results = cur.fetchall()
+    """
+    conn = None
+    cur = None
+    try:
+        conn = get_db_connection()
+        cur = conn.cursor()
+        yield conn, cur
+    finally:
+        if cur:
+            cur.close()
+        if conn:
+            conn.close()
 
 
 @app.route('/api/health', methods=['GET'])
 def health_check():
     """Health check endpoint."""
     try:
-        conn = get_db_connection()
-        cur = conn.cursor()
-        cur.execute("SELECT COUNT(*) as count FROM iniciativas")
-        count = cur.fetchone()['count']
-        cur.close()
-        conn.close()
+        with db_connection() as (conn, cur):
+            cur.execute("SELECT COUNT(*) as count FROM iniciativas")
+            count = cur.fetchone()['count']
 
-        return jsonify({
-            'status': 'ok',
-            'database': 'connected',
-            'iniciativas_count': count
-        })
+            return jsonify({
+                'status': 'ok',
+                'database': 'connected',
+                'iniciativas_count': count
+            })
     except Exception as e:
         return jsonify({
             'status': 'error',
@@ -80,93 +113,86 @@ def get_iniciativas():
     ]
     """
     try:
-        conn = get_db_connection()
-        cur = conn.cursor()
+        with db_connection() as (conn, cur):
+            # Get optional legislature filter
+            legislature = request.args.get('legislature')
 
-        # Get optional legislature filter
-        legislature = request.args.get('legislature')
+            # Build query with optional filter
+            query = """
+                SELECT
+                    id, ini_id, legislature, number, type, type_description,
+                    title, author_type, author_name, start_date, end_date,
+                    current_status, is_completed, text_link, raw_data
+                FROM iniciativas
+            """
+            params = []
 
-        # Build query with optional filter
-        query = """
-            SELECT
-                id, ini_id, legislature, number, type, type_description,
-                title, author_type, author_name, start_date, end_date,
-                current_status, is_completed, text_link, raw_data
-            FROM iniciativas
-        """
-        params = []
+            if legislature:
+                query += " WHERE legislature = %s"
+                params.append(legislature)
 
-        if legislature:
-            query += " WHERE legislature = %s"
-            params.append(legislature)
+            query += " ORDER BY start_date DESC"
 
-        query += " ORDER BY start_date DESC"
+            # Get iniciativas
+            cur.execute(query, params)
+            iniciativas = cur.fetchall()
 
-        # Get iniciativas
-        cur.execute(query, params)
-        iniciativas = cur.fetchall()
+            # Get all initiative database IDs for batch event query
+            ini_db_ids = [ini['id'] for ini in iniciativas]
 
-        # Get all initiative database IDs for batch event query
-        ini_db_ids = [ini['id'] for ini in iniciativas]
+            # Batch fetch all events (avoids N+1 query problem)
+            events_query = """
+                SELECT iniciativa_id, phase_name, event_date, observations
+                FROM iniciativa_events
+                WHERE iniciativa_id = ANY(%s)
+                ORDER BY iniciativa_id, event_date
+            """
+            cur.execute(events_query, (ini_db_ids,))
+            all_events = cur.fetchall()
 
-        # Batch fetch all events (avoids N+1 query problem)
-        events_query = """
-            SELECT iniciativa_id, phase_name, event_date, observations
-            FROM iniciativa_events
-            WHERE iniciativa_id = ANY(%s)
-            ORDER BY iniciativa_id, event_date
-        """
-        cur.execute(events_query, (ini_db_ids,))
-        all_events = cur.fetchall()
+            # Group events by initiative database ID
+            events_by_ini_db_id = {}
+            for event in all_events:
+                ini_db_id = event['iniciativa_id']
+                if ini_db_id not in events_by_ini_db_id:
+                    events_by_ini_db_id[ini_db_id] = []
+                events_by_ini_db_id[ini_db_id].append({
+                    'Fase': event['phase_name'],
+                    'DataFase': event['event_date'].isoformat() if event['event_date'] else None,
+                    'DescFase': event['observations']
+                })
 
-        # Group events by initiative database ID
-        events_by_ini_db_id = {}
-        for event in all_events:
-            ini_db_id = event['iniciativa_id']
-            if ini_db_id not in events_by_ini_db_id:
-                events_by_ini_db_id[ini_db_id] = []
-            events_by_ini_db_id[ini_db_id].append({
-                'Fase': event['phase_name'],
-                'DataFase': event['event_date'].isoformat() if event['event_date'] else None,
-                'DescFase': event['observations']
-            })
+            # Build response using normalized columns (no raw_data needed!)
+            # This reduces payload size by ~90% and uses single batch query for events
+            result = []
+            for ini in iniciativas:
+                try:
+                    raw_data = ini['raw_data'] or {}
+                    minimal_data = {
+                        'IniId': ini['ini_id'],
+                        'IniTitulo': ini['title'],
+                        'IniTipo': ini['type'],
+                        'IniDescTipo': ini['type_description'],
+                        'IniNr': ini['number'],
+                        'IniLeg': ini['legislature'],
+                        'IniLinkTexto': ini['text_link'],
+                        'IniEventos': events_by_ini_db_id.get(ini['id'], []),
+                        'IniAutorGruposParlamentares': raw_data.get('IniAutorGruposParlamentares'),
+                        'IniAutorOutros': raw_data.get('IniAutorOutros'),
+                        'DataInicioleg': ini['start_date'].isoformat() if ini['start_date'] else None,
+                        '_currentStatus': ini['current_status'],
+                        '_isCompleted': ini['is_completed']
+                    }
 
-        # Build response using normalized columns (no raw_data needed!)
-        # This reduces payload size by ~90% and uses single batch query for events
-        result = []
-        for ini in iniciativas:
-            try:
-                raw_data = ini['raw_data'] or {}
-                minimal_data = {
-                    'IniId': ini['ini_id'],
-                    'IniTitulo': ini['title'],
-                    'IniTipo': ini['type'],
-                    'IniDescTipo': ini['type_description'],
-                    'IniNr': ini['number'],
-                    'IniLeg': ini['legislature'],
-                    'IniLinkTexto': ini['text_link'],
-                    'IniEventos': events_by_ini_db_id.get(ini['id'], []),
-                    'IniAutorGruposParlamentares': raw_data.get('IniAutorGruposParlamentares'),
-                    'IniAutorOutros': raw_data.get('IniAutorOutros'),
-                    'DataInicioleg': ini['start_date'].isoformat() if ini['start_date'] else None,
-                    '_currentStatus': ini['current_status'],
-                    '_isCompleted': ini['is_completed']
-                }
+                    result.append(minimal_data)
+                except Exception as e:
+                    logger.warning("Error processing iniciativa %s: %s", ini['ini_id'], e)
+                    continue
 
-                result.append(minimal_data)
-            except Exception as e:
-                # Skip errors, log
-                print(f"Error processing iniciativa {ini['ini_id']}: {e}")
-                continue
-
-        cur.close()
-        conn.close()
-
-        return jsonify(result)
+            return jsonify(result)
 
     except Exception as e:
-        import traceback
-        traceback.print_exc()
+        logger.exception("Error fetching iniciativas")
         return jsonify({'error': str(e), 'type': type(e).__name__}), 500
 
 
@@ -174,27 +200,22 @@ def get_iniciativas():
 def get_iniciativa(ini_id):
     """Get single iniciativa by ID."""
     try:
-        conn = get_db_connection()
-        cur = conn.cursor()
+        with db_connection() as (conn, cur):
+            cur.execute("""
+                SELECT raw_data
+                FROM iniciativas
+                WHERE ini_id = %s
+            """, (ini_id,))
 
-        cur.execute("""
-            SELECT raw_data
-            FROM iniciativas
-            WHERE ini_id = %s
-        """, (ini_id,))
+            row = cur.fetchone()
 
-        row = cur.fetchone()
+            if not row:
+                return jsonify({'error': 'Not found'}), 404
 
-        if not row:
-            return jsonify({'error': 'Not found'}), 404
+            # raw_data is already a dict (JSONB)
+            data = row['raw_data']
 
-        # raw_data is already a dict (JSONB)
-        data = row['raw_data']
-
-        cur.close()
-        conn.close()
-
-        return jsonify(data)
+            return jsonify(data)
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
@@ -208,26 +229,21 @@ def get_phase_counts():
     Returns: [{"phase": "Entrada", "count": 808}, ...]
     """
     try:
-        conn = get_db_connection()
-        cur = conn.cursor()
+        with db_connection() as (conn, cur):
+            # Get phase counts from events table
+            cur.execute("""
+                SELECT
+                    phase_name as phase,
+                    COUNT(DISTINCT iniciativa_id) as count
+                FROM iniciativa_events
+                GROUP BY phase_name
+                ORDER BY count DESC
+            """)
 
-        # Get phase counts from events table
-        cur.execute("""
-            SELECT
-                phase_name as phase,
-                COUNT(DISTINCT iniciativa_id) as count
-            FROM iniciativa_events
-            GROUP BY phase_name
-            ORDER BY count DESC
-        """)
+            phases = [{'phase': row['phase'], 'count': row['count']}
+                      for row in cur.fetchall()]
 
-        phases = [{'phase': row['phase'], 'count': row['count']}
-                  for row in cur.fetchall()]
-
-        cur.close()
-        conn.close()
-
-        return jsonify(phases)
+            return jsonify(phases)
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
@@ -241,35 +257,30 @@ def get_agenda():
     Returns data in format compatible with existing frontend.
     """
     try:
-        conn = get_db_connection()
-        cur = conn.cursor()
+        with db_connection() as (conn, cur):
+            # Optional date filters
+            start_date = request.args.get('start_date')
+            end_date = request.args.get('end_date')
 
-        # Optional date filters
-        start_date = request.args.get('start_date')
-        end_date = request.args.get('end_date')
+            query = "SELECT raw_data FROM agenda_events WHERE 1=1"
+            params = []
 
-        query = "SELECT raw_data FROM agenda_events WHERE 1=1"
-        params = []
+            if start_date:
+                query += " AND start_date >= %s"
+                params.append(start_date)
 
-        if start_date:
-            query += " AND start_date >= %s"
-            params.append(start_date)
+            if end_date:
+                query += " AND start_date <= %s"
+                params.append(end_date)
 
-        if end_date:
-            query += " AND start_date <= %s"
-            params.append(end_date)
+            query += " ORDER BY start_date, start_time"
 
-        query += " ORDER BY start_date, start_time"
+            cur.execute(query, params)
 
-        cur.execute(query, params)
+            # raw_data is already a dict (JSONB)
+            events = [row['raw_data'] for row in cur.fetchall()]
 
-        # raw_data is already a dict (JSONB)
-        events = [row['raw_data'] for row in cur.fetchall()]
-
-        cur.close()
-        conn.close()
-
-        return jsonify(events)
+            return jsonify(events)
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
@@ -287,90 +298,84 @@ def get_agenda_initiatives(event_id):
         }
     """
     try:
-        conn = get_db_connection()
-        cur = conn.cursor()
+        with db_connection() as (conn, cur):
+            # Get agenda event details
+            cur.execute("""
+                SELECT
+                    id, event_id, title, start_date, start_time, end_time,
+                    section, committee, location, description, raw_data
+                FROM agenda_events
+                WHERE event_id = %s
+            """, (event_id,))
 
-        # Get agenda event details
-        cur.execute("""
-            SELECT
-                id, event_id, title, start_date, start_time, end_time,
-                section, committee, location, description, raw_data
-            FROM agenda_events
-            WHERE event_id = %s
-        """, (event_id,))
+            agenda_row = cur.fetchone()
 
-        agenda_row = cur.fetchone()
+            if not agenda_row:
+                return jsonify({'error': 'Agenda event not found'}), 404
 
-        if not agenda_row:
-            return jsonify({'error': 'Agenda event not found'}), 404
+            # Get linked initiatives with their details
+            cur.execute("""
+                SELECT
+                    i.ini_id,
+                    i.legislature,
+                    i.number,
+                    i.type,
+                    i.type_description,
+                    i.title,
+                    i.author_name,
+                    i.current_status,
+                    i.is_completed,
+                    i.text_link,
+                    l.link_type,
+                    l.link_confidence,
+                    l.extracted_text
+                FROM agenda_initiative_links l
+                JOIN iniciativas i ON l.iniciativa_id = i.id
+                WHERE l.agenda_event_id = %s
+                ORDER BY l.link_confidence DESC, i.ini_id
+            """, (agenda_row['id'],))
 
-        # Get linked initiatives with their details
-        cur.execute("""
-            SELECT
-                i.ini_id,
-                i.legislature,
-                i.number,
-                i.type,
-                i.type_description,
-                i.title,
-                i.author_name,
-                i.current_status,
-                i.is_completed,
-                i.text_link,
-                l.link_type,
-                l.link_confidence,
-                l.extracted_text
-            FROM agenda_initiative_links l
-            JOIN iniciativas i ON l.iniciativa_id = i.id
-            WHERE l.agenda_event_id = %s
-            ORDER BY l.link_confidence DESC, i.ini_id
-        """, (agenda_row['id'],))
+            initiatives = []
+            for row in cur.fetchall():
+                initiatives.append({
+                    'ini_id': row['ini_id'],
+                    'legislature': row['legislature'],
+                    'number': row['number'],
+                    'type': row['type'],
+                    'type_description': row['type_description'],
+                    'title': row['title'],
+                    'author': row['author_name'],
+                    'status': row['current_status'],
+                    'is_completed': row['is_completed'],
+                    'text_link': row['text_link'],
+                    'link_type': row['link_type'],
+                    'link_confidence': float(row['link_confidence']) if row['link_confidence'] else None,
+                    'link_evidence': row['extracted_text']
+                })
 
-        initiatives = []
-        for row in cur.fetchall():
-            initiatives.append({
-                'ini_id': row['ini_id'],
-                'legislature': row['legislature'],
-                'number': row['number'],
-                'type': row['type'],
-                'type_description': row['type_description'],
-                'title': row['title'],
-                'author': row['author_name'],
-                'status': row['current_status'],
-                'is_completed': row['is_completed'],
-                'text_link': row['text_link'],
-                'link_type': row['link_type'],
-                'link_confidence': float(row['link_confidence']) if row['link_confidence'] else None,
-                'link_evidence': row['extracted_text']
-            })
+            # Extract InternetText from raw_data if available
+            raw_data = agenda_row['raw_data'] or {}
+            internet_text = raw_data.get('InternetText')
 
-        # Extract InternetText from raw_data if available
-        raw_data = agenda_row['raw_data'] or {}
-        internet_text = raw_data.get('InternetText')
+            result = {
+                'agenda_event': {
+                    'event_id': agenda_row['event_id'],
+                    'title': agenda_row['title'],
+                    'date': agenda_row['start_date'].isoformat() if agenda_row['start_date'] else None,
+                    'start_time': str(agenda_row['start_time']) if agenda_row['start_time'] else None,
+                    'end_time': str(agenda_row['end_time']) if agenda_row['end_time'] else None,
+                    'section': agenda_row['section'],
+                    'committee': agenda_row['committee'],
+                    'location': agenda_row['location'],
+                    'description_html': internet_text
+                },
+                'linked_initiatives': initiatives
+            }
 
-        result = {
-            'agenda_event': {
-                'event_id': agenda_row['event_id'],
-                'title': agenda_row['title'],
-                'date': agenda_row['start_date'].isoformat() if agenda_row['start_date'] else None,
-                'start_time': str(agenda_row['start_time']) if agenda_row['start_time'] else None,
-                'end_time': str(agenda_row['end_time']) if agenda_row['end_time'] else None,
-                'section': agenda_row['section'],
-                'committee': agenda_row['committee'],
-                'location': agenda_row['location'],
-                'description_html': internet_text
-            },
-            'linked_initiatives': initiatives
-        }
-
-        cur.close()
-        conn.close()
-
-        return jsonify(result)
+            return jsonify(result)
 
     except Exception as e:
-        import traceback
-        traceback.print_exc()
+        logger.exception("Error fetching agenda initiatives for event %s", event_id)
         return jsonify({'error': str(e)}), 500
 
 
@@ -378,33 +383,28 @@ def get_agenda_initiatives(event_id):
 def get_legislatures():
     """Get list of available legislatures with counts."""
     try:
-        conn = get_db_connection()
-        cur = conn.cursor()
+        with db_connection() as (conn, cur):
+            cur.execute("""
+                SELECT
+                    legislature,
+                    COUNT(*) as count,
+                    MIN(start_date) as earliest_date,
+                    MAX(start_date) as latest_date
+                FROM iniciativas
+                GROUP BY legislature
+                ORDER BY legislature DESC
+            """)
 
-        cur.execute("""
-            SELECT
-                legislature,
-                COUNT(*) as count,
-                MIN(start_date) as earliest_date,
-                MAX(start_date) as latest_date
-            FROM iniciativas
-            GROUP BY legislature
-            ORDER BY legislature DESC
-        """)
+            legislatures = []
+            for row in cur.fetchall():
+                legislatures.append({
+                    'legislature': row['legislature'],
+                    'count': row['count'],
+                    'earliest_date': row['earliest_date'].isoformat() if row['earliest_date'] else None,
+                    'latest_date': row['latest_date'].isoformat() if row['latest_date'] else None
+                })
 
-        legislatures = []
-        for row in cur.fetchall():
-            legislatures.append({
-                'legislature': row['legislature'],
-                'count': row['count'],
-                'earliest_date': row['earliest_date'].isoformat() if row['earliest_date'] else None,
-                'latest_date': row['latest_date'].isoformat() if row['latest_date'] else None
-            })
-
-        cur.close()
-        conn.close()
-
-        return jsonify(legislatures)
+            return jsonify(legislatures)
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
@@ -419,70 +419,65 @@ def get_stats():
         legislature - Filter by legislature (optional)
     """
     try:
-        conn = get_db_connection()
-        cur = conn.cursor()
+        with db_connection() as (conn, cur):
+            # Get optional legislature filter
+            legislature = request.args.get('legislature')
 
-        # Get optional legislature filter
-        legislature = request.args.get('legislature')
+            stats = {}
 
-        stats = {}
+            # Build WHERE clause
+            where_clause = ""
+            params = []
+            if legislature:
+                where_clause = " WHERE legislature = %s"
+                params.append(legislature)
 
-        # Build WHERE clause
-        where_clause = ""
-        params = []
-        if legislature:
-            where_clause = " WHERE legislature = %s"
-            params.append(legislature)
+            # Total iniciativas
+            cur.execute(f"SELECT COUNT(*) as count FROM iniciativas{where_clause}", params)
+            stats['total'] = cur.fetchone()['count']
 
-        # Total iniciativas
-        cur.execute(f"SELECT COUNT(*) as count FROM iniciativas{where_clause}", params)
-        stats['total'] = cur.fetchone()['count']
+            # Completed
+            cur.execute(f"SELECT COUNT(*) as count FROM iniciativas{where_clause} {'AND' if legislature else 'WHERE'} is_completed = TRUE",
+                       params + [] if not legislature else params)
+            stats['completed'] = cur.fetchone()['count']
 
-        # Completed
-        cur.execute(f"SELECT COUNT(*) as count FROM iniciativas{where_clause} {'AND' if legislature else 'WHERE'} is_completed = TRUE",
-                   params + [] if not legislature else params)
-        stats['completed'] = cur.fetchone()['count']
+            # By legislature (only if not filtered)
+            if not legislature:
+                cur.execute("""
+                    SELECT legislature, COUNT(*) as count
+                    FROM iniciativas
+                    GROUP BY legislature
+                    ORDER BY legislature DESC
+                """)
+                stats['by_legislature'] = [{'legislature': row['legislature'], 'count': row['count']}
+                                           for row in cur.fetchall()]
 
-        # By legislature (only if not filtered)
-        if not legislature:
-            cur.execute("""
-                SELECT legislature, COUNT(*) as count
-                FROM iniciativas
-                GROUP BY legislature
-                ORDER BY legislature DESC
-            """)
-            stats['by_legislature'] = [{'legislature': row['legislature'], 'count': row['count']}
-                                       for row in cur.fetchall()]
+            # By type
+            cur.execute(f"""
+                SELECT type_description, COUNT(*) as count
+                FROM iniciativas{where_clause}
+                GROUP BY type_description
+                ORDER BY count DESC
+            """, params)
+            stats['by_type'] = [{'type': row['type_description'], 'count': row['count']}
+                               for row in cur.fetchall()]
 
-        # By type
-        cur.execute(f"""
-            SELECT type_description, COUNT(*) as count
-            FROM iniciativas{where_clause}
-            GROUP BY type_description
-            ORDER BY count DESC
-        """, params)
-        stats['by_type'] = [{'type': row['type_description'], 'count': row['count']}
-                           for row in cur.fetchall()]
+            # By status
+            cur.execute(f"""
+                SELECT current_status, COUNT(*) as count
+                FROM iniciativas{where_clause}
+                GROUP BY current_status
+                ORDER BY count DESC
+                LIMIT 10
+            """, params)
+            stats['by_status'] = [{'status': row['current_status'], 'count': row['count']}
+                                 for row in cur.fetchall()]
 
-        # By status
-        cur.execute(f"""
-            SELECT current_status, COUNT(*) as count
-            FROM iniciativas{where_clause}
-            GROUP BY current_status
-            ORDER BY count DESC
-            LIMIT 10
-        """, params)
-        stats['by_status'] = [{'status': row['current_status'], 'count': row['count']}
-                             for row in cur.fetchall()]
+            # Agenda count (no filter for agenda)
+            cur.execute("SELECT COUNT(*) as count FROM agenda_events")
+            stats['agenda_events'] = cur.fetchone()['count']
 
-        # Agenda count (no filter for agenda)
-        cur.execute("SELECT COUNT(*) as count FROM agenda_events")
-        stats['agenda_events'] = cur.fetchone()['count']
-
-        cur.close()
-        conn.close()
-
-        return jsonify(stats)
+            return jsonify(stats)
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
@@ -506,48 +501,43 @@ def search_iniciativas():
         if not query:
             return jsonify([])
 
-        conn = get_db_connection()
-        cur = conn.cursor()
+        with db_connection() as (conn, cur):
+            # Build query with optional legislature filter
+            sql_query = """
+                SELECT
+                    ini_id, legislature, title, type_description, current_status, start_date,
+                    ts_rank(to_tsvector('portuguese', title), query) as rank
+                FROM iniciativas,
+                     to_tsquery('portuguese', %s) as query
+                WHERE to_tsvector('portuguese', title) @@ query
+            """
+            params = [query]
 
-        # Build query with optional legislature filter
-        sql_query = """
-            SELECT
-                ini_id, legislature, title, type_description, current_status, start_date,
-                ts_rank(to_tsvector('portuguese', title), query) as rank
-            FROM iniciativas,
-                 to_tsquery('portuguese', %s) as query
-            WHERE to_tsvector('portuguese', title) @@ query
-        """
-        params = [query]
+            if legislature:
+                sql_query += " AND legislature = %s"
+                params.append(legislature)
 
-        if legislature:
-            sql_query += " AND legislature = %s"
-            params.append(legislature)
+            sql_query += """
+                ORDER BY rank DESC
+                LIMIT %s
+            """
+            params.append(limit)
 
-        sql_query += """
-            ORDER BY rank DESC
-            LIMIT %s
-        """
-        params.append(limit)
+            cur.execute(sql_query, params)
 
-        cur.execute(sql_query, params)
+            results = []
+            for row in cur.fetchall():
+                results.append({
+                    'ini_id': row['ini_id'],
+                    'legislature': row['legislature'],
+                    'title': row['title'],
+                    'type': row['type_description'],
+                    'status': row['current_status'],
+                    'date': row['start_date'].isoformat() if row['start_date'] else None,
+                    'relevance': float(row['rank'])
+                })
 
-        results = []
-        for row in cur.fetchall():
-            results.append({
-                'ini_id': row['ini_id'],
-                'legislature': row['legislature'],
-                'title': row['title'],
-                'type': row['type_description'],
-                'status': row['current_status'],
-                'date': row['start_date'].isoformat() if row['start_date'] else None,
-                'relevance': float(row['rank'])
-            })
-
-        cur.close()
-        conn.close()
-
-        return jsonify(results)
+            return jsonify(results)
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
@@ -564,46 +554,41 @@ def get_orgaos():
     Returns list of bodies with member counts by party.
     """
     try:
-        conn = get_db_connection()
-        cur = conn.cursor()
+        with db_connection() as (conn, cur):
+            # Optional type filter
+            org_type = request.args.get('type')
 
-        # Optional type filter
-        org_type = request.args.get('type')
+            query = """
+                SELECT
+                    o.id, o.org_id, o.legislature, o.name, o.acronym, o.org_type, o.number,
+                    COUNT(m.id) as member_count
+                FROM orgaos o
+                LEFT JOIN orgao_membros m ON o.id = m.orgao_id
+            """
+            params = []
 
-        query = """
-            SELECT
-                o.id, o.org_id, o.legislature, o.name, o.acronym, o.org_type, o.number,
-                COUNT(m.id) as member_count
-            FROM orgaos o
-            LEFT JOIN orgao_membros m ON o.id = m.orgao_id
-        """
-        params = []
+            if org_type:
+                query += " WHERE o.org_type = %s"
+                params.append(org_type)
 
-        if org_type:
-            query += " WHERE o.org_type = %s"
-            params.append(org_type)
+            query += " GROUP BY o.id ORDER BY o.org_type, o.name"
 
-        query += " GROUP BY o.id ORDER BY o.org_type, o.name"
+            cur.execute(query, params)
 
-        cur.execute(query, params)
+            orgaos = []
+            for row in cur.fetchall():
+                orgaos.append({
+                    'id': row['id'],
+                    'org_id': row['org_id'],
+                    'legislature': row['legislature'],
+                    'name': row['name'],
+                    'acronym': row['acronym'],
+                    'type': row['org_type'],
+                    'number': row['number'],
+                    'member_count': row['member_count']
+                })
 
-        orgaos = []
-        for row in cur.fetchall():
-            orgaos.append({
-                'id': row['id'],
-                'org_id': row['org_id'],
-                'legislature': row['legislature'],
-                'name': row['name'],
-                'acronym': row['acronym'],
-                'type': row['org_type'],
-                'number': row['number'],
-                'member_count': row['member_count']
-            })
-
-        cur.close()
-        conn.close()
-
-        return jsonify(orgaos)
+            return jsonify(orgaos)
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
@@ -617,150 +602,145 @@ def get_orgao(org_id):
     Returns body details plus members grouped by party.
     """
     try:
-        conn = get_db_connection()
-        cur = conn.cursor()
+        with db_connection() as (conn, cur):
+            # Get body details
+            cur.execute("""
+                SELECT id, org_id, legislature, name, acronym, org_type, number
+                FROM orgaos
+                WHERE org_id = %s
+            """, (org_id,))
 
-        # Get body details
-        cur.execute("""
-            SELECT id, org_id, legislature, name, acronym, org_type, number
-            FROM orgaos
-            WHERE org_id = %s
-        """, (org_id,))
+            row = cur.fetchone()
+            if not row:
+                return jsonify({'error': 'Not found'}), 404
 
-        row = cur.fetchone()
-        if not row:
-            return jsonify({'error': 'Not found'}), 404
+            db_id = row['id']
 
-        db_id = row['id']
+            orgao = {
+                'id': row['id'],
+                'org_id': row['org_id'],
+                'legislature': row['legislature'],
+                'name': row['name'],
+                'acronym': row['acronym'],
+                'type': row['org_type'],
+                'number': row['number']
+            }
 
-        orgao = {
-            'id': row['id'],
-            'org_id': row['org_id'],
-            'legislature': row['legislature'],
-            'name': row['name'],
-            'acronym': row['acronym'],
-            'type': row['org_type'],
-            'number': row['number']
-        }
+            # Get members
+            cur.execute("""
+                SELECT dep_id, deputy_name, party, role, member_type
+                FROM orgao_membros
+                WHERE orgao_id = %s
+                ORDER BY
+                    CASE WHEN role IS NOT NULL THEN 0 ELSE 1 END,
+                    party, deputy_name
+            """, (db_id,))
 
-        # Get members
-        cur.execute("""
-            SELECT dep_id, deputy_name, party, role, member_type
-            FROM orgao_membros
-            WHERE orgao_id = %s
-            ORDER BY
-                CASE WHEN role IS NOT NULL THEN 0 ELSE 1 END,
-                party, deputy_name
-        """, (db_id,))
+            members = []
+            party_counts = {}
 
-        members = []
-        party_counts = {}
+            for row in cur.fetchall():
+                party = row['party'] or 'Sem partido'
+                party_counts[party] = party_counts.get(party, 0) + 1
 
-        for row in cur.fetchall():
-            party = row['party'] or 'Sem partido'
-            party_counts[party] = party_counts.get(party, 0) + 1
+                members.append({
+                    'dep_id': row['dep_id'],
+                    'name': row['deputy_name'],
+                    'party': party,
+                    'role': row['role'],
+                    'member_type': row['member_type']
+                })
 
-            members.append({
-                'dep_id': row['dep_id'],
-                'name': row['deputy_name'],
-                'party': party,
-                'role': row['role'],
-                'member_type': row['member_type']
-            })
+            orgao['members'] = members
+            orgao['party_breakdown'] = party_counts
+            orgao['member_count'] = len(members)
 
-        orgao['members'] = members
-        orgao['party_breakdown'] = party_counts
-        orgao['member_count'] = len(members)
+            # Get agenda events for this committee (by name match)
+            # Strip name to handle trailing spaces in data
+            committee_name = orgao['name'].strip()
+            cur.execute("""
+                SELECT event_id, title, subtitle, start_date, start_time,
+                       location, description, meeting_number
+                FROM agenda_events
+                WHERE committee ILIKE %s
+                ORDER BY start_date DESC, start_time DESC
+                LIMIT 20
+            """, (f"%{committee_name}%",))
 
-        # Get agenda events for this committee (by name match)
-        # Strip name to handle trailing spaces in data
-        committee_name = orgao['name'].strip()
-        cur.execute("""
-            SELECT event_id, title, subtitle, start_date, start_time,
-                   location, description, meeting_number
-            FROM agenda_events
-            WHERE committee ILIKE %s
-            ORDER BY start_date DESC, start_time DESC
-            LIMIT 20
-        """, (f"%{committee_name}%",))
-
-        agenda_events = []
-        for row in cur.fetchall():
-            agenda_events.append({
-                'event_id': row['event_id'],
-                'title': row['title'],
-                'subtitle': row['subtitle'],
-                'date': row['start_date'].isoformat() if row['start_date'] else None,
-                'time': row['start_time'].strftime('%H:%M') if row['start_time'] else None,
-                'location': row['location'],
-                'description': row['description'],
-                'meeting_number': row['meeting_number']
-            })
-
-        orgao['agenda_events'] = agenda_events
-
-        # Get initiatives linked to this committee (from iniciativa_comissao)
-        cur.execute("""
-            SELECT
-                ic.id,
-                ic.link_type,
-                ic.phase_code,
-                ic.phase_name,
-                ic.has_vote,
-                ic.vote_result,
-                ic.vote_date,
-                ic.has_rapporteur,
-                ic.distribution_date,
-                i.id as ini_db_id,
-                i.ini_id,
-                i.number,
-                i.type,
-                i.type_description,
-                i.title,
-                i.current_status,
-                i.is_completed,
-                i.author_name
-            FROM iniciativa_comissao ic
-            JOIN iniciativas i ON ic.iniciativa_id = i.id
-            WHERE ic.orgao_id = %s
-            ORDER BY
-                CASE ic.link_type WHEN 'lead' THEN 1 WHEN 'secondary' THEN 2 ELSE 3 END,
-                i.is_completed ASC,
-                ic.distribution_date DESC NULLS LAST
-        """, (db_id,))
-
-        initiatives = []
-        for row in cur.fetchall():
-            initiatives.append({
-                'link_id': row['id'],
-                'link_type': row['link_type'],
-                'phase_code': row['phase_code'],
-                'phase_name': row['phase_name'],
-                'has_vote': row['has_vote'],
-                'vote_result': row['vote_result'],
-                'vote_date': row['vote_date'].isoformat() if row['vote_date'] else None,
-                'has_rapporteur': row['has_rapporteur'],
-                'distribution_date': row['distribution_date'].isoformat() if row['distribution_date'] else None,
-                'initiative': {
-                    'id': row['ini_db_id'],
-                    'ini_id': row['ini_id'],
-                    'number': row['number'],
-                    'type': row['type'],
-                    'type_description': row['type_description'],
+            agenda_events = []
+            for row in cur.fetchall():
+                agenda_events.append({
+                    'event_id': row['event_id'],
                     'title': row['title'],
-                    'current_status': row['current_status'],
-                    'is_completed': row['is_completed'],
-                    'author_name': row['author_name']
-                }
-            })
+                    'subtitle': row['subtitle'],
+                    'date': row['start_date'].isoformat() if row['start_date'] else None,
+                    'time': row['start_time'].strftime('%H:%M') if row['start_time'] else None,
+                    'location': row['location'],
+                    'description': row['description'],
+                    'meeting_number': row['meeting_number']
+                })
 
-        orgao['initiatives'] = initiatives
-        orgao['initiative_count'] = len(initiatives)
+            orgao['agenda_events'] = agenda_events
 
-        cur.close()
-        conn.close()
+            # Get initiatives linked to this committee (from iniciativa_comissao)
+            cur.execute("""
+                SELECT
+                    ic.id,
+                    ic.link_type,
+                    ic.phase_code,
+                    ic.phase_name,
+                    ic.has_vote,
+                    ic.vote_result,
+                    ic.vote_date,
+                    ic.has_rapporteur,
+                    ic.distribution_date,
+                    i.id as ini_db_id,
+                    i.ini_id,
+                    i.number,
+                    i.type,
+                    i.type_description,
+                    i.title,
+                    i.current_status,
+                    i.is_completed,
+                    i.author_name
+                FROM iniciativa_comissao ic
+                JOIN iniciativas i ON ic.iniciativa_id = i.id
+                WHERE ic.orgao_id = %s
+                ORDER BY
+                    CASE ic.link_type WHEN 'lead' THEN 1 WHEN 'secondary' THEN 2 ELSE 3 END,
+                    i.is_completed ASC,
+                    ic.distribution_date DESC NULLS LAST
+            """, (db_id,))
 
-        return jsonify(orgao)
+            initiatives = []
+            for row in cur.fetchall():
+                initiatives.append({
+                    'link_id': row['id'],
+                    'link_type': row['link_type'],
+                    'phase_code': row['phase_code'],
+                    'phase_name': row['phase_name'],
+                    'has_vote': row['has_vote'],
+                    'vote_result': row['vote_result'],
+                    'vote_date': row['vote_date'].isoformat() if row['vote_date'] else None,
+                    'has_rapporteur': row['has_rapporteur'],
+                    'distribution_date': row['distribution_date'].isoformat() if row['distribution_date'] else None,
+                    'initiative': {
+                        'id': row['ini_db_id'],
+                        'ini_id': row['ini_id'],
+                        'number': row['number'],
+                        'type': row['type'],
+                        'type_description': row['type_description'],
+                        'title': row['title'],
+                        'current_status': row['current_status'],
+                        'is_completed': row['is_completed'],
+                        'author_name': row['author_name']
+                    }
+                })
+
+            orgao['initiatives'] = initiatives
+            orgao['initiative_count'] = len(initiatives)
+
+            return jsonify(orgao)
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
@@ -774,119 +754,114 @@ def get_orgaos_summary():
     Returns aggregated view suitable for visualization.
     """
     try:
-        conn = get_db_connection()
-        cur = conn.cursor()
+        with db_connection() as (conn, cur):
+            # Get all committees (main ones only) with party breakdown
+            cur.execute("""
+                SELECT
+                    o.id, o.org_id, o.name, o.acronym, o.org_type,
+                    m.party,
+                    COUNT(*) as count
+                FROM orgaos o
+                JOIN orgao_membros m ON o.id = m.orgao_id
+                WHERE o.org_type = 'comissao'
+                GROUP BY o.id, o.org_id, o.name, o.acronym, o.org_type, m.party
+                ORDER BY o.name, m.party
+            """)
 
-        # Get all committees (main ones only) with party breakdown
-        cur.execute("""
-            SELECT
-                o.id, o.org_id, o.name, o.acronym, o.org_type,
-                m.party,
-                COUNT(*) as count
-            FROM orgaos o
-            JOIN orgao_membros m ON o.id = m.orgao_id
-            WHERE o.org_type = 'comissao'
-            GROUP BY o.id, o.org_id, o.name, o.acronym, o.org_type, m.party
-            ORDER BY o.name, m.party
-        """)
+            # Build nested structure
+            committees = {}
+            for row in cur.fetchall():
+                org_id = row['org_id']
+                if org_id not in committees:
+                    committees[org_id] = {
+                        'id': row['id'],
+                        'org_id': org_id,
+                        'name': row['name'],
+                        'acronym': row['acronym'],
+                        'type': row['org_type'],
+                        'parties': {},
+                        'total_members': 0,
+                        'ini_authored': 0,
+                        'ini_in_progress': 0,
+                        'ini_approved': 0,
+                        'ini_rejected': 0
+                    }
 
-        # Build nested structure
-        committees = {}
-        for row in cur.fetchall():
-            org_id = row['org_id']
-            if org_id not in committees:
-                committees[org_id] = {
-                    'id': row['id'],
-                    'org_id': org_id,
-                    'name': row['name'],
-                    'acronym': row['acronym'],
-                    'type': row['org_type'],
-                    'parties': {},
-                    'total_members': 0,
-                    'ini_authored': 0,
-                    'ini_in_progress': 0,
-                    'ini_approved': 0,
-                    'ini_rejected': 0
-                }
+                party = row['party'] or 'Sem partido'
+                committees[org_id]['parties'][party] = row['count']
+                committees[org_id]['total_members'] += row['count']
 
-            party = row['party'] or 'Sem partido'
-            committees[org_id]['parties'][party] = row['count']
-            committees[org_id]['total_members'] += row['count']
+            # Get initiative statistics for each committee
+            # 1. Authored initiatives (rare - committees as authors)
+            cur.execute("""
+                SELECT orgao_id, COUNT(*) as count
+                FROM iniciativa_autores
+                WHERE author_type = 'committee' AND orgao_id IS NOT NULL
+                GROUP BY orgao_id
+            """)
+            for row in cur.fetchall():
+                db_id = row['orgao_id']
+                # Find committee by db id
+                for c in committees.values():
+                    if c['id'] == db_id:
+                        c['ini_authored'] = row['count']
+                        break
 
-        # Get initiative statistics for each committee
-        # 1. Authored initiatives (rare - committees as authors)
-        cur.execute("""
-            SELECT orgao_id, COUNT(*) as count
-            FROM iniciativa_autores
-            WHERE author_type = 'committee' AND orgao_id IS NOT NULL
-            GROUP BY orgao_id
-        """)
-        for row in cur.fetchall():
-            db_id = row['orgao_id']
-            # Find committee by db id
-            for c in committees.values():
-                if c['id'] == db_id:
-                    c['ini_authored'] = row['count']
-                    break
+            # 2. Lead initiatives in progress (not completed)
+            cur.execute("""
+                SELECT ic.orgao_id, COUNT(*) as count
+                FROM iniciativa_comissao ic
+                JOIN iniciativas i ON ic.iniciativa_id = i.id
+                WHERE ic.link_type = 'lead' AND i.is_completed = FALSE
+                GROUP BY ic.orgao_id
+            """)
+            for row in cur.fetchall():
+                db_id = row['orgao_id']
+                for c in committees.values():
+                    if c['id'] == db_id:
+                        c['ini_in_progress'] = row['count']
+                        break
 
-        # 2. Lead initiatives in progress (not completed)
-        cur.execute("""
-            SELECT ic.orgao_id, COUNT(*) as count
-            FROM iniciativa_comissao ic
-            JOIN iniciativas i ON ic.iniciativa_id = i.id
-            WHERE ic.link_type = 'lead' AND i.is_completed = FALSE
-            GROUP BY ic.orgao_id
-        """)
-        for row in cur.fetchall():
-            db_id = row['orgao_id']
-            for c in committees.values():
-                if c['id'] == db_id:
-                    c['ini_in_progress'] = row['count']
-                    break
+            # 3. Approved initiatives (lead only)
+            cur.execute("""
+                SELECT ic.orgao_id, COUNT(*) as count
+                FROM iniciativa_comissao ic
+                JOIN iniciativas i ON ic.iniciativa_id = i.id
+                WHERE ic.link_type = 'lead'
+                  AND i.is_completed = TRUE
+                  AND i.current_status ILIKE '%publicação%'
+                GROUP BY ic.orgao_id
+            """)
+            for row in cur.fetchall():
+                db_id = row['orgao_id']
+                for c in committees.values():
+                    if c['id'] == db_id:
+                        c['ini_approved'] = row['count']
+                        break
 
-        # 3. Approved initiatives (lead only)
-        cur.execute("""
-            SELECT ic.orgao_id, COUNT(*) as count
-            FROM iniciativa_comissao ic
-            JOIN iniciativas i ON ic.iniciativa_id = i.id
-            WHERE ic.link_type = 'lead'
-              AND i.is_completed = TRUE
-              AND i.current_status ILIKE '%publicação%'
-            GROUP BY ic.orgao_id
-        """)
-        for row in cur.fetchall():
-            db_id = row['orgao_id']
-            for c in committees.values():
-                if c['id'] == db_id:
-                    c['ini_approved'] = row['count']
-                    break
+            # 4. Rejected initiatives (lead only)
+            cur.execute("""
+                SELECT ic.orgao_id, COUNT(*) as count
+                FROM iniciativa_comissao ic
+                JOIN iniciativas i ON ic.iniciativa_id = i.id
+                WHERE ic.link_type = 'lead'
+                  AND i.is_completed = TRUE
+                  AND (i.current_status ILIKE '%rejeitad%'
+                       OR i.current_status ILIKE '%retirad%'
+                       OR i.current_status ILIKE '%caducad%')
+                GROUP BY ic.orgao_id
+            """)
+            for row in cur.fetchall():
+                db_id = row['orgao_id']
+                for c in committees.values():
+                    if c['id'] == db_id:
+                        c['ini_rejected'] = row['count']
+                        break
 
-        # 4. Rejected initiatives (lead only)
-        cur.execute("""
-            SELECT ic.orgao_id, COUNT(*) as count
-            FROM iniciativa_comissao ic
-            JOIN iniciativas i ON ic.iniciativa_id = i.id
-            WHERE ic.link_type = 'lead'
-              AND i.is_completed = TRUE
-              AND (i.current_status ILIKE '%rejeitad%'
-                   OR i.current_status ILIKE '%retirad%'
-                   OR i.current_status ILIKE '%caducad%')
-            GROUP BY ic.orgao_id
-        """)
-        for row in cur.fetchall():
-            db_id = row['orgao_id']
-            for c in committees.values():
-                if c['id'] == db_id:
-                    c['ini_rejected'] = row['count']
-                    break
+            # Convert to list and sort by name
+            result = sorted(committees.values(), key=lambda x: x['name'])
 
-        # Convert to list and sort by name
-        result = sorted(committees.values(), key=lambda x: x['name'])
-
-        cur.close()
-        conn.close()
-
-        return jsonify(result)
+            return jsonify(result)
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
@@ -906,165 +881,159 @@ def get_deputados():
     Returns list of deputies with party composition summary.
     """
     try:
-        conn = get_db_connection()
-        cur = conn.cursor()
+        with db_connection() as (conn, cur):
+            # Get optional filters
+            legislature = request.args.get('legislature', 'XVII')
+            party = request.args.get('party')
+            circulo = request.args.get('circulo')
+            # Default to 'Efetivo' - also handle empty string case
+            situation = request.args.get('situation', 'Efetivo') or 'Efetivo'
 
-        # Get optional filters
-        legislature = request.args.get('legislature', 'XVII')
-        party = request.args.get('party')
-        circulo = request.args.get('circulo')
-        # Default to 'Efetivo' - also handle empty string case
-        situation = request.args.get('situation', 'Efetivo') or 'Efetivo'
-
-        # Build query
-        query = """
-            SELECT
-                d.id, d.dep_id, d.dep_cad_id, d.legislature,
-                d.name, d.full_name, d.party, d.circulo_id, d.circulo,
-                d.gender, d.birth_date, d.profession,
-                d.situation, d.situation_start, d.situation_end
-            FROM deputados d
-            WHERE d.legislature = %s
-        """
-        params = [legislature]
-
-        if party:
-            query += " AND d.party = %s"
-            params.append(party)
-
-        if circulo:
-            query += " AND d.circulo = %s"
-            params.append(circulo)
-
-        if situation:
-            query += " AND d.situation = %s"
-            params.append(situation)
-
-        query += " ORDER BY d.party, d.name"
-
-        cur.execute(query, params)
-
-        # Build deputy list
-        deputados = []
-        dep_ids = []
-
-        for row in cur.fetchall():
-            dep_cad_id = row['dep_cad_id']
-            dep_ids.append(dep_cad_id)
-
-            # Calculate age from birth_date
-            age = None
-            if row['birth_date']:
-                today = datetime.now().date()
-                birth = row['birth_date']
-                age = today.year - birth.year - ((today.month, today.day) < (birth.month, birth.day))
-
-            deputados.append({
-                'id': row['id'],
-                'dep_id': row['dep_id'],
-                'dep_cad_id': dep_cad_id,
-                'name': row['name'],
-                'full_name': row['full_name'],
-                'party': row['party'],
-                'circulo': row['circulo'],
-                'gender': row['gender'],
-                'age': age,
-                'profession': row['profession'],
-                'situation': row['situation'],
-                'comissoes': []  # Will be filled below
-            })
-
-        # Get committee memberships for all deputies
-        if dep_ids:
-            cur.execute("""
+            # Build query
+            query = """
                 SELECT
-                    m.dep_cad_id,
-                    o.name as comissao_name,
-                    o.acronym,
-                    m.role,
-                    m.member_type
-                FROM orgao_membros m
-                JOIN orgaos o ON m.orgao_id = o.id
-                WHERE m.dep_cad_id = ANY(%s)
-                  AND o.org_type = 'comissao'
-                ORDER BY m.dep_cad_id, o.name
-            """, (dep_ids,))
+                    d.id, d.dep_id, d.dep_cad_id, d.legislature,
+                    d.name, d.full_name, d.party, d.circulo_id, d.circulo,
+                    d.gender, d.birth_date, d.profession,
+                    d.situation, d.situation_start, d.situation_end
+                FROM deputados d
+                WHERE d.legislature = %s
+            """
+            params = [legislature]
 
-            # Group committees by deputy
-            comissoes_by_dep = {}
+            if party:
+                query += " AND d.party = %s"
+                params.append(party)
+
+            if circulo:
+                query += " AND d.circulo = %s"
+                params.append(circulo)
+
+            if situation:
+                query += " AND d.situation = %s"
+                params.append(situation)
+
+            query += " ORDER BY d.party, d.name"
+
+            cur.execute(query, params)
+
+            # Build deputy list
+            deputados = []
+            dep_ids = []
+
             for row in cur.fetchall():
                 dep_cad_id = row['dep_cad_id']
-                if dep_cad_id not in comissoes_by_dep:
-                    comissoes_by_dep[dep_cad_id] = []
-                comissoes_by_dep[dep_cad_id].append({
-                    'name': row['comissao_name'],
-                    'acronym': row['acronym'],
-                    'role': row['role'],
-                    'member_type': row['member_type']
+                dep_ids.append(dep_cad_id)
+
+                # Calculate age from birth_date
+                age = None
+                if row['birth_date']:
+                    today = datetime.now().date()
+                    birth = row['birth_date']
+                    age = today.year - birth.year - ((today.month, today.day) < (birth.month, birth.day))
+
+                deputados.append({
+                    'id': row['id'],
+                    'dep_id': row['dep_id'],
+                    'dep_cad_id': dep_cad_id,
+                    'name': row['name'],
+                    'full_name': row['full_name'],
+                    'party': row['party'],
+                    'circulo': row['circulo'],
+                    'gender': row['gender'],
+                    'age': age,
+                    'profession': row['profession'],
+                    'situation': row['situation'],
+                    'comissoes': []  # Will be filled below
                 })
 
-            # Add committees to each deputy
-            for dep in deputados:
-                dep['comissoes'] = comissoes_by_dep.get(dep['dep_cad_id'], [])
+            # Get committee memberships for all deputies
+            if dep_ids:
+                cur.execute("""
+                    SELECT
+                        m.dep_cad_id,
+                        o.name as comissao_name,
+                        o.acronym,
+                        m.role,
+                        m.member_type
+                    FROM orgao_membros m
+                    JOIN orgaos o ON m.orgao_id = o.id
+                    WHERE m.dep_cad_id = ANY(%s)
+                      AND o.org_type = 'comissao'
+                    ORDER BY m.dep_cad_id, o.name
+                """, (dep_ids,))
 
-        # Get party composition summary (for hemicycle)
-        # Use same situation filter as main query for consistency
-        cur.execute("""
-            SELECT party, COUNT(*) as count
-            FROM deputados
-            WHERE legislature = %s AND situation = %s
-            GROUP BY party
-            ORDER BY count DESC
-        """, (legislature, situation))
+                # Group committees by deputy
+                comissoes_by_dep = {}
+                for row in cur.fetchall():
+                    dep_cad_id = row['dep_cad_id']
+                    if dep_cad_id not in comissoes_by_dep:
+                        comissoes_by_dep[dep_cad_id] = []
+                    comissoes_by_dep[dep_cad_id].append({
+                        'name': row['comissao_name'],
+                        'acronym': row['acronym'],
+                        'role': row['role'],
+                        'member_type': row['member_type']
+                    })
 
-        party_composition = {}
-        total_deputados = 0
-        for row in cur.fetchall():
-            party_name = row['party'] or 'Sem partido'
-            party_composition[party_name] = row['count']
-            total_deputados += row['count']
+                # Add committees to each deputy
+                for dep in deputados:
+                    dep['comissoes'] = comissoes_by_dep.get(dep['dep_cad_id'], [])
 
-        # Get gender breakdown
-        cur.execute("""
-            SELECT gender, COUNT(*) as count
-            FROM deputados
-            WHERE legislature = %s AND situation = %s
-            GROUP BY gender
-        """, (legislature, situation))
+            # Get party composition summary (for hemicycle)
+            # Use same situation filter as main query for consistency
+            cur.execute("""
+                SELECT party, COUNT(*) as count
+                FROM deputados
+                WHERE legislature = %s AND situation = %s
+                GROUP BY party
+                ORDER BY count DESC
+            """, (legislature, situation))
 
-        gender_breakdown = {}
-        for row in cur.fetchall():
-            gender_breakdown[row['gender'] or 'Unknown'] = row['count']
+            party_composition = {}
+            total_deputados = 0
+            for row in cur.fetchall():
+                party_name = row['party'] or 'Sem partido'
+                party_composition[party_name] = row['count']
+                total_deputados += row['count']
 
-        # Get circulo breakdown
-        cur.execute("""
-            SELECT circulo, COUNT(*) as count
-            FROM deputados
-            WHERE legislature = %s AND situation = %s
-            GROUP BY circulo
-            ORDER BY count DESC
-        """, (legislature, situation))
+            # Get gender breakdown
+            cur.execute("""
+                SELECT gender, COUNT(*) as count
+                FROM deputados
+                WHERE legislature = %s AND situation = %s
+                GROUP BY gender
+            """, (legislature, situation))
 
-        circulo_breakdown = {}
-        for row in cur.fetchall():
-            circulo_breakdown[row['circulo']] = row['count']
+            gender_breakdown = {}
+            for row in cur.fetchall():
+                gender_breakdown[row['gender'] or 'Unknown'] = row['count']
 
-        cur.close()
-        conn.close()
+            # Get circulo breakdown
+            cur.execute("""
+                SELECT circulo, COUNT(*) as count
+                FROM deputados
+                WHERE legislature = %s AND situation = %s
+                GROUP BY circulo
+                ORDER BY count DESC
+            """, (legislature, situation))
 
-        return jsonify({
-            'deputados': deputados,
-            'summary': {
-                'total': total_deputados,
-                'party_composition': party_composition,
-                'gender_breakdown': gender_breakdown,
-                'circulo_breakdown': circulo_breakdown
-            }
-        })
+            circulo_breakdown = {}
+            for row in cur.fetchall():
+                circulo_breakdown[row['circulo']] = row['count']
+
+            return jsonify({
+                'deputados': deputados,
+                'summary': {
+                    'total': total_deputados,
+                    'party_composition': party_composition,
+                    'gender_breakdown': gender_breakdown,
+                    'circulo_breakdown': circulo_breakdown
+                }
+            })
 
     except Exception as e:
-        import traceback
-        traceback.print_exc()
+        logger.exception("Error fetching deputados")
         return jsonify({'error': str(e)}), 500
 
 
@@ -1199,11 +1168,11 @@ def submit_feedback():
                 })
         except urllib.error.HTTPError as e:
             error_body = e.read().decode('utf-8') if e.fp else str(e)
-            print(f"GitHub API error: {e.code} - {error_body}")
+            logger.error("GitHub API error: %s - %s", e.code, error_body)
             return jsonify({'error': 'Failed to submit feedback'}), 500
 
     except Exception as e:
-        print(f"Feedback error: {e}")
+        logger.exception("Feedback error")
         return jsonify({'error': 'Internal server error'}), 500
 
 
@@ -1211,5 +1180,5 @@ if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     debug = os.environ.get('FLASK_ENV') == 'development'
 
-    print(f"Starting Viriato API on port {port}...")
+    logger.info("Starting Viriato API on port %s (debug=%s)", port, debug)
     app.run(host='0.0.0.0', port=port, debug=debug)
