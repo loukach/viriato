@@ -6,7 +6,7 @@
 ## Quick Overview
 
 **What:** Portuguese Parliament data visualization tools
-**Live Site:** https://loukach.github.io/viriato/
+**Live Site:** https://viriato-frontend.onrender.com/
 **API:** https://viriato-api.onrender.com
 **Tech:** SPA (vanilla JS) + Flask REST API + PostgreSQL
 **Language:** Portuguese (Portugal) - Interface in PT-PT to serve Portuguese citizens
@@ -129,7 +129,7 @@ All documentation uses:
 
 **Deployment Status:**
 - ✅ All changes deployed to GitHub Pages
-- ✅ Live at https://loukach.github.io/viriato/
+- ✅ Live at https://viriato-frontend.onrender.com/
 
 **Potential features to consider:**
 - Deputy profiles and voting records
@@ -189,7 +189,7 @@ None currently. All features working as designed.
 ## Testing
 
 **Start of Session Testing Checklist:**
-Use Playwright MCP to test the live site (https://loukach.github.io/viriato/):
+Use Playwright MCP to test the live site (https://viriato-frontend.onrender.com/):
 
 1. **Navigation** - Click through Home → Iniciativas → Agenda tabs
 2. **Search functionality** - On Iniciativas page:

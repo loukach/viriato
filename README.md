@@ -2,7 +2,7 @@
 
 Visualização de dados abertos do Parlamento Português. Tornando a democracia mais acessível e transparente.
 
-**Site:** https://loukach.github.io/viriato/
+**Site:** https://viriato-frontend.onrender.com/
 
 ## O Que É
 
@@ -42,10 +42,10 @@ Quatro ferramentas interativas construídas com dados abertos do Parlamento Port
 
 **View the live app:**
 ```
-https://loukach.github.io/viriato/               # Home
-https://loukach.github.io/viriato/#/iniciativas  # Initiatives
-https://loukach.github.io/viriato/#/agenda       # Agenda
-https://loukach.github.io/viriato/#/comissoes    # Committees
+https://viriato-frontend.onrender.com/               # Home
+https://viriato-frontend.onrender.com/#/iniciativas  # Initiatives
+https://viriato-frontend.onrender.com/#/agenda       # Agenda
+https://viriato-frontend.onrender.com/#/comissoes    # Committees
 ```
 
 **API endpoints:**

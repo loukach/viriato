@@ -337,7 +337,7 @@ Optimize:
 
 | Service | URL | Purpose |
 |---------|-----|---------|
-| **Frontend** | https://loukach.github.io/viriato/ | User-facing web app |
+| **Frontend** | https://viriato-frontend.onrender.com/ | User-facing web app |
 | **API** | https://viriato-api.onrender.com | REST API |
 | **API Health** | https://viriato-api.onrender.com/api/health | Health check |
 | **Database** | dpg-xxxxx.frankfurt-postgres.render.com | PostgreSQL (internal) |
