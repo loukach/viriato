@@ -913,7 +913,8 @@ def get_deputados():
         legislature = request.args.get('legislature', 'XVII')
         party = request.args.get('party')
         circulo = request.args.get('circulo')
-        situation = request.args.get('situation', 'Efetivo')
+        # Default to 'Efetivo' - also handle empty string case
+        situation = request.args.get('situation', 'Efetivo') or 'Efetivo'
 
         # Build query
         query = """
@@ -1007,13 +1008,14 @@ def get_deputados():
                 dep['comissoes'] = comissoes_by_dep.get(dep['dep_cad_id'], [])
 
         # Get party composition summary (for hemicycle)
+        # Use same situation filter as main query for consistency
         cur.execute("""
             SELECT party, COUNT(*) as count
             FROM deputados
-            WHERE legislature = %s AND situation = 'Efetivo'
+            WHERE legislature = %s AND situation = %s
             GROUP BY party
             ORDER BY count DESC
-        """, (legislature,))
+        """, (legislature, situation))
 
         party_composition = {}
         total_deputados = 0
@@ -1026,9 +1028,9 @@ def get_deputados():
         cur.execute("""
             SELECT gender, COUNT(*) as count
             FROM deputados
-            WHERE legislature = %s AND situation = 'Efetivo'
+            WHERE legislature = %s AND situation = %s
             GROUP BY gender
-        """, (legislature,))
+        """, (legislature, situation))
 
         gender_breakdown = {}
         for row in cur.fetchall():
@@ -1038,10 +1040,10 @@ def get_deputados():
         cur.execute("""
             SELECT circulo, COUNT(*) as count
             FROM deputados
-            WHERE legislature = %s AND situation = 'Efetivo'
+            WHERE legislature = %s AND situation = %s
             GROUP BY circulo
             ORDER BY count DESC
-        """, (legislature,))
+        """, (legislature, situation))
 
         circulo_breakdown = {}
         for row in cur.fetchall():

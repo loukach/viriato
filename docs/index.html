@@ -4007,7 +4007,9 @@
                 setupFilters();
             } catch (error) {
                 console.error('Error loading initiatives:', error);
-                document.getElementById('initiatives').innerHTML = `
+                const container = document.getElementById('initiatives');
+                container.classList.remove('loading');
+                container.innerHTML = `
                     <div class="error" role="alert">
                         <div class="error-title">Erro ao carregar iniciativas</div>
                         <div class="error-message">O servidor pode estar a iniciar (aguarde 10-30 segundos) ou houve um problema de ligação.</div>
@@ -4017,7 +4019,9 @@
         }
 
         function retryLoadInitiatives() {
-            document.getElementById('initiatives').innerHTML = '<div class="loading">A carregar iniciativas...</div>';
+            const container = document.getElementById('initiatives');
+            container.classList.add('loading');
+            container.innerHTML = 'A carregar iniciativas...';
             INITIATIVES_DATA = [];
             loadInitiatives();
         }
@@ -4042,7 +4046,9 @@
                 }
             } catch (error) {
                 console.error('Error loading agenda:', error);
-                document.getElementById('agenda').innerHTML = `
+                const container = document.getElementById('agenda');
+                container.classList.remove('loading');
+                container.innerHTML = `
                     <div class="error" role="alert">
                         <div class="error-title">Erro ao carregar agenda</div>
                         <div class="error-message">O servidor pode estar a iniciar (aguarde 10-30 segundos) ou houve um problema de ligação.</div>
@@ -4052,7 +4058,9 @@
         }
 
         function retryLoadAgenda() {
-            document.getElementById('agenda').innerHTML = '<div class="loading">A carregar agenda...</div>';
+            const container = document.getElementById('agenda');
+            container.classList.add('loading');
+            container.innerHTML = 'A carregar agenda...';
             AGENDA_DATA = [];
             loadAgenda();
         }
@@ -4066,10 +4074,16 @@
                 }
                 COMISSOES_DATA = await response.json();
                 console.log(`Loaded ${COMISSOES_DATA.length} committees`);
+
+                // Update homepage count
+                document.getElementById('home-comissoes-count').textContent = COMISSOES_DATA.length;
+
                 renderComissoes();
             } catch (error) {
                 console.error('Error loading comissões:', error);
-                document.getElementById('comissoes-content').innerHTML = `
+                const container = document.getElementById('comissoes-content');
+                container.classList.remove('loading');
+                container.innerHTML = `
                     <div class="error" role="alert">
                         <div class="error-title">Erro ao carregar comissões</div>
                         <div class="error-message">O servidor pode estar a iniciar (aguarde 10-30 segundos) ou houve um problema de ligação.</div>
@@ -4079,7 +4093,9 @@
         }
 
         function retryLoadComissoes() {
-            document.getElementById('comissoes-content').innerHTML = '<div class="loading">A carregar comissões...</div>';
+            const container = document.getElementById('comissoes-content');
+            container.classList.add('loading');
+            container.innerHTML = 'A carregar comissões...';
             COMISSOES_DATA = [];
             loadComissoes();
         }
@@ -4092,11 +4108,17 @@
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 DEPUTADOS_DATA = await response.json();
-                console.log(`Loaded ${DEPUTADOS_DATA.deputados.length} deputados`);
+                console.log(`Loaded ${DEPUTADOS_DATA.deputados.length} deputados (summary.total: ${DEPUTADOS_DATA.summary.total})`);
+
+                // Update homepage count with summary total (Efetivo deputies)
+                document.getElementById('home-deputados-count').textContent = DEPUTADOS_DATA.summary.total;
+
                 renderAssembleia();
             } catch (error) {
                 console.error('Error loading deputados:', error);
-                document.getElementById('assembleia-content').innerHTML = `
+                const container = document.getElementById('assembleia-content');
+                container.classList.remove('loading');
+                container.innerHTML = `
                     <div class="error" role="alert">
                         <div class="error-title">Erro ao carregar deputados</div>
                         <div class="error-message">O servidor pode estar a iniciar (aguarde 10-30 segundos) ou houve um problema de ligação.</div>
@@ -4106,7 +4128,9 @@
         }
 
         function retryLoadDeputados() {
-            document.getElementById('assembleia-content').innerHTML = '<div class="loading">A carregar deputados...</div>';
+            const container = document.getElementById('assembleia-content');
+            container.classList.add('loading');
+            container.innerHTML = 'A carregar deputados...';
             DEPUTADOS_DATA = null;
             SELECTED_PARTY_FILTER = null;
             loadDeputados();
@@ -4115,6 +4139,7 @@
         // Render Assembleia View
         function renderAssembleia() {
             const container = document.getElementById('assembleia-content');
+            container.classList.remove('loading');
 
             if (!DEPUTADOS_DATA || DEPUTADOS_DATA.deputados.length === 0) {
                 container.innerHTML = '<div class="no-data">Nenhum deputado encontrado.</div>';
