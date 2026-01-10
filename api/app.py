@@ -895,14 +895,15 @@ def get_deputados():
             # Default to 'serving' - shows all 230 active deputies
             situation = request.args.get('situation', 'serving') or 'serving'
 
-            # Build query
+            # Build query - JOIN with deputados_bio for biographical data
             query = """
                 SELECT
                     d.id, d.dep_id, d.dep_cad_id, d.legislature,
                     d.name, d.full_name, d.party, d.circulo_id, d.circulo,
-                    d.gender, d.birth_date, d.profession,
+                    b.gender, b.birth_date, b.profession,
                     d.situation, d.situation_start, d.situation_end
                 FROM deputados d
+                LEFT JOIN deputados_bio b ON d.dep_cad_id = b.cad_id
                 WHERE d.legislature = %s
             """
             params = [legislature]

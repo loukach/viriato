@@ -3,8 +3,12 @@
 """
 Load Deputies data into PostgreSQL database.
 
-Loads data from InformacaoBaseXVII_json.txt and RegistoBiograficoXVII_json.txt
-into the deputados table, enriching with biographical data.
+Loads data from two source files into two separate tables:
+  - InformacaoBaseXVII_json.txt  -> deputados table (1,446 records)
+  - RegistoBiograficoXVII_json.txt -> deputados_bio table (330 records)
+
+This separation keeps ingestion simple and faithful to the source data.
+The API layer handles joining and business logic.
 
 Usage:
     python scripts/load_deputados.py
@@ -69,34 +73,11 @@ def parse_date(date_str):
         return None
 
 
-def load_biographical_data(filepath):
-    """Load biographical registry data and return a dict keyed by CadId."""
-    print(f"Loading biographical data from {filepath.name}...")
+# =============================================================================
+# LOAD DEPUTADOS (from InformacaoBase)
+# =============================================================================
 
-    bio_data = {}
-
-    if not filepath.exists():
-        print(f"  Warning: {filepath.name} not found, skipping biographical enrichment")
-        return bio_data
-
-    with open(filepath, 'r', encoding='utf-8') as f:
-        data = json.load(f)
-
-    for record in data:
-        cad_id = record.get('CadId')
-        if cad_id:
-            bio_data[cad_id] = {
-                'gender': record.get('CadSexo'),
-                'birth_date': parse_date(record.get('CadDtNascimento')),
-                'profession': record.get('CadProfissao'),
-                'full_name': record.get('CadNomeCompleto'),
-            }
-
-    print(f"  Loaded {len(bio_data)} biographical records")
-    return bio_data
-
-
-def load_deputados_from_file(filepath, bio_data):
+def load_deputados_from_file(filepath):
     """Load deputies from InformacaoBase JSON file."""
     print(f"Loading deputados from {filepath.name}...")
 
@@ -113,11 +94,10 @@ def load_deputados_from_file(filepath, bio_data):
         if not dep_id:
             continue
 
-        # Get current party (most recent GP entry)
+        # Get current party (most recent GP entry without end date)
         party = None
         gp_list = dep.get('DepGP', [])
         if gp_list:
-            # Sort by start date descending, take the first one without end date
             active_gp = None
             for gp in gp_list:
                 if not gp.get('gpDtFim'):  # No end date = currently active
@@ -134,7 +114,6 @@ def load_deputados_from_file(filepath, bio_data):
         situation_end = None
         sit_list = dep.get('DepSituacao', [])
         if sit_list:
-            # Take the most recent situation (last one without end date, or last overall)
             active_sit = None
             for sit in sit_list:
                 if not sit.get('sioDtFim'):
@@ -147,21 +126,15 @@ def load_deputados_from_file(filepath, bio_data):
                 situation_start = parse_date(active_sit.get('sioDtInicio'))
                 situation_end = parse_date(active_sit.get('sioDtFim'))
 
-        # Get biographical data if available
-        bio = bio_data.get(dep_cad_id, {})
-
         deputado = {
             'dep_id': dep_id,
             'dep_cad_id': dep_cad_id,
             'legislature': dep.get('LegDes', 'XVII'),
             'name': dep.get('DepNomeParlamentar', ''),
-            'full_name': bio.get('full_name') or dep.get('DepNomeCompleto'),
+            'full_name': dep.get('DepNomeCompleto'),
             'party': party,
             'circulo_id': dep.get('DepCPId'),
             'circulo': dep.get('DepCPDes'),
-            'gender': bio.get('gender'),
-            'birth_date': bio.get('birth_date'),
-            'profession': bio.get('profession'),
             'situation': situation,
             'situation_start': situation_start,
             'situation_end': situation_end,
@@ -195,9 +168,6 @@ def insert_deputados(conn, deputados):
             dep['party'],
             dep['circulo_id'],
             dep['circulo'],
-            dep['gender'],
-            dep['birth_date'],
-            dep['profession'],
             dep['situation'],
             dep['situation_start'],
             dep['situation_end'],
@@ -208,8 +178,7 @@ def insert_deputados(conn, deputados):
     insert_sql = """
         INSERT INTO deputados (
             dep_id, dep_cad_id, legislature, name, full_name, party,
-            circulo_id, circulo, gender, birth_date, profession,
-            situation, situation_start, situation_end, raw_data
+            circulo_id, circulo, situation, situation_start, situation_end, raw_data
         ) VALUES %s
         ON CONFLICT (dep_id) DO UPDATE SET
             dep_cad_id = EXCLUDED.dep_cad_id,
@@ -219,9 +188,6 @@ def insert_deputados(conn, deputados):
             party = EXCLUDED.party,
             circulo_id = EXCLUDED.circulo_id,
             circulo = EXCLUDED.circulo,
-            gender = EXCLUDED.gender,
-            birth_date = EXCLUDED.birth_date,
-            profession = EXCLUDED.profession,
             situation = EXCLUDED.situation,
             situation_start = EXCLUDED.situation_start,
             situation_end = EXCLUDED.situation_end,
@@ -242,6 +208,106 @@ def insert_deputados(conn, deputados):
     return count
 
 
+# =============================================================================
+# LOAD DEPUTADOS_BIO (from RegistoBiografico)
+# =============================================================================
+
+def load_bio_from_file(filepath):
+    """Load biographical data from RegistoBiografico JSON file."""
+    print(f"Loading biographical data from {filepath.name}...")
+
+    if not filepath.exists():
+        print(f"  Warning: {filepath.name} not found, skipping biographical data")
+        return []
+
+    with open(filepath, 'r', encoding='utf-8') as f:
+        data = json.load(f)
+
+    bio_records = []
+    for record in data:
+        cad_id = record.get('CadId')
+        if not cad_id:
+            continue
+
+        bio = {
+            'cad_id': int(cad_id),
+            'full_name': record.get('CadNomeCompleto'),
+            'gender': record.get('CadSexo'),
+            'birth_date': parse_date(record.get('CadDtNascimento')),
+            'profession': record.get('CadProfissao'),
+            'education': record.get('CadHabilitacoes'),
+            'published_works': record.get('CadObrasPublicadas'),
+            'awards': record.get('CadCondecoracoes'),
+            'titles': record.get('CadTitulos'),
+            'raw_data': record
+        }
+        bio_records.append(bio)
+
+    print(f"  Loaded {len(bio_records)} biographical records")
+    return bio_records
+
+
+def insert_bio(conn, bio_records):
+    """Insert biographical data into deputados_bio table."""
+    print(f"Inserting {len(bio_records)} biographical records into database...")
+
+    cur = conn.cursor()
+
+    # Clear existing data for clean reload
+    cur.execute("DELETE FROM deputados_bio")
+
+    # Prepare data for bulk insert
+    values = []
+    for bio in bio_records:
+        values.append((
+            bio['cad_id'],
+            bio['full_name'],
+            bio['gender'],
+            bio['birth_date'],
+            bio['profession'],
+            bio['education'],
+            bio['published_works'],
+            bio['awards'],
+            bio['titles'],
+            Json(bio['raw_data'])
+        ))
+
+    # Bulk insert using execute_values
+    insert_sql = """
+        INSERT INTO deputados_bio (
+            cad_id, full_name, gender, birth_date, profession,
+            education, published_works, awards, titles, raw_data
+        ) VALUES %s
+        ON CONFLICT (cad_id) DO UPDATE SET
+            full_name = EXCLUDED.full_name,
+            gender = EXCLUDED.gender,
+            birth_date = EXCLUDED.birth_date,
+            profession = EXCLUDED.profession,
+            education = EXCLUDED.education,
+            published_works = EXCLUDED.published_works,
+            awards = EXCLUDED.awards,
+            titles = EXCLUDED.titles,
+            raw_data = EXCLUDED.raw_data,
+            updated_at = NOW()
+    """
+
+    execute_values(cur, insert_sql, values)
+    conn.commit()
+
+    # Get final count
+    cur.execute("SELECT COUNT(*) FROM deputados_bio")
+    count = cur.fetchone()[0]
+
+    cur.close()
+
+    print(f"  Inserted/updated {count} biographical records")
+    return count
+
+
+# =============================================================================
+# SUMMARY
+# =============================================================================
+
 def print_summary(conn):
     """Print summary statistics."""
     cur = conn.cursor()
@@ -250,48 +316,72 @@ def print_summary(conn):
     print("SUMMARY")
     print("=" * 60)
 
-    # Total count
+    # Total deputados
     cur.execute("SELECT COUNT(*) FROM deputados WHERE legislature = 'XVII'")
     total = cur.fetchone()[0]
-    print(f"Total deputados: {total}")
+    print(f"\nTotal deputados (all situations): {total}")
 
-    # By party
+    # By situation
+    cur.execute("""
+        SELECT situation, COUNT(*) as count
+        FROM deputados
+        WHERE legislature = 'XVII'
+        GROUP BY situation
+        ORDER BY count DESC
+    """)
+    print("\nBy situation:")
+    serving_count = 0
+    for row in cur.fetchall():
+        situation = row[0] or 'Unknown'
+        count = row[1]
+        # Mark serving statuses
+        is_serving = situation in ('Efetivo', 'Efetivo Temporário', 'Efetivo Definitivo')
+        marker = " <- serving" if is_serving else ""
+        if is_serving:
+            serving_count += count
+        print(f"  {situation}: {count}{marker}")
+    print(f"  --------")
+    print(f"  Total serving: {serving_count}")
+
+    # Biographical coverage
+    cur.execute("""
+        SELECT
+            COUNT(*) as total,
+            COUNT(b.cad_id) as with_bio
+        FROM deputados d
+        LEFT JOIN deputados_bio b ON d.dep_cad_id = b.cad_id
+        WHERE d.legislature = 'XVII'
+    """)
+    row = cur.fetchone()
+    print(f"\nBiographical data coverage: {row[1]}/{row[0]} ({100*row[1]//row[0]}%)")
+
+    # By party (serving only)
     cur.execute("""
         SELECT party, COUNT(*) as count
         FROM deputados
-        WHERE legislature = 'XVII' AND situation = 'Efetivo'
+        WHERE legislature = 'XVII'
+          AND situation IN ('Efetivo', 'Efetivo Temporário', 'Efetivo Definitivo')
         GROUP BY party
         ORDER BY count DESC
     """)
-    print("\nBy party (Efetivo only):")
+    print("\nBy party (serving deputies only):")
     for row in cur.fetchall():
         print(f"  {row[0] or 'Sem partido'}: {row[1]}")
 
-    # By gender
+    # By gender (serving only, from bio table)
     cur.execute("""
-        SELECT gender, COUNT(*) as count
-        FROM deputados
-        WHERE legislature = 'XVII' AND situation = 'Efetivo'
-        GROUP BY gender
-        ORDER BY gender
+        SELECT b.gender, COUNT(*) as count
+        FROM deputados d
+        JOIN deputados_bio b ON d.dep_cad_id = b.cad_id
+        WHERE d.legislature = 'XVII'
+          AND d.situation IN ('Efetivo', 'Efetivo Temporário', 'Efetivo Definitivo')
+        GROUP BY b.gender
+        ORDER BY b.gender
     """)
-    print("\nBy gender (Efetivo only):")
+    print("\nBy gender (serving deputies with bio data):")
     for row in cur.fetchall():
         gender_name = {'M': 'Male', 'F': 'Female'}.get(row[0], 'Unknown')
         print(f"  {gender_name}: {row[1]}")
-
-    # By circulo
-    cur.execute("""
-        SELECT circulo, COUNT(*) as count
-        FROM deputados
-        WHERE legislature = 'XVII' AND situation = 'Efetivo'
-        GROUP BY circulo
-        ORDER BY count DESC
-        LIMIT 10
-    """)
-    print("\nTop 10 círculos (Efetivo only):")
-    for row in cur.fetchall():
-        print(f"  {row[0]}: {row[1]}")
 
     cur.close()
 
@@ -302,28 +392,31 @@ def main():
     print("LOADING DEPUTADOS DATA")
     print("=" * 60)
     print()
+    print("Source files:")
+    print(f"  - {INFO_BASE_FILE.name} -> deputados table")
+    print(f"  - {REGISTO_BIO_FILE.name} -> deputados_bio table")
+    print()
 
     # Check files exist
     if not INFO_BASE_FILE.exists():
         print(f"ERROR: {INFO_BASE_FILE} not found")
         sys.exit(1)
 
-    # Load biographical data first
-    bio_data = load_biographical_data(REGISTO_BIO_FILE)
-
-    # Load deputados
-    deputados = load_deputados_from_file(INFO_BASE_FILE, bio_data)
-
-    if not deputados:
-        print("ERROR: No deputados found")
-        sys.exit(1)
-
     # Connect to database
     conn = get_db_connection()
 
     try:
-        # Insert deputados
+        # Load and insert deputados (from InformacaoBase)
+        deputados = load_deputados_from_file(INFO_BASE_FILE)
+        if not deputados:
+            print("ERROR: No deputados found")
+            sys.exit(1)
         insert_deputados(conn, deputados)
+
+        # Load and insert biographical data (from RegistoBiografico)
+        bio_records = load_bio_from_file(REGISTO_BIO_FILE)
+        if bio_records:
+            insert_bio(conn, bio_records)
 
         # Print summary
         print_summary(conn)
