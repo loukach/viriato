@@ -113,6 +113,12 @@ body {
     margin-right: 48px;
     letter-spacing: -0.5px;
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    text-decoration: none;
+    transition: opacity var(--transition-fast);
+}
+
+.logo:hover {
+    opacity: 0.9;
 }
 
 .nav-tabs {
@@ -124,7 +130,7 @@ body {
 .nav-tab {
     color: rgba(255,255,255,0.85);
     text-decoration: none;
-    padding: 16px 28px;
+    padding: 16px 20px;
     font-weight: 500;
     font-size: 0.95rem;
     letter-spacing: 0.3px;
@@ -132,6 +138,9 @@ body {
     border-bottom: 3px solid transparent;
     cursor: pointer;
     border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .nav-tab:hover {
@@ -146,17 +155,21 @@ body {
     font-weight: 600;
 }
 
-/* Nav tab icons - hidden on desktop, visible on mobile */
+/* Nav tab icons - visible on both desktop and mobile */
 .nav-icon {
-    display: none;
-    width: 22px;
-    height: 22px;
+    display: block;
+    width: 20px;
+    height: 20px;
     stroke: currentColor;
     flex-shrink: 0;
 }
 
 .nav-label {
-    /* Visible by default on desktop */
+    /* Visible by default on desktop, hidden on mobile */
+}
+
+.feedback-label {
+    /* Visible by default on desktop, hidden on mobile */
 }
 
 /* Feedback CTA Button */
@@ -304,8 +317,14 @@ body {
 }
 
 .viewer-icon {
-    font-size: 3.5em;
     margin-bottom: 20px;
+    color: var(--primary);
+}
+
+.viewer-icon svg {
+    width: 56px;
+    height: 56px;
+    stroke: currentColor;
     filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
 }
 
@@ -2730,58 +2749,44 @@ footer a:hover {
 /* Responsive */
 @media (max-width: 900px) {
     .nav-container {
-        flex-direction: column;
-        align-items: flex-start;
-        padding: 0 16px;
+        flex-direction: row;
+        align-items: center;
+        padding: 0 12px;
+        gap: 8px;
     }
 
     .logo {
         margin-right: 0;
-        margin-bottom: 8px;
         padding: 12px 0;
-        font-size: 1.4rem;
+        font-size: 1.3rem;
+        flex-shrink: 0;
     }
 
     .nav-tabs {
-        width: 100%;
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-        scrollbar-width: none;
+        flex: 1;
+        justify-content: center;
         gap: 2px;
     }
 
-    .nav-tabs::-webkit-scrollbar {
-        display: none;
-    }
-
     .nav-tab {
-        padding: 12px 14px;
+        padding: 12px 10px;
         font-size: 0.9rem;
         flex-shrink: 0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
     }
 
-    /* Show icons, hide labels on mobile */
-    .nav-icon {
-        display: block;
-    }
-
+    /* Hide labels on mobile, show icons only */
     .nav-label {
         display: none;
     }
 
-    .feedback-cta {
-        position: absolute;
-        top: 10px;
-        right: 16px;
-        padding: 8px 14px;
-        font-size: 0.85rem;
+    /* Hide feedback button text on mobile */
+    .feedback-label {
+        display: none;
     }
 
-    .nav-container {
-        position: relative;
+    .feedback-cta {
+        padding: 10px;
+        flex-shrink: 0;
     }
 
     .viewers {
