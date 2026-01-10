@@ -2765,7 +2765,7 @@ footer a:hover {
 
     .nav-tabs {
         flex: 1;
-        justify-content: center;
+        justify-content: flex-start;
         gap: 2px;
     }
 
@@ -2773,6 +2773,14 @@ footer a:hover {
         padding: 12px 10px;
         font-size: 0.9rem;
         flex-shrink: 0;
+    }
+
+    /* Larger, higher contrast icons on mobile */
+    .nav-icon {
+        width: 30px;
+        height: 30px;
+        opacity: 1;
+        filter: brightness(1.2);
     }
 
     /* Hide labels on mobile, show icons only */
