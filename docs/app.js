@@ -252,6 +252,13 @@ function DeputyCard(dep, partyColors) {
         comissoesHtml = `<div class="deputado-comissoes">${tags}${overflow}</div>`;
     }
 
+    // Build replacement info for substitutes (Efetivo Temporario)
+    let replacesHtml = '';
+    if (dep.situation === 'Efetivo Temporário' && dep.replaces) {
+        const replacesText = Array.isArray(dep.replaces) ? dep.replaces.join(', ') : dep.replaces;
+        replacesHtml = `<div class="deputado-replaces" title="Substitui ${replacesText}"><span class="deputado-replaces-icon">↔️</span> Substitui: ${replacesText}</div>`;
+    }
+
     return `
         <div class="deputado-card" data-name="${dep.name.toLowerCase()}" data-party="${dep.party}" data-circulo="${dep.circulo}" data-gender="${dep.gender}">
             <div class="deputado-header">
@@ -266,6 +273,7 @@ function DeputyCard(dep, partyColors) {
                 ${genderIcon ? `<span class="deputado-meta-item"><span class="deputado-meta-icon">${genderIcon}</span></span>` : ''}
                 ${ageDisplay ? `<span class="deputado-meta-item">${ageDisplay}</span>` : ''}
             </div>
+            ${replacesHtml}
             ${comissoesHtml}
         </div>
     `.trim();

@@ -2628,6 +2628,22 @@ body {
     font-size: 0.9rem;
 }
 
+.deputado-replaces {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    padding: 4px 8px;
+    background: var(--bg-elevated);
+    border-radius: 4px;
+    margin-top: 4px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.deputado-replaces-icon {
+    font-size: 0.8rem;
+}
+
 .deputado-comissoes {
     display: flex;
     flex-wrap: wrap;

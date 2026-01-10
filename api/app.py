@@ -877,17 +877,23 @@ def get_deputados():
         party - Filter by party
         circulo - Filter by electoral district
         situation - Filter by situation (Efetivo, Suspenso, etc.)
+                   Default: 'serving' (shows all 230 active deputies)
+                   Special values: 'serving' = Efetivo + Efetivo Temporario + Efetivo Definitivo
+                                  'all' = no situation filter
 
     Returns list of deputies with party composition summary.
     """
+    # Serving situations = deputies currently in office (total 230)
+    SERVING_SITUATIONS = ['Efetivo', 'Efetivo Temporário', 'Efetivo Definitivo']
+
     try:
         with db_connection() as (conn, cur):
             # Get optional filters
             legislature = request.args.get('legislature', 'XVII')
             party = request.args.get('party')
             circulo = request.args.get('circulo')
-            # Default to 'Efetivo' - also handle empty string case
-            situation = request.args.get('situation', 'Efetivo') or 'Efetivo'
+            # Default to 'serving' - shows all 230 active deputies
+            situation = request.args.get('situation', 'serving') or 'serving'
 
             # Build query
             query = """
@@ -909,7 +915,11 @@ def get_deputados():
                 query += " AND d.circulo = %s"
                 params.append(circulo)
 
-            if situation:
+            # Handle situation filter
+            if situation == 'serving':
+                query += " AND d.situation = ANY(%s)"
+                params.append(SERVING_SITUATIONS)
+            elif situation != 'all':
                 query += " AND d.situation = %s"
                 params.append(situation)
 
@@ -980,15 +990,60 @@ def get_deputados():
                 for dep in deputados:
                     dep['comissoes'] = comissoes_by_dep.get(dep['dep_cad_id'], [])
 
+            # Find who Efetivo Temporário deputies are replacing
+            # They replace Suspenso(Eleito) deputies from same circulo and party
+            temp_deputies = [d for d in deputados if d['situation'] == 'Efetivo Temporário']
+            if temp_deputies:
+                # Get all suspended deputies in same legislature
+                cur.execute("""
+                    SELECT name, party, circulo
+                    FROM deputados
+                    WHERE legislature = %s AND situation = 'Suspenso(Eleito)'
+                """, (legislature,))
+
+                # Group suspended by (circulo, party)
+                suspended_by_location = {}
+                for row in cur.fetchall():
+                    key = (row['circulo'], row['party'])
+                    if key not in suspended_by_location:
+                        suspended_by_location[key] = []
+                    suspended_by_location[key].append(row['name'])
+
+                # Match temp deputies to who they're replacing
+                for dep in deputados:
+                    if dep['situation'] == 'Efetivo Temporário':
+                        key = (dep['circulo'], dep['party'])
+                        replacing = suspended_by_location.get(key, [])
+                        dep['replaces'] = replacing[0] if len(replacing) == 1 else replacing if replacing else None
+                    else:
+                        dep['replaces'] = None
+
             # Get party composition summary (for hemicycle)
             # Use same situation filter as main query for consistency
-            cur.execute("""
-                SELECT party, COUNT(*) as count
-                FROM deputados
-                WHERE legislature = %s AND situation = %s
-                GROUP BY party
-                ORDER BY count DESC
-            """, (legislature, situation))
+            if situation == 'serving':
+                cur.execute("""
+                    SELECT party, COUNT(*) as count
+                    FROM deputados
+                    WHERE legislature = %s AND situation = ANY(%s)
+                    GROUP BY party
+                    ORDER BY count DESC
+                """, (legislature, SERVING_SITUATIONS))
+            elif situation == 'all':
+                cur.execute("""
+                    SELECT party, COUNT(*) as count
+                    FROM deputados
+                    WHERE legislature = %s
+                    GROUP BY party
+                    ORDER BY count DESC
+                """, (legislature,))
+            else:
+                cur.execute("""
+                    SELECT party, COUNT(*) as count
+                    FROM deputados
+                    WHERE legislature = %s AND situation = %s
+                    GROUP BY party
+                    ORDER BY count DESC
+                """, (legislature, situation))
 
             party_composition = {}
             total_deputados = 0
@@ -998,25 +1053,57 @@ def get_deputados():
                 total_deputados += row['count']
 
             # Get gender breakdown
-            cur.execute("""
-                SELECT gender, COUNT(*) as count
-                FROM deputados
-                WHERE legislature = %s AND situation = %s
-                GROUP BY gender
-            """, (legislature, situation))
+            if situation == 'serving':
+                cur.execute("""
+                    SELECT gender, COUNT(*) as count
+                    FROM deputados
+                    WHERE legislature = %s AND situation = ANY(%s)
+                    GROUP BY gender
+                """, (legislature, SERVING_SITUATIONS))
+            elif situation == 'all':
+                cur.execute("""
+                    SELECT gender, COUNT(*) as count
+                    FROM deputados
+                    WHERE legislature = %s
+                    GROUP BY gender
+                """, (legislature,))
+            else:
+                cur.execute("""
+                    SELECT gender, COUNT(*) as count
+                    FROM deputados
+                    WHERE legislature = %s AND situation = %s
+                    GROUP BY gender
+                """, (legislature, situation))
 
             gender_breakdown = {}
             for row in cur.fetchall():
                 gender_breakdown[row['gender'] or 'Unknown'] = row['count']
 
             # Get circulo breakdown
-            cur.execute("""
-                SELECT circulo, COUNT(*) as count
-                FROM deputados
-                WHERE legislature = %s AND situation = %s
-                GROUP BY circulo
-                ORDER BY count DESC
-            """, (legislature, situation))
+            if situation == 'serving':
+                cur.execute("""
+                    SELECT circulo, COUNT(*) as count
+                    FROM deputados
+                    WHERE legislature = %s AND situation = ANY(%s)
+                    GROUP BY circulo
+                    ORDER BY count DESC
+                """, (legislature, SERVING_SITUATIONS))
+            elif situation == 'all':
+                cur.execute("""
+                    SELECT circulo, COUNT(*) as count
+                    FROM deputados
+                    WHERE legislature = %s
+                    GROUP BY circulo
+                    ORDER BY count DESC
+                """, (legislature,))
+            else:
+                cur.execute("""
+                    SELECT circulo, COUNT(*) as count
+                    FROM deputados
+                    WHERE legislature = %s AND situation = %s
+                    GROUP BY circulo
+                    ORDER BY count DESC
+                """, (legislature, situation))
 
             circulo_breakdown = {}
             for row in cur.fetchall():
