@@ -1053,27 +1053,30 @@ def get_deputados():
                 party_composition[party_name] = row['count']
                 total_deputados += row['count']
 
-            # Get gender breakdown
+            # Get gender breakdown (gender is in deputados_bio table)
             if situation == 'serving':
                 cur.execute("""
-                    SELECT gender, COUNT(*) as count
-                    FROM deputados
-                    WHERE legislature = %s AND situation = ANY(%s)
-                    GROUP BY gender
+                    SELECT b.gender, COUNT(*) as count
+                    FROM deputados d
+                    LEFT JOIN deputados_bio b ON d.dep_cad_id = b.cad_id
+                    WHERE d.legislature = %s AND d.situation = ANY(%s)
+                    GROUP BY b.gender
                 """, (legislature, SERVING_SITUATIONS))
             elif situation == 'all':
                 cur.execute("""
-                    SELECT gender, COUNT(*) as count
-                    FROM deputados
-                    WHERE legislature = %s
-                    GROUP BY gender
+                    SELECT b.gender, COUNT(*) as count
+                    FROM deputados d
+                    LEFT JOIN deputados_bio b ON d.dep_cad_id = b.cad_id
+                    WHERE d.legislature = %s
+                    GROUP BY b.gender
                 """, (legislature,))
             else:
                 cur.execute("""
-                    SELECT gender, COUNT(*) as count
-                    FROM deputados
-                    WHERE legislature = %s AND situation = %s
-                    GROUP BY gender
+                    SELECT b.gender, COUNT(*) as count
+                    FROM deputados d
+                    LEFT JOIN deputados_bio b ON d.dep_cad_id = b.cad_id
+                    WHERE d.legislature = %s AND d.situation = %s
+                    GROUP BY b.gender
                 """, (legislature, situation))
 
             gender_breakdown = {}
