@@ -155,6 +155,195 @@ function updateHomeCount(elementId, count) {
     }
 }
 
+// ============================================================
+// UI COMPONENTS
+// ============================================================
+// Reusable HTML template functions to reduce duplication.
+// Each component returns an HTML string that can be used with innerHTML.
+
+/**
+ * Generic stat card (used for assembleia stats, type cards, etc.)
+ */
+function StatCard(value, label, options = {}) {
+    const { className = 'stat-card', style = '' } = options;
+    return `
+        <div class="${className}"${style ? ` style="${style}"` : ''}>
+            <div class="${className}-value">${value}</div>
+            <div class="${className}-label">${label}</div>
+        </div>
+    `.trim();
+}
+
+/**
+ * Status badge for initiatives
+ */
+function StatusBadge(statusInfo, title = '', inline = false) {
+    const tag = inline ? 'span' : 'div';
+    return `<${tag} class="initiative-status ${statusInfo.cssClass}" title="${title}">
+        <span class="status-category-label">${statusInfo.label}</span>
+    </${tag}>`;
+}
+
+/**
+ * Initiative type badge
+ */
+function TypeBadge(typeCode, typeLabel, typeDesc = '') {
+    const typeClass = `type-${typeCode}`;
+    return `<span class="initiative-badge ${typeClass}"${typeDesc ? ` aria-label="Tipo ${typeDesc}"` : ''}>${typeLabel}</span>`;
+}
+
+/**
+ * Initiative card - main legislative initiative display
+ */
+function InitiativeCard(ini, index) {
+    const status = getCurrentStatus(ini);
+    const statusInfo = getStatusCategory(status);
+    const typeClass = `type-${ini.IniTipo}`;
+    const events = ini.IniEventos || [];
+
+    return `
+        <article class="initiative-card"
+                 data-ini-id="${ini.IniId}"
+                 data-index="${index}"
+                 onclick="toggleCardExpansion(this, event)"
+                 onkeydown="handleInitiativeKeydown(event, this)"
+                 tabindex="0"
+                 role="button"
+                 aria-expanded="false"
+                 aria-label="${ini.IniTitulo}">
+            <div class="initiative-header">
+                ${TypeBadge(ini.IniTipo, getTypeLabel(ini.IniTipo), ini.IniDescTipo)}
+                <span class="initiative-number">${ini.IniNr}/${ini.IniTipo}</span>
+            </div>
+            <div class="initiative-title">${ini.IniTitulo}</div>
+            <div class="initiative-meta">
+                <span aria-label="Data de inicio"><span aria-hidden="true">📅</span> ${formatDate(ini.DataInicioleg)}</span>
+                <span aria-label="${events.length} fases"><span aria-hidden="true">📊</span> ${events.length} fases</span>
+            </div>
+            ${StatusBadge(statusInfo, status)}
+            <div class="initiative-details" aria-hidden="true"></div>
+            <div class="expand-indicator">
+                <span class="expand-icon" aria-hidden="true">▼</span>
+                <span class="expand-text">Clique para ver ciclo de vida</span>
+            </div>
+        </article>
+    `.trim();
+}
+
+/**
+ * Deputy card with avatar, info, and commissions
+ */
+function DeputyCard(dep, partyColors) {
+    const color = partyColors[dep.party] || '#6b7280';
+    const initials = dep.name.split(' ').filter(n => n.length > 2).map(n => n[0]).slice(0, 2).join('');
+    const genderIcon = dep.gender === 'F' ? '♀️' : dep.gender === 'M' ? '♂️' : '';
+    const ageDisplay = dep.age ? `${dep.age} anos` : '';
+
+    // Build commissions HTML
+    let comissoesHtml = '';
+    if (dep.comissoes && dep.comissoes.length > 0) {
+        const tags = dep.comissoes.slice(0, 3).map(c => {
+            const hasRole = c.role && c.role !== 'Membro';
+            const roleClass = hasRole ? 'role' : '';
+            const label = c.acronym || c.name.substring(0, 20);
+            return `<span class="deputado-comissao-tag ${roleClass}" title="${c.name}${hasRole ? ' - ' + c.role : ''}">${label}</span>`;
+        }).join('');
+        const overflow = dep.comissoes.length > 3 ? `<span class="deputado-comissao-tag">+${dep.comissoes.length - 3}</span>` : '';
+        comissoesHtml = `<div class="deputado-comissoes">${tags}${overflow}</div>`;
+    }
+
+    return `
+        <div class="deputado-card" data-name="${dep.name.toLowerCase()}" data-party="${dep.party}" data-circulo="${dep.circulo}" data-gender="${dep.gender}">
+            <div class="deputado-header">
+                <div class="deputado-avatar" style="background-color: ${color}">${initials}</div>
+                <div class="deputado-info">
+                    <div class="deputado-name">${dep.name}</div>
+                    <div class="deputado-party" style="color: ${color}">${dep.party || 'Sem partido'}</div>
+                </div>
+            </div>
+            <div class="deputado-meta">
+                <span class="deputado-meta-item"><span class="deputado-meta-icon">📍</span> ${dep.circulo || 'N/A'}</span>
+                ${genderIcon ? `<span class="deputado-meta-item"><span class="deputado-meta-icon">${genderIcon}</span></span>` : ''}
+                ${ageDisplay ? `<span class="deputado-meta-item">${ageDisplay}</span>` : ''}
+            </div>
+            ${comissoesHtml}
+        </div>
+    `.trim();
+}
+
+/**
+ * Committee stat badge (A, E, +, -)
+ */
+function CommitteeStat(status, icon, count, title) {
+    if (!count) return '';
+    return `<span class="comissao-stat ${status}" title="${title}"><span class="stat-icon">${icon}</span>${count}</span>`;
+}
+
+/**
+ * Modal loading state
+ */
+function ModalLoading(message = 'A carregar...') {
+    return `
+        <div class="modal-loading">
+            <div class="modal-loading-spinner"></div>
+            <div>${message}</div>
+        </div>
+    `.trim();
+}
+
+/**
+ * Modal empty state
+ */
+function ModalEmpty(message = 'Sem informação adicional.', icon = '📋') {
+    return `
+        <div class="modal-empty">
+            <div class="modal-empty-icon">${icon}</div>
+            <div>${message}</div>
+        </div>
+    `.trim();
+}
+
+/**
+ * Modal error state
+ */
+function ModalError(message, title = 'Erro ao carregar') {
+    return `
+        <div class="modal-error">
+            <div class="modal-error-icon">⚠️</div>
+            <div>${title}</div>
+            <div style="font-size: 0.85rem; margin-top: 8px;">${message}</div>
+        </div>
+    `.trim();
+}
+
+/**
+ * Linked initiative in agenda modal
+ */
+function LinkedInitiative(ini) {
+    const statusInfo = getStatusCategory(ini.status);
+    return `
+        <div class="linked-initiative">
+            <div class="initiative-header-row">
+                <span class="initiative-type-badge">${ini.type_description}</span>
+                <span class="initiative-id">ID: ${ini.ini_id}</span>
+            </div>
+            <div class="initiative-title-text">${ini.title}</div>
+            <div class="initiative-meta-row">
+                ${ini.author ? `<div class="initiative-meta-item"><span class="initiative-meta-label">Autor:</span> ${ini.author}</div>` : ''}
+                <div class="initiative-meta-item">
+                    <span class="initiative-meta-label">Estado:</span>
+                    ${StatusBadge(statusInfo, ini.status || '', true)}
+                </div>
+            </div>
+            ${ini.text_link ? `<a href="${ini.text_link}" target="_blank" class="initiative-link-btn" rel="noopener">Ver detalhes completos →</a>` : ''}
+        </div>
+    `.trim();
+}
+
+// ============================================================
+// DATA LOADING FUNCTIONS
+// ============================================================
+
 // Load Initiatives Data
 async function loadInitiatives() {
     try {
@@ -386,18 +575,9 @@ function renderAssembleia() {
         </div>
 
         <div class="assembleia-stats">
-            <div class="assembleia-stat-card">
-                <div class="assembleia-stat-value">${Object.keys(party_composition).length}</div>
-                <div class="assembleia-stat-label">Partidos</div>
-            </div>
-            <div class="assembleia-stat-card">
-                <div class="assembleia-stat-value">${femalePercentage}%</div>
-                <div class="assembleia-stat-label">Mulheres</div>
-            </div>
-            <div class="assembleia-stat-card">
-                <div class="assembleia-stat-value">${Object.keys(circulo_breakdown).length}</div>
-                <div class="assembleia-stat-label">Círculos</div>
-            </div>
+            ${StatCard(Object.keys(party_composition).length, 'Partidos', { className: 'assembleia-stat-card' })}
+            ${StatCard(femalePercentage + '%', 'Mulheres', { className: 'assembleia-stat-card' })}
+            ${StatCard(Object.keys(circulo_breakdown).length, 'Círculos', { className: 'assembleia-stat-card' })}
         </div>
 
         <h2 style="font-size: 1.5rem; margin-bottom: 16px;">Deputados${SELECTED_PARTY_FILTER ? ` - ${SELECTED_PARTY_FILTER}` : ''}</h2>
@@ -424,50 +604,7 @@ function renderAssembleia() {
 }
 
 function renderDeputadosList(deputados) {
-    return deputados.map(dep => {
-        const color = PARTY_COLORS[dep.party] || '#888888';
-        const initials = dep.name.split(' ').map(n => n[0]).slice(0, 2).join('');
-
-        // Gender icon
-        const genderIcon = dep.gender === 'F' ? '♀️' : dep.gender === 'M' ? '♂️' : '';
-
-        // Age display
-        const ageDisplay = dep.age ? `${dep.age} anos` : '';
-
-        // Comissões tags
-        let comissoesHtml = '';
-        if (dep.comissoes && dep.comissoes.length > 0) {
-            comissoesHtml = '<div class="deputado-comissoes">';
-            dep.comissoes.slice(0, 3).forEach(c => {
-                const hasRole = c.role && c.role !== 'Vogal';
-                const roleClass = hasRole ? 'role' : '';
-                const label = c.acronym || c.name.replace('Comissão de ', '').substring(0, 20);
-                comissoesHtml += `<span class="deputado-comissao-tag ${roleClass}" title="${c.name}${hasRole ? ' - ' + c.role : ''}">${label}</span>`;
-            });
-            if (dep.comissoes.length > 3) {
-                comissoesHtml += `<span class="deputado-comissao-tag">+${dep.comissoes.length - 3}</span>`;
-            }
-            comissoesHtml += '</div>';
-        }
-
-        return `
-            <div class="deputado-card" data-name="${dep.name.toLowerCase()}" data-party="${dep.party}" data-circulo="${dep.circulo}" data-gender="${dep.gender}">
-                <div class="deputado-header">
-                    <div class="deputado-avatar" style="background-color: ${color}">${initials}</div>
-                    <div class="deputado-info">
-                        <div class="deputado-name">${dep.name}</div>
-                        <div class="deputado-party" style="color: ${color}">${dep.party || 'Sem partido'}</div>
-                    </div>
-                </div>
-                <div class="deputado-meta">
-                    <span class="deputado-meta-item"><span class="deputado-meta-icon">📍</span> ${dep.circulo || 'N/A'}</span>
-                    ${genderIcon ? `<span class="deputado-meta-item"><span class="deputado-meta-icon">${genderIcon}</span></span>` : ''}
-                    ${ageDisplay ? `<span class="deputado-meta-item">${ageDisplay}</span>` : ''}
-                </div>
-                ${comissoesHtml}
-            </div>
-        `;
-    }).join('');
+    return deputados.map(dep => DeputyCard(dep, PARTY_COLORS)).join('');
 }
 
 function filterByParty(party) {
@@ -1107,18 +1244,13 @@ function renderTypeWidget() {
         'A': { name: 'Apreciações Parl.', color: 'linear-gradient(135deg, #d97706, #b45309)' }
     };
 
-    let html = '';
-    Object.entries(typeCounts)
+    const html = Object.entries(typeCounts)
         .sort((a, b) => b[1] - a[1])
-        .forEach(([type, count]) => {
+        .map(([type, count]) => {
             const config = typeConfig[type] || { name: type, color: 'linear-gradient(135deg, #6b7280, #4b5563)' };
-            html += `
-                <div class="type-card" style="background: ${config.color}">
-                    <div class="type-card-value">${count}</div>
-                    <div class="type-card-label">${config.name}</div>
-                </div>
-            `;
-        });
+            return StatCard(count, config.name, { className: 'type-card', style: `background: ${config.color}` });
+        })
+        .join('');
 
     container.innerHTML = html;
 }
@@ -1385,40 +1517,7 @@ function renderInitiatives(filterType) {
 
     let html = '<div class="initiatives-grid">';
     filtered.forEach((ini, index) => {
-        const status = getCurrentStatus(ini);
-        const statusInfo = getStatusCategory(status);
-        const typeClass = `type-${ini.IniTipo}`;
-        const events = ini.IniEventos || [];
-
-        html += `
-            <article class="initiative-card"
-                     data-ini-id="${ini.IniId}"
-                     data-index="${index}"
-                     onclick="toggleCardExpansion(this, event)"
-                     onkeydown="handleInitiativeKeydown(event, this)"
-                     tabindex="0"
-                     role="button"
-                     aria-expanded="false"
-                     aria-label="${ini.IniTitulo}">
-                <div class="initiative-header">
-                    <span class="initiative-badge ${typeClass}" aria-label="Tipo ${ini.IniDescTipo}">${getTypeLabel(ini.IniTipo)}</span>
-                    <span class="initiative-number">${ini.IniNr}/${ini.IniTipo}</span>
-                </div>
-                <div class="initiative-title">${ini.IniTitulo}</div>
-                <div class="initiative-meta">
-                    <span aria-label="Data de inicio"><span aria-hidden="true">📅</span> ${formatDate(ini.DataInicioleg)}</span>
-                    <span aria-label="${events.length} fases"><span aria-hidden="true">📊</span> ${events.length} fases</span>
-                </div>
-                <div class="initiative-status ${statusInfo.cssClass}" title="${status}">
-                    <span class="status-category-label">${statusInfo.label}</span>
-                </div>
-                <div class="initiative-details" aria-hidden="true"></div>
-                <div class="expand-indicator">
-                    <span class="expand-icon" aria-hidden="true">▼</span>
-                    <span class="expand-text">Clique para ver ciclo de vida</span>
-                </div>
-            </article>
-        `;
+        html += InitiativeCard(ini, index);
     });
     html += '</div>';
 
@@ -1800,40 +1899,7 @@ function renderSearchResults(matchedInitiatives) {
 
     let html = '<div class="initiatives-grid">';
     filtered.forEach((ini, index) => {
-        const status = getCurrentStatus(ini);
-        const statusInfo = getStatusCategory(status);
-        const typeClass = `type-${ini.IniTipo}`;
-        const events = ini.IniEventos || [];
-
-        html += `
-            <article class="initiative-card"
-                     data-ini-id="${ini.IniId}"
-                     data-index="${index}"
-                     onclick="toggleCardExpansion(this, event)"
-                     onkeydown="handleInitiativeKeydown(event, this)"
-                     tabindex="0"
-                     role="button"
-                     aria-expanded="false"
-                     aria-label="${ini.IniTitulo}">
-                <div class="initiative-header">
-                    <span class="initiative-badge ${typeClass}" aria-label="Tipo ${ini.IniDescTipo}">${getTypeLabel(ini.IniTipo)}</span>
-                    <span class="initiative-number">${ini.IniNr}/${ini.IniTipo}</span>
-                </div>
-                <div class="initiative-title">${ini.IniTitulo}</div>
-                <div class="initiative-meta">
-                    <span aria-label="Data de inicio"><span aria-hidden="true">📅</span> ${formatDate(ini.DataInicioleg)}</span>
-                    <span aria-label="${events.length} fases"><span aria-hidden="true">📊</span> ${events.length} fases</span>
-                </div>
-                <div class="initiative-status ${statusInfo.cssClass}" title="${status}">
-                    <span class="status-category-label">${statusInfo.label}</span>
-                </div>
-                <div class="initiative-details" aria-hidden="true"></div>
-                <div class="expand-indicator">
-                    <span class="expand-icon" aria-hidden="true">▼</span>
-                    <span class="expand-text">Clique para ver ciclo de vida</span>
-                </div>
-            </article>
-        `;
+        html += InitiativeCard(ini, index);
     });
     html += '</div>';
 
@@ -2226,12 +2292,7 @@ async function showAgendaInitiatives(eventId) {
 
     // Show modal with loading state
     modal.classList.add('active');
-    modalBody.innerHTML = `
-        <div class="modal-loading">
-            <div class="modal-loading-spinner"></div>
-            <div>A carregar iniciativas...</div>
-        </div>
-    `;
+    modalBody.innerHTML = ModalLoading('A carregar iniciativas...');
 
     try {
         const response = await fetch(`${API_URL}/api/agenda/${eventId}/initiatives`);
@@ -2266,56 +2327,18 @@ async function showAgendaInitiatives(eventId) {
         // Render initiatives
         if (linked_initiatives.length === 0) {
             if (!agenda_event.description_html) {
-                html += `
-                    <div class="modal-empty">
-                        <div class="modal-empty-icon">📋</div>
-                        <div>Sem informação adicional para este evento.</div>
-                    </div>
-                `;
+                html += ModalEmpty('Sem informação adicional para este evento.');
             }
         } else {
             html += `<div class="initiatives-section-title">Iniciativas Legislativas</div>`;
             linked_initiatives.forEach(ini => {
-                const statusInfo = getStatusCategory(ini.status || 'Em curso');
-                html += `
-                    <div class="linked-initiative">
-                        <div class="initiative-header-row">
-                            <span class="initiative-type-badge">${ini.type_description}</span>
-                            <span class="initiative-id">ID: ${ini.ini_id}</span>
-                        </div>
-                        <div class="initiative-title-text">${ini.title}</div>
-                        <div class="initiative-meta-row">
-                            ${ini.author ? `
-                                <div class="initiative-meta-item">
-                                    <span class="initiative-meta-label">Autor:</span> ${ini.author}
-                                </div>
-                            ` : ''}
-                            <div class="initiative-meta-item">
-                                <span class="initiative-meta-label">Estado:</span>
-                                <span class="initiative-status ${statusInfo.cssClass}" title="${ini.status || ''}">${statusInfo.label}</span>
-                            </div>
-                        </div>
-                        ${ini.text_link ? `
-                            <a href="${ini.text_link}" target="_blank" class="initiative-link-btn" rel="noopener">
-                                Ver detalhes completos →
-                            </a>
-                        ` : ''}
-                    </div>
-                `;
+                html += LinkedInitiative(ini);
             });
         }
         modalBody.innerHTML = html;
     } catch (error) {
         console.error('Error loading agenda initiatives:', error);
-        modalBody.innerHTML = `
-            <div class="modal-error">
-                <div class="modal-error-icon">⚠️</div>
-                <div>Erro ao carregar iniciativas</div>
-                <div style="font-size: 0.85rem; margin-top: 8px;">
-                    ${error.message}
-                </div>
-            </div>
-        `;
+        modalBody.innerHTML = ModalError(error.message, 'Erro ao carregar iniciativas');
     }
 }
 
