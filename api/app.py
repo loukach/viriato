@@ -892,6 +892,180 @@ def get_orgaos_summary():
         return jsonify({'error': str(e)}), 500
 
 
+@app.route('/api/deputados', methods=['GET'])
+def get_deputados():
+    """
+    Get all deputies with biographical and committee data.
+
+    Query parameters:
+        legislature - Filter by legislature (default: XVII)
+        party - Filter by party
+        circulo - Filter by electoral district
+        situation - Filter by situation (Efetivo, Suspenso, etc.)
+
+    Returns list of deputies with party composition summary.
+    """
+    try:
+        conn = get_db_connection()
+        cur = conn.cursor()
+
+        # Get optional filters
+        legislature = request.args.get('legislature', 'XVII')
+        party = request.args.get('party')
+        circulo = request.args.get('circulo')
+        situation = request.args.get('situation', 'Efetivo')
+
+        # Build query
+        query = """
+            SELECT
+                d.id, d.dep_id, d.dep_cad_id, d.legislature,
+                d.name, d.full_name, d.party, d.circulo_id, d.circulo,
+                d.gender, d.birth_date, d.profession,
+                d.situation, d.situation_start, d.situation_end
+            FROM deputados d
+            WHERE d.legislature = %s
+        """
+        params = [legislature]
+
+        if party:
+            query += " AND d.party = %s"
+            params.append(party)
+
+        if circulo:
+            query += " AND d.circulo = %s"
+            params.append(circulo)
+
+        if situation:
+            query += " AND d.situation = %s"
+            params.append(situation)
+
+        query += " ORDER BY d.party, d.name"
+
+        cur.execute(query, params)
+
+        # Build deputy list
+        deputados = []
+        dep_ids = []
+
+        for row in cur.fetchall():
+            dep_cad_id = row['dep_cad_id']
+            dep_ids.append(dep_cad_id)
+
+            # Calculate age from birth_date
+            age = None
+            if row['birth_date']:
+                today = datetime.now().date()
+                birth = row['birth_date']
+                age = today.year - birth.year - ((today.month, today.day) < (birth.month, birth.day))
+
+            deputados.append({
+                'id': row['id'],
+                'dep_id': row['dep_id'],
+                'dep_cad_id': dep_cad_id,
+                'name': row['name'],
+                'full_name': row['full_name'],
+                'party': row['party'],
+                'circulo': row['circulo'],
+                'gender': row['gender'],
+                'age': age,
+                'profession': row['profession'],
+                'situation': row['situation'],
+                'comissoes': []  # Will be filled below
+            })
+
+        # Get committee memberships for all deputies
+        if dep_ids:
+            cur.execute("""
+                SELECT
+                    m.dep_cad_id,
+                    o.name as comissao_name,
+                    o.acronym,
+                    m.role,
+                    m.member_type
+                FROM orgao_membros m
+                JOIN orgaos o ON m.orgao_id = o.id
+                WHERE m.dep_cad_id = ANY(%s)
+                  AND o.org_type = 'comissao'
+                ORDER BY m.dep_cad_id, o.name
+            """, (dep_ids,))
+
+            # Group committees by deputy
+            comissoes_by_dep = {}
+            for row in cur.fetchall():
+                dep_cad_id = row['dep_cad_id']
+                if dep_cad_id not in comissoes_by_dep:
+                    comissoes_by_dep[dep_cad_id] = []
+                comissoes_by_dep[dep_cad_id].append({
+                    'name': row['comissao_name'],
+                    'acronym': row['acronym'],
+                    'role': row['role'],
+                    'member_type': row['member_type']
+                })
+
+            # Add committees to each deputy
+            for dep in deputados:
+                dep['comissoes'] = comissoes_by_dep.get(dep['dep_cad_id'], [])
+
+        # Get party composition summary (for hemicycle)
+        cur.execute("""
+            SELECT party, COUNT(*) as count
+            FROM deputados
+            WHERE legislature = %s AND situation = 'Efetivo'
+            GROUP BY party
+            ORDER BY count DESC
+        """, (legislature,))
+
+        party_composition = {}
+        total_deputados = 0
+        for row in cur.fetchall():
+            party_name = row['party'] or 'Sem partido'
+            party_composition[party_name] = row['count']
+            total_deputados += row['count']
+
+        # Get gender breakdown
+        cur.execute("""
+            SELECT gender, COUNT(*) as count
+            FROM deputados
+            WHERE legislature = %s AND situation = 'Efetivo'
+            GROUP BY gender
+        """, (legislature,))
+
+        gender_breakdown = {}
+        for row in cur.fetchall():
+            gender_breakdown[row['gender'] or 'Unknown'] = row['count']
+
+        # Get circulo breakdown
+        cur.execute("""
+            SELECT circulo, COUNT(*) as count
+            FROM deputados
+            WHERE legislature = %s AND situation = 'Efetivo'
+            GROUP BY circulo
+            ORDER BY count DESC
+        """, (legislature,))
+
+        circulo_breakdown = {}
+        for row in cur.fetchall():
+            circulo_breakdown[row['circulo']] = row['count']
+
+        cur.close()
+        conn.close()
+
+        return jsonify({
+            'deputados': deputados,
+            'summary': {
+                'total': total_deputados,
+                'party_composition': party_composition,
+                'gender_breakdown': gender_breakdown,
+                'circulo_breakdown': circulo_breakdown
+            }
+        })
+
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return jsonify({'error': str(e)}), 500
+
+
 # Simple in-memory rate limiter for feedback
 feedback_rate_limit = {}
 FEEDBACK_RATE_LIMIT_MINUTES = 5

@@ -2385,6 +2385,307 @@
             }
         }
 
+        /* Assembleia View Styles */
+        #assembleia-view {
+            padding: 32px 0;
+        }
+
+        #assembleia-view .page-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        #assembleia-view .page-subtitle {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            margin-bottom: 32px;
+        }
+
+        /* Large Hemicycle for Assembleia */
+        .assembleia-hemicycle-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 48px;
+            padding: 32px;
+            background: var(--bg-card);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-md);
+        }
+
+        .assembleia-hemicycle {
+            width: 100%;
+            max-width: 600px;
+            aspect-ratio: 2 / 1;
+        }
+
+        .assembleia-hemicycle-segment {
+            transition: opacity 0.2s ease, transform 0.2s ease;
+            cursor: pointer;
+        }
+
+        .assembleia-hemicycle-segment:hover {
+            opacity: 0.85;
+        }
+
+        .assembleia-total {
+            text-align: center;
+            margin-top: 24px;
+        }
+
+        .assembleia-total-number {
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--primary);
+            line-height: 1;
+        }
+
+        .assembleia-total-label {
+            font-size: 1rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        /* Party Legend for Assembleia */
+        .assembleia-legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            justify-content: center;
+            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border-light);
+        }
+
+        .assembleia-legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: var(--bg-primary);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .assembleia-legend-item:hover {
+            background: var(--border-light);
+        }
+
+        .assembleia-legend-item.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .assembleia-legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 4px;
+        }
+
+        .assembleia-legend-label {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .assembleia-legend-count {
+            font-weight: 400;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        .assembleia-legend-item.active .assembleia-legend-count {
+            color: rgba(255,255,255,0.8);
+        }
+
+        /* Summary Stats */
+        .assembleia-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .assembleia-stat-card {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            text-align: center;
+            border: 1px solid var(--border-light);
+        }
+
+        .assembleia-stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .assembleia-stat-label {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        /* Deputados List */
+        .deputados-filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 24px;
+            padding: 16px;
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-light);
+        }
+
+        .deputados-filter {
+            padding: 8px 12px;
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-md);
+            font-size: 0.9rem;
+            background: white;
+            cursor: pointer;
+        }
+
+        .deputados-filter:focus {
+            outline: 2px solid var(--primary);
+            outline-offset: 2px;
+        }
+
+        .deputados-search {
+            flex: 1;
+            min-width: 200px;
+            padding: 8px 12px;
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-md);
+            font-size: 0.9rem;
+        }
+
+        .deputados-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 16px;
+        }
+
+        .deputado-card {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            padding: 16px;
+            border: 1px solid var(--border-light);
+            box-shadow: var(--shadow-sm);
+            transition: all 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .deputado-card:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+
+        .deputado-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .deputado-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .deputado-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .deputado-name {
+            font-weight: 600;
+            font-size: 1rem;
+            color: var(--text-primary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .deputado-party {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .deputado-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .deputado-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .deputado-meta-icon {
+            font-size: 0.9rem;
+        }
+
+        .deputado-comissoes {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+        }
+
+        .deputado-comissao-tag {
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            background: var(--bg-primary);
+            border-radius: var(--radius-sm);
+            color: var(--text-secondary);
+            white-space: nowrap;
+        }
+
+        .deputado-comissao-tag.role {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Responsive for Assembleia */
+        @media (max-width: 768px) {
+            .assembleia-hemicycle {
+                max-width: 100%;
+            }
+
+            .assembleia-legend {
+                gap: 8px;
+            }
+
+            .assembleia-legend-item {
+                padding: 6px 12px;
+            }
+
+            .deputados-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .deputados-filters {
+                flex-direction: column;
+            }
+        }
+
         /* Footer */
         footer {
             text-align: center;
@@ -3288,6 +3589,7 @@
                 <a href="#/iniciativas" class="nav-tab" data-view="iniciativas" role="tab" aria-selected="false">Iniciativas</a>
                 <a href="#/agenda" class="nav-tab" data-view="agenda" role="tab" aria-selected="false">Agenda</a>
                 <a href="#/comissoes" class="nav-tab" data-view="comissoes" role="tab" aria-selected="false">Comissões</a>
+                <a href="#/assembleia" class="nav-tab" data-view="assembleia" role="tab" aria-selected="false">Assembleia</a>
             </div>
             <button class="feedback-cta" onclick="openFeedbackModal()" aria-label="Enviar sugestões">
                 <svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M7.549 10.078c.46.182.88.424 1.258.725.378.3.701.65.97 1.046a4.829 4.829 0 0 1 .848 2.714V15H9.75v-.438a3.894 3.894 0 0 0-1.155-2.782 4.054 4.054 0 0 0-1.251-.84 3.898 3.898 0 0 0-1.532-.315A3.894 3.894 0 0 0 3.03 11.78a4.06 4.06 0 0 0-.84 1.251c-.206.474-.31.985-.315 1.531V15H1v-.438a4.724 4.724 0 0 1 .848-2.713 4.918 4.918 0 0 1 2.229-1.77 2.994 2.994 0 0 1-.555-.493 3.156 3.156 0 0 1-.417-.602 2.942 2.942 0 0 1-.26-.683 3.345 3.345 0 0 1-.095-.739c0-.423.08-.82.24-1.189a3.095 3.095 0 0 1 1.626-1.627 3.067 3.067 0 0 1 2.386-.007 3.095 3.095 0 0 1 1.627 1.627 3.067 3.067 0 0 1 .157 1.928c-.06.237-.148.465-.266.684a3.506 3.506 0 0 1-.417.608c-.16.187-.345.35-.554.492zM5.812 9.75c.301 0 .584-.057.848-.17a2.194 2.194 0 0 0 1.162-1.163c.119-.269.178-.554.178-.854a2.138 2.138 0 0 0-.643-1.538 2.383 2.383 0 0 0-.697-.472 2.048 2.048 0 0 0-.848-.178c-.3 0-.583.057-.847.17a2.218 2.218 0 0 0-1.17 1.17c-.113.264-.17.547-.17.848 0 .3.057.583.17.847.115.264.27.497.466.697a2.168 2.168 0 0 0 1.552.643zM15 1v7h-1.75l-2.625 2.625V8H9.75v-.875h1.75v1.388l1.388-1.388h1.237v-5.25h-8.75v1.572a7.255 7.255 0 0 0-.438.069 2.62 2.62 0 0 0-.437.123V1H15z"/></svg>
@@ -3366,6 +3668,24 @@
                         <div class="stat">
                             <span class="stat-value">XVII</span>
                             <div class="stat-label">Legislatura</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="viewer-card" onclick="navigateTo('#/assembleia')" onkeydown="handleCardKeydown(event, '#/assembleia')" tabindex="0" role="button" aria-label="Ver Composição da Assembleia">
+                    <div class="viewer-icon" aria-hidden="true">👥</div>
+                    <div class="viewer-title">Composição da Assembleia</div>
+                    <div class="viewer-description">
+                        Explore os deputados por partido, círculo eleitoral, género e comissões.
+                    </div>
+                    <div class="viewer-stats">
+                        <div class="stat">
+                            <span class="stat-value" id="home-deputados-count">230</span>
+                            <div class="stat-label">Deputados</div>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value">22</span>
+                            <div class="stat-label">Círculos</div>
                         </div>
                     </div>
                 </div>
@@ -3550,6 +3870,18 @@
         </div>
     </div>
 
+    <!-- ASSEMBLEIA VIEW -->
+    <div id="assembleia-view" class="view" role="tabpanel" aria-labelledby="assembleia-tab">
+        <div class="container">
+            <h1 class="page-title">Composição da Assembleia</h1>
+            <p class="page-subtitle">Deputados da XVII Legislatura por partido, círculo eleitoral e género</p>
+
+            <div id="assembleia-content" class="loading" role="status" aria-live="polite">
+                A carregar deputados...
+            </div>
+        </div>
+    </div>
+
     </main>
 
     <!-- Footer -->
@@ -3570,15 +3902,18 @@
         let INITIATIVES_DATA = [];
         let AGENDA_DATA = [];
         let COMISSOES_DATA = [];
+        let DEPUTADOS_DATA = null;  // null = not loaded, object = { deputados: [], summary: {} }
         let SEARCH_RESULTS = null;  // null = no search, array = search results
         let SELECTED_LEGISLATURE = 'XVII';  // Track selected legislature (default to current)
+        let SELECTED_PARTY_FILTER = null;  // For filtering deputados by party
 
         // Page titles for each route
         const PAGE_TITLES = {
             'home': 'Viriato - Dados Abertos do Parlamento Português',
             'iniciativas': 'Iniciativas Legislativas - Viriato',
             'agenda': 'Agenda Parlamentar - Viriato',
-            'comissoes': 'Comissões Parlamentares - Viriato'
+            'comissoes': 'Comissões Parlamentares - Viriato',
+            'assembleia': 'Composição da Assembleia - Viriato'
         };
 
         // Router
@@ -3627,6 +3962,8 @@
                     loadAgenda();
                 } else if (route === 'comissoes' && COMISSOES_DATA.length === 0) {
                     loadComissoes();
+                } else if (route === 'assembleia' && !DEPUTADOS_DATA) {
+                    loadDeputados();
                 }
             }
         }
@@ -3745,6 +4082,278 @@
             document.getElementById('comissoes-content').innerHTML = '<div class="loading">A carregar comissões...</div>';
             COMISSOES_DATA = [];
             loadComissoes();
+        }
+
+        // Load Deputados Data
+        async function loadDeputados() {
+            try {
+                const response = await fetch(`${API_URL}/api/deputados`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                DEPUTADOS_DATA = await response.json();
+                console.log(`Loaded ${DEPUTADOS_DATA.deputados.length} deputados`);
+                renderAssembleia();
+            } catch (error) {
+                console.error('Error loading deputados:', error);
+                document.getElementById('assembleia-content').innerHTML = `
+                    <div class="error" role="alert">
+                        <div class="error-title">Erro ao carregar deputados</div>
+                        <div class="error-message">O servidor pode estar a iniciar (aguarde 10-30 segundos) ou houve um problema de ligação.</div>
+                        <button class="retry-btn" onclick="retryLoadDeputados()">Tentar novamente</button>
+                    </div>`;
+            }
+        }
+
+        function retryLoadDeputados() {
+            document.getElementById('assembleia-content').innerHTML = '<div class="loading">A carregar deputados...</div>';
+            DEPUTADOS_DATA = null;
+            SELECTED_PARTY_FILTER = null;
+            loadDeputados();
+        }
+
+        // Render Assembleia View
+        function renderAssembleia() {
+            const container = document.getElementById('assembleia-content');
+
+            if (!DEPUTADOS_DATA || DEPUTADOS_DATA.deputados.length === 0) {
+                container.innerHTML = '<div class="no-data">Nenhum deputado encontrado.</div>';
+                return;
+            }
+
+            const { deputados, summary } = DEPUTADOS_DATA;
+            const { total, party_composition, gender_breakdown, circulo_breakdown } = summary;
+
+            // Sort parties by political spectrum (right to left, CH at center)
+            const partyOrder = ['CDS-PP', 'IL', 'PSD', 'JPP', 'CH', 'PS', 'PAN', 'L', 'BE', 'PCP'];
+            const sortedParties = Object.keys(party_composition).sort((a, b) => {
+                const ai = partyOrder.indexOf(a);
+                const bi = partyOrder.indexOf(b);
+                return (ai === -1 ? 99 : ai) - (bi === -1 ? 99 : bi);
+            });
+
+            // Helper function to create hemicycle SVG arc path
+            function createArcPath(startAngle, endAngle, innerRadius, outerRadius, cx, cy) {
+                const startAngleRad = (startAngle - 90) * Math.PI / 180;
+                const endAngleRad = (endAngle - 90) * Math.PI / 180;
+
+                const x1 = cx + outerRadius * Math.cos(startAngleRad);
+                const y1 = cy + outerRadius * Math.sin(startAngleRad);
+                const x2 = cx + outerRadius * Math.cos(endAngleRad);
+                const y2 = cy + outerRadius * Math.sin(endAngleRad);
+                const x3 = cx + innerRadius * Math.cos(endAngleRad);
+                const y3 = cy + innerRadius * Math.sin(endAngleRad);
+                const x4 = cx + innerRadius * Math.cos(startAngleRad);
+                const y4 = cy + innerRadius * Math.sin(startAngleRad);
+
+                const largeArc = (endAngle - startAngle) > 180 ? 1 : 0;
+
+                return `M ${x1} ${y1} A ${outerRadius} ${outerRadius} 0 ${largeArc} 1 ${x2} ${y2} L ${x3} ${y3} A ${innerRadius} ${innerRadius} 0 ${largeArc} 0 ${x4} ${y4} Z`;
+            }
+
+            // Build large hemicycle SVG
+            const cx = 200, cy = 190;
+            const outerRadius = 180, innerRadius = 70;
+            let currentAngle = -90;
+
+            let segments = '';
+            sortedParties.forEach(party => {
+                const count = party_composition[party] || 0;
+                if (count > 0) {
+                    const sweepAngle = (count / total) * 180;
+                    const endAngle = currentAngle + sweepAngle;
+                    const color = PARTY_COLORS[party] || '#888888';
+                    const path = createArcPath(currentAngle, endAngle, innerRadius, outerRadius, cx, cy);
+                    const isActive = SELECTED_PARTY_FILTER === party ? 'active' : '';
+                    segments += `<path class="assembleia-hemicycle-segment ${isActive}" d="${path}" fill="${color}" stroke="white" stroke-width="1" onclick="filterByParty('${party}')"><title>${party}: ${count} deputados</title></path>`;
+                    currentAngle = endAngle;
+                }
+            });
+
+            // Build legend
+            let legendHtml = '<div class="assembleia-legend">';
+            sortedParties.forEach(party => {
+                const count = party_composition[party] || 0;
+                const color = PARTY_COLORS[party] || '#888888';
+                const isActive = SELECTED_PARTY_FILTER === party ? 'active' : '';
+                legendHtml += `
+                    <div class="assembleia-legend-item ${isActive}" onclick="filterByParty('${party}')">
+                        <span class="assembleia-legend-color" style="background-color: ${color}"></span>
+                        <span class="assembleia-legend-label">${party}</span>
+                        <span class="assembleia-legend-count">${count}</span>
+                    </div>`;
+            });
+            // Add "All" option
+            const allActive = !SELECTED_PARTY_FILTER ? 'active' : '';
+            legendHtml += `
+                <div class="assembleia-legend-item ${allActive}" onclick="filterByParty(null)">
+                    <span class="assembleia-legend-color" style="background-color: var(--text-muted)"></span>
+                    <span class="assembleia-legend-label">Todos</span>
+                    <span class="assembleia-legend-count">${total}</span>
+                </div>`;
+            legendHtml += '</div>';
+
+            // Gender stats
+            const maleCount = gender_breakdown['M'] || 0;
+            const femaleCount = gender_breakdown['F'] || 0;
+            const femalePercentage = total > 0 ? Math.round((femaleCount / total) * 100) : 0;
+
+            // Build HTML
+            let html = `
+                <div class="assembleia-hemicycle-container">
+                    <svg class="assembleia-hemicycle" viewBox="0 0 400 200" preserveAspectRatio="xMidYMax meet">
+                        ${segments}
+                    </svg>
+                    <div class="assembleia-total">
+                        <div class="assembleia-total-number">${total}</div>
+                        <div class="assembleia-total-label">Deputados</div>
+                    </div>
+                    ${legendHtml}
+                </div>
+
+                <div class="assembleia-stats">
+                    <div class="assembleia-stat-card">
+                        <div class="assembleia-stat-value">${Object.keys(party_composition).length}</div>
+                        <div class="assembleia-stat-label">Partidos</div>
+                    </div>
+                    <div class="assembleia-stat-card">
+                        <div class="assembleia-stat-value">${femalePercentage}%</div>
+                        <div class="assembleia-stat-label">Mulheres</div>
+                    </div>
+                    <div class="assembleia-stat-card">
+                        <div class="assembleia-stat-value">${Object.keys(circulo_breakdown).length}</div>
+                        <div class="assembleia-stat-label">Círculos</div>
+                    </div>
+                </div>
+
+                <h2 style="font-size: 1.5rem; margin-bottom: 16px;">Deputados${SELECTED_PARTY_FILTER ? ` - ${SELECTED_PARTY_FILTER}` : ''}</h2>
+
+                <div class="deputados-filters">
+                    <input type="text" class="deputados-search" placeholder="Pesquisar deputado..." oninput="filterDeputados(this.value)" id="deputados-search-input">
+                    <select class="deputados-filter" onchange="filterByCirculo(this.value)" id="circulo-filter">
+                        <option value="">Todos os círculos</option>
+                        ${Object.keys(circulo_breakdown).sort().map(c => `<option value="${c}">${c}</option>`).join('')}
+                    </select>
+                    <select class="deputados-filter" onchange="filterByGender(this.value)" id="gender-filter">
+                        <option value="">Género</option>
+                        <option value="M">Masculino</option>
+                        <option value="F">Feminino</option>
+                    </select>
+                </div>
+
+                <div class="deputados-grid" id="deputados-grid">
+                    ${renderDeputadosList(deputados)}
+                </div>
+            `;
+
+            container.innerHTML = html;
+        }
+
+        function renderDeputadosList(deputados) {
+            return deputados.map(dep => {
+                const color = PARTY_COLORS[dep.party] || '#888888';
+                const initials = dep.name.split(' ').map(n => n[0]).slice(0, 2).join('');
+
+                // Gender icon
+                const genderIcon = dep.gender === 'F' ? '♀️' : dep.gender === 'M' ? '♂️' : '';
+
+                // Age display
+                const ageDisplay = dep.age ? `${dep.age} anos` : '';
+
+                // Comissões tags
+                let comissoesHtml = '';
+                if (dep.comissoes && dep.comissoes.length > 0) {
+                    comissoesHtml = '<div class="deputado-comissoes">';
+                    dep.comissoes.slice(0, 3).forEach(c => {
+                        const hasRole = c.role && c.role !== 'Vogal';
+                        const roleClass = hasRole ? 'role' : '';
+                        const label = c.acronym || c.name.replace('Comissão de ', '').substring(0, 20);
+                        comissoesHtml += `<span class="deputado-comissao-tag ${roleClass}" title="${c.name}${hasRole ? ' - ' + c.role : ''}">${label}</span>`;
+                    });
+                    if (dep.comissoes.length > 3) {
+                        comissoesHtml += `<span class="deputado-comissao-tag">+${dep.comissoes.length - 3}</span>`;
+                    }
+                    comissoesHtml += '</div>';
+                }
+
+                return `
+                    <div class="deputado-card" data-name="${dep.name.toLowerCase()}" data-party="${dep.party}" data-circulo="${dep.circulo}" data-gender="${dep.gender}">
+                        <div class="deputado-header">
+                            <div class="deputado-avatar" style="background-color: ${color}">${initials}</div>
+                            <div class="deputado-info">
+                                <div class="deputado-name">${dep.name}</div>
+                                <div class="deputado-party" style="color: ${color}">${dep.party || 'Sem partido'}</div>
+                            </div>
+                        </div>
+                        <div class="deputado-meta">
+                            <span class="deputado-meta-item"><span class="deputado-meta-icon">📍</span> ${dep.circulo || 'N/A'}</span>
+                            ${genderIcon ? `<span class="deputado-meta-item"><span class="deputado-meta-icon">${genderIcon}</span></span>` : ''}
+                            ${ageDisplay ? `<span class="deputado-meta-item">${ageDisplay}</span>` : ''}
+                        </div>
+                        ${comissoesHtml}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function filterByParty(party) {
+            SELECTED_PARTY_FILTER = party;
+            renderAssembleia();
+            applyFilters();
+        }
+
+        function filterDeputados(searchText) {
+            applyFilters();
+        }
+
+        function filterByCirculo(circulo) {
+            applyFilters();
+        }
+
+        function filterByGender(gender) {
+            applyFilters();
+        }
+
+        function applyFilters() {
+            const searchInput = document.getElementById('deputados-search-input');
+            const circuloFilter = document.getElementById('circulo-filter');
+            const genderFilter = document.getElementById('gender-filter');
+
+            const searchText = searchInput ? searchInput.value.toLowerCase() : '';
+            const circulo = circuloFilter ? circuloFilter.value : '';
+            const gender = genderFilter ? genderFilter.value : '';
+
+            const cards = document.querySelectorAll('.deputado-card');
+            cards.forEach(card => {
+                const name = card.dataset.name;
+                const cardParty = card.dataset.party;
+                const cardCirculo = card.dataset.circulo;
+                const cardGender = card.dataset.gender;
+
+                let show = true;
+
+                // Party filter
+                if (SELECTED_PARTY_FILTER && cardParty !== SELECTED_PARTY_FILTER) {
+                    show = false;
+                }
+
+                // Search filter
+                if (searchText && !name.includes(searchText)) {
+                    show = false;
+                }
+
+                // Circulo filter
+                if (circulo && cardCirculo !== circulo) {
+                    show = false;
+                }
+
+                // Gender filter
+                if (gender && cardGender !== gender) {
+                    show = false;
+                }
+
+                card.style.display = show ? '' : 'none';
+            });
         }
 
         // Party colors for committee visualization (official colors)
