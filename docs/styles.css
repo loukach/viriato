@@ -146,6 +146,19 @@ body {
     font-weight: 600;
 }
 
+/* Nav tab icons - hidden on desktop, visible on mobile */
+.nav-icon {
+    display: none;
+    width: 22px;
+    height: 22px;
+    stroke: currentColor;
+    flex-shrink: 0;
+}
+
+.nav-label {
+    /* Visible by default on desktop */
+}
+
 /* Feedback CTA Button */
 .feedback-cta {
     display: flex;
@@ -2742,9 +2755,21 @@ footer a:hover {
     }
 
     .nav-tab {
-        padding: 12px 16px;
+        padding: 12px 14px;
         font-size: 0.9rem;
         flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* Show icons, hide labels on mobile */
+    .nav-icon {
+        display: block;
+    }
+
+    .nav-label {
+        display: none;
     }
 
     .feedback-cta {
