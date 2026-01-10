@@ -1,6 +1,6 @@
 # Project Status - Viriato
 
-**Last Updated:** January 8, 2026
+**Last Updated:** January 10, 2026
 **Current Phase:** Production (Phase 3)
 
 ## Quick Overview
@@ -18,10 +18,12 @@
 - **Status:** ✅ Complete and deployed
 - **Language:** Portuguese (PT-PT) throughout the interface
 - **Target Audience:** Portuguese citizens - all text and interface elements are in Portuguese from Portugal
-- **What:** Hash-routed SPA with 3 views:
-  - **Home** (`#/`) - Purple gradient landing with stats cards
+- **What:** Hash-routed SPA with 5 views:
+  - **Home** (`#/`) - Landing page with stats cards
+  - **A Assembleia** (`#/assembleia`) - Deputies by party, district, and gender
   - **Iniciativas** (`#/iniciativas`) - Legislative initiatives tracker with multi-legislature support
   - **Agenda** (`#/agenda`) - Parliamentary calendar with interactive filters and dual view modes
+  - **Comissões** (`#/comissoes`) - Committee composition and initiative tracking
 - **Features:**
   - Legislature selector (Todas, XVII, XVI, XV, XIV)
   - Full-text search with Portuguese language support
@@ -48,7 +50,10 @@
 - **Tables:**
   - `iniciativas` - 6,748 legislative initiatives (all 4 legislatures)
   - `iniciativa_events` - 57,078 lifecycle events
-  - `agenda_events` - 34 calendar events
+  - `deputados` - 1,446 deputies (230 currently serving)
+  - `deputados_bio` - 330 biographical records
+  - `orgaos` - 122 parliamentary bodies
+  - `agenda_events` - 69 calendar events
 
 ## Data Status
 
@@ -128,7 +133,7 @@ All documentation uses:
   - Addresses pain point: "Legislative process is incomprehensible"
 
 **Deployment Status:**
-- ✅ All changes deployed to GitHub Pages
+- ✅ Frontend deployed on Render.com (Static Site)
 - ✅ Live at https://viriato-frontend.onrender.com/
 
 **Potential features to consider:**
@@ -144,21 +149,19 @@ All documentation uses:
 - Single Page Application with hash routing (no build process required)
 - Flask REST API for data access (CORS enabled)
 - PostgreSQL for persistent storage with full-text search
-- GitHub Pages for frontend hosting (free)
-- Render.com for API and database hosting (free tier)
+- Render.com for all hosting: Static Site (frontend), Web Service (API), PostgreSQL (database)
 
 **Design principles:**
 - "It's important to not hide the complexity of running a democracy" - we show all 60 phases, no simplification
 - **Language:** Portuguese (PT-PT) throughout - this website serves Portuguese citizens accessing their parliament's data, so all interface text, labels, and content are in Portuguese from Portugal
 
 **Git workflow:**
-- All prototypes in `/docs` for GitHub Pages
-- Working copies in `/prototype` for development
+- Frontend source in `/docs` (built to `/dist` for Render)
 - All data committed to git (user decision)
 
 ## File Locations
 
-**Frontend (GitHub Pages):** `/docs` folder
+**Frontend (Render Static Site):** `/docs` folder (source), `/dist` (built)
 - `index.html` - Single Page Application
 
 **Backend API:** `/api` folder

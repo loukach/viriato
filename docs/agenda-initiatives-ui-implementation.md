@@ -97,7 +97,7 @@ Uses `agenda_initiative_links` junction table created in commit `8f2eab0`:
 
 ## Deployment
 
-**Production URL:** https://loukach.github.io/viriato/#/agenda
+**Production URL:** https://viriato-frontend.onrender.com/#/agenda
 **API URL:** https://viriato-api.onrender.com
 
-Both frontend (GitHub Pages) and backend (Render) deployed automatically via git push.
+Both frontend (Render Static Site) and backend (Render Web Service) deployed automatically via git push.

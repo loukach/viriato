@@ -8,9 +8,10 @@ Visualização de dados abertos do Parlamento Português. Tornando a democracia 
 
 Quatro ferramentas interativas construídas com dados abertos do Parlamento Português:
 
-1. **Agenda Parlamentar** - Calendário diário de todas as atividades parlamentares
+1. **A Assembleia** - Deputados por partido, círculo eleitoral e género
 2. **Iniciativas Legislativas** - Acompanhamento de 6,748 propostas através do processo legislativo
-3. **Comissões Parlamentares** - Composição e trabalho das 18 comissões da XVII Legislatura
+3. **Agenda Parlamentar** - Calendário diário de todas as atividades parlamentares
+4. **Comissões Parlamentares** - Composição e trabalho das 18 comissões da XVII Legislatura
 
 ## Idioma
 
@@ -26,13 +27,13 @@ Quatro ferramentas interativas construídas com dados abertos do Parlamento Port
 - ✅ PostgreSQL database backend deployed on Render.com
 - ✅ REST API with 10+ endpoints
 - ✅ Single Page Application (SPA) with hash routing
-- ✅ Full production deployment on GitHub Pages + Render.com
+- ✅ Full production deployment on Render.com (Static Site + Web Service + PostgreSQL)
 - ✅ Committee composition and initiative tracking
 - ✅ Simplified status categories (60+ phases → 7 labels)
 
 **Built:**
-- Single Page Application with four views (Home, Iniciativas, Agenda, Comissões)
-- PostgreSQL database with 6,748 iniciativas (XIV-XVII), 57,078 events, 34 agenda items
+- Single Page Application with five views (Home, Assembleia, Iniciativas, Agenda, Comissões)
+- PostgreSQL database with 6,748 iniciativas (XIV-XVII), 57,078 events, 69 agenda items
 - Flask REST API backend with multi-legislature support
 - Automatic data loading from API
 - Responsive design for all screen sizes
@@ -75,8 +76,8 @@ No build process needed - Single Page Application with API data loading.
 
 ```
 ┌─────────────────┐
-│  GitHub Pages   │  Single Page App (docs/index.html)
-│  (Frontend)     │  4 views: Home, Iniciativas, Agenda, Comissões
+│  Render.com     │  Single Page App (docs/index.html)
+│  (Static Site)  │  5 views: Home, Assembleia, Iniciativas, Agenda, Comissões
 └────────┬────────┘
          │
          ↓ HTTPS
@@ -96,7 +97,7 @@ No build process needed - Single Page Application with API data loading.
 
 ```
 viriato/
-├── docs/                     # GitHub Pages site (SPA)
+├── docs/                     # Frontend source (SPA)
 │   ├── index.html           # Single Page Application
 │   └── archive/             # Legacy standalone pages
 ├── api/                      # Flask REST API
@@ -180,7 +181,7 @@ Based on ideas from [adamastor](https://github.com/bcamarneiro/adamastor).
 - Single Page Application (vanilla JavaScript, no frameworks)
 - Hash-based routing for bookmarkable views
 - Responsive CSS with mobile support
-- Hosted on GitHub Pages
+- Hosted on Render.com (Static Site)
 
 **Backend:**
 - Flask REST API (Python)

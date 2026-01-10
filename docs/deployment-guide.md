@@ -6,8 +6,8 @@ Complete guide to deploying Viriato (Portuguese Parliament data visualization) t
 
 ```
 ┌─────────────────┐
-│  GitHub Pages   │  Static Frontend (docs/)
-│  (Frontend)     │  → Calls API
+│  Render.com     │  Static Frontend (docs/)
+│  (Static Site)  │  → Calls API
 └────────┬────────┘
          │
          ↓ HTTPS
@@ -19,7 +19,7 @@ Complete guide to deploying Viriato (Portuguese Parliament data visualization) t
          ↓ SQL
 ┌─────────────────┐
 │   Render.com    │  PostgreSQL Database
-│   (Database)    │  808 iniciativas, 4888 events
+│   (Database)    │  6,748 iniciativas, 57,078 events
 └─────────────────┘
 ```
 
@@ -28,7 +28,7 @@ Complete guide to deploying Viriato (Portuguese Parliament data visualization) t
 ✅ **Already completed:**
 - PostgreSQL database created on Render (`viriato`)
 - Database schema applied
-- Data loaded (808 iniciativas, 34 agenda events)
+- Data loaded (6,748 iniciativas, 69 agenda events)
 
 🔲 **Need to deploy:**
 - Flask API backend
@@ -288,7 +288,7 @@ Common causes:
 API already has CORS enabled. If issues persist:
 ```python
 # In api/app.py
-CORS(app, origins=["https://loukach.github.io"])
+CORS(app, origins=["https://viriato-frontend.onrender.com"])
 ```
 
 ### Database Connection Timeout

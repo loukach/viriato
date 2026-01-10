@@ -51,7 +51,7 @@
 │                         POSTGRESQL DATABASE                                  │
 │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐     │
 │  │ iniciativas  │  │  deputados   │  │    orgaos    │  │ agenda_events│     │
-│  │  (808 rows)  │  │ (1,446 rows) │  │  (122 rows)  │  │  (34 rows)   │     │
+│  │ (6,748 rows) │  │ (1,446 rows) │  │  (122 rows)  │  │  (69 rows)   │     │
 │  └──────────────┘  └──────────────┘  └──────────────┘  └──────────────┘     │
 │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐     │
 │  │iniciativa_   │  │deputados_bio │  │orgao_membros │  │iniciativa_   │     │
@@ -221,7 +221,7 @@ psql $DATABASE_URL -f scripts/schema.sql
 
 ```bash
 python scripts/load_to_postgres.py
-# Expected: ~808 iniciativas, ~5000 events, ~34 agenda events
+# Expected: ~6,748 iniciativas (all legislatures), ~57,000 events, ~69 agenda events
 ```
 
 ### `scripts/load_deputados.py`
@@ -324,7 +324,7 @@ python scripts/load_authors.py
                               ▼                    ▼
                     ┌─────────────────┐  ┌─────────────────┐
                     │     orgaos      │  │   iniciativas   │
-                    │ (122 committees)│  │ (808 initiatives)│
+                    │ (122 committees)│  │(6,748 initiatives)│
                     └────────┬────────┘  └────────┬────────┘
                              │                    │
          │                    ├──────────────────┐
@@ -338,7 +338,7 @@ python scripts/load_authors.py
 
 ┌─────────────────┐       ┌─────────────────┐
 │  agenda_events  │◄──────│agenda_initiative│
-│  (34 events)    │       │    _links       │
+│  (69 events)    │       │    _links       │
 └─────────────────┘       └─────────────────┘
 ```
 
@@ -346,7 +346,7 @@ python scripts/load_authors.py
 
 | Table | Rows | Description |
 |-------|------|-------------|
-| `iniciativas` | 808 | Legislative initiatives (XVII legislature) |
+| `iniciativas` | 6,748 | Legislative initiatives (XIV-XVII legislatures) |
 | `iniciativa_events` | ~5,000 | Lifecycle events per initiative |
 | `iniciativa_comissao` | ~1,500 | Initiative-committee relationships |
 | `iniciativa_conjunta` | ~200 | Joint initiative links |
@@ -355,7 +355,7 @@ python scripts/load_authors.py
 | `deputados_bio` | 330 | Biographical data from RegistoBiografico |
 | `orgaos` | 122 | Committees, working groups |
 | `orgao_membros` | ~1,200 | Committee membership |
-| `agenda_events` | 34 | Parliamentary calendar |
+| `agenda_events` | 69 | Parliamentary calendar |
 | `agenda_initiative_links` | ~100 | Agenda-initiative links |
 
 ---
