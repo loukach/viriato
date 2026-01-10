@@ -3968,6 +3968,70 @@
             }
         }
 
+        // ============================================================
+        // DATA LOADING & RENDERING PATTERNS
+        // ============================================================
+        // When adding new data views, follow these patterns to ensure
+        // consistent behavior and avoid common bugs (loader issues, etc.)
+        //
+        // LOAD FUNCTION PATTERN (loadXxx):
+        //   1. Call showLoading(containerId) if re-fetching
+        //   2. Fetch data from API
+        //   3. Update homepage count: updateHomeCount('home-xxx-count', data.length)
+        //   4. Call render function: renderXxx()
+        //   5. In catch block: call showError(containerId, retryFn, 'Error title')
+        //
+        // RENDER FUNCTION PATTERN (renderXxx):
+        //   1. Get container: const container = document.getElementById('xxx')
+        //   2. Remove loading state: container.classList.remove('loading')
+        //   3. Handle empty data: if (!DATA || DATA.length === 0) { ... return }
+        //   4. Build HTML and set: container.innerHTML = html
+        //
+        // RETRY FUNCTION PATTERN (retryLoadXxx):
+        //   1. Call showLoading(containerId)
+        //   2. Reset data: XXX_DATA = null/[]
+        //   3. Call load function: loadXxx()
+        // ============================================================
+
+        // Helper: Show loading state on a container
+        function showLoading(containerId, message) {
+            const container = document.getElementById(containerId);
+            if (container) {
+                container.classList.add('loading');
+                container.innerHTML = message || 'A carregar...';
+            }
+        }
+
+        // Helper: Remove loading state from a container
+        function hideLoading(containerId) {
+            const container = document.getElementById(containerId);
+            if (container) {
+                container.classList.remove('loading');
+            }
+        }
+
+        // Helper: Show error state with retry button
+        function showError(containerId, retryFunctionName, errorTitle, errorMessage) {
+            const container = document.getElementById(containerId);
+            if (container) {
+                container.classList.remove('loading');
+                container.innerHTML = `
+                    <div class="error" role="alert">
+                        <div class="error-title">${errorTitle || 'Erro ao carregar dados'}</div>
+                        <div class="error-message">${errorMessage || 'O servidor pode estar a iniciar (aguarde 10-30 segundos) ou houve um problema de ligação.'}</div>
+                        <button class="retry-btn" onclick="${retryFunctionName}()">Tentar novamente</button>
+                    </div>`;
+            }
+        }
+
+        // Helper: Update homepage count element
+        function updateHomeCount(elementId, count) {
+            const element = document.getElementById(elementId);
+            if (element) {
+                element.textContent = count;
+            }
+        }
+
         // Load Initiatives Data
         async function loadInitiatives() {
             try {
@@ -4007,21 +4071,12 @@
                 setupFilters();
             } catch (error) {
                 console.error('Error loading initiatives:', error);
-                const container = document.getElementById('initiatives');
-                container.classList.remove('loading');
-                container.innerHTML = `
-                    <div class="error" role="alert">
-                        <div class="error-title">Erro ao carregar iniciativas</div>
-                        <div class="error-message">O servidor pode estar a iniciar (aguarde 10-30 segundos) ou houve um problema de ligação.</div>
-                        <button class="retry-btn" onclick="retryLoadInitiatives()">Tentar novamente</button>
-                    </div>`;
+                showError('initiatives', 'retryLoadInitiatives', 'Erro ao carregar iniciativas');
             }
         }
 
         function retryLoadInitiatives() {
-            const container = document.getElementById('initiatives');
-            container.classList.add('loading');
-            container.innerHTML = 'A carregar iniciativas...';
+            showLoading('initiatives', 'A carregar iniciativas...');
             INITIATIVES_DATA = [];
             loadInitiatives();
         }
@@ -4036,7 +4091,7 @@
                 AGENDA_DATA = await response.json();
                 console.log(`Loaded ${AGENDA_DATA.length} agenda events`);
 
-                document.getElementById('home-agenda-count').textContent = AGENDA_DATA.length;
+                updateHomeCount('home-agenda-count', AGENDA_DATA.length);
 
                 // Render based on current view
                 if (CURRENT_AGENDA_VIEW === 'timeline') {
@@ -4046,21 +4101,12 @@
                 }
             } catch (error) {
                 console.error('Error loading agenda:', error);
-                const container = document.getElementById('agenda');
-                container.classList.remove('loading');
-                container.innerHTML = `
-                    <div class="error" role="alert">
-                        <div class="error-title">Erro ao carregar agenda</div>
-                        <div class="error-message">O servidor pode estar a iniciar (aguarde 10-30 segundos) ou houve um problema de ligação.</div>
-                        <button class="retry-btn" onclick="retryLoadAgenda()">Tentar novamente</button>
-                    </div>`;
+                showError('agenda', 'retryLoadAgenda', 'Erro ao carregar agenda');
             }
         }
 
         function retryLoadAgenda() {
-            const container = document.getElementById('agenda');
-            container.classList.add('loading');
-            container.innerHTML = 'A carregar agenda...';
+            showLoading('agenda', 'A carregar agenda...');
             AGENDA_DATA = [];
             loadAgenda();
         }
@@ -4075,27 +4121,16 @@
                 COMISSOES_DATA = await response.json();
                 console.log(`Loaded ${COMISSOES_DATA.length} committees`);
 
-                // Update homepage count
-                document.getElementById('home-comissoes-count').textContent = COMISSOES_DATA.length;
-
+                updateHomeCount('home-comissoes-count', COMISSOES_DATA.length);
                 renderComissoes();
             } catch (error) {
                 console.error('Error loading comissões:', error);
-                const container = document.getElementById('comissoes-content');
-                container.classList.remove('loading');
-                container.innerHTML = `
-                    <div class="error" role="alert">
-                        <div class="error-title">Erro ao carregar comissões</div>
-                        <div class="error-message">O servidor pode estar a iniciar (aguarde 10-30 segundos) ou houve um problema de ligação.</div>
-                        <button class="retry-btn" onclick="retryLoadComissoes()">Tentar novamente</button>
-                    </div>`;
+                showError('comissoes-content', 'retryLoadComissoes', 'Erro ao carregar comissões');
             }
         }
 
         function retryLoadComissoes() {
-            const container = document.getElementById('comissoes-content');
-            container.classList.add('loading');
-            container.innerHTML = 'A carregar comissões...';
+            showLoading('comissoes-content', 'A carregar comissões...');
             COMISSOES_DATA = [];
             loadComissoes();
         }
@@ -4111,26 +4146,17 @@
                 console.log(`Loaded ${DEPUTADOS_DATA.deputados.length} deputados (summary.total: ${DEPUTADOS_DATA.summary.total})`);
 
                 // Update homepage count with summary total (Efetivo deputies)
-                document.getElementById('home-deputados-count').textContent = DEPUTADOS_DATA.summary.total;
+                updateHomeCount('home-deputados-count', DEPUTADOS_DATA.summary.total);
 
                 renderAssembleia();
             } catch (error) {
                 console.error('Error loading deputados:', error);
-                const container = document.getElementById('assembleia-content');
-                container.classList.remove('loading');
-                container.innerHTML = `
-                    <div class="error" role="alert">
-                        <div class="error-title">Erro ao carregar deputados</div>
-                        <div class="error-message">O servidor pode estar a iniciar (aguarde 10-30 segundos) ou houve um problema de ligação.</div>
-                        <button class="retry-btn" onclick="retryLoadDeputados()">Tentar novamente</button>
-                    </div>`;
+                showError('assembleia-content', 'retryLoadDeputados', 'Erro ao carregar deputados');
             }
         }
 
         function retryLoadDeputados() {
-            const container = document.getElementById('assembleia-content');
-            container.classList.add('loading');
-            container.innerHTML = 'A carregar deputados...';
+            showLoading('assembleia-content', 'A carregar deputados...');
             DEPUTADOS_DATA = null;
             SELECTED_PARTY_FILTER = null;
             loadDeputados();
@@ -4138,8 +4164,8 @@
 
         // Render Assembleia View
         function renderAssembleia() {
+            hideLoading('assembleia-content');
             const container = document.getElementById('assembleia-content');
-            container.classList.remove('loading');
 
             if (!DEPUTADOS_DATA || DEPUTADOS_DATA.deputados.length === 0) {
                 container.innerHTML = '<div class="no-data">Nenhum deputado encontrado.</div>';
@@ -4397,8 +4423,8 @@
 
         // Render Comissões
         function renderComissoes() {
+            hideLoading('comissoes-content');
             const container = document.getElementById('comissoes-content');
-            container.classList.remove('loading');
 
             if (COMISSOES_DATA.length === 0) {
                 container.innerHTML = '<div class="no-data">Nenhuma comissão encontrada.</div>';
@@ -5219,6 +5245,8 @@
         }
 
         function renderInitiatives(filterType) {
+            hideLoading('initiatives');
+
             // If there's an active search, use the search results renderer instead
             if (SEARCH_RESULTS !== null) {
                 const matchingIds = new Set(SEARCH_RESULTS.map(r => r.ini_id));
@@ -5272,7 +5300,6 @@
             html += '</div>';
 
             container.innerHTML = filtered.length > 0 ? html : '<p style="text-align: center; color: #6b7280;">Nenhuma iniciativa encontrada</p>';
-            container.classList.remove('loading');
         }
 
         // Store current filtered data for expansion row access
@@ -5637,6 +5664,7 @@
         }
 
         function renderSearchResults(matchedInitiatives) {
+            hideLoading('initiatives');
             const container = document.getElementById('initiatives');
 
             // Apply current type filter to search results (use [data-type] to avoid matching legislature buttons)
@@ -5687,11 +5715,11 @@
             html += '</div>';
 
             container.innerHTML = filtered.length > 0 ? html : '<p style="text-align: center; color: #6b7280;">Nenhuma iniciativa encontrada</p>';
-            container.classList.remove('loading');
         }
 
         // Render Agenda - Grid Calendar Layout
         function renderAgenda() {
+            hideLoading('agenda');
             const container = document.getElementById('agenda');
 
             // Filter out metadata events and apply type filters
@@ -5792,7 +5820,6 @@
 
             html += '</div>';
             container.innerHTML = html;
-            container.classList.remove('loading');
         }
 
         function parseAgendaDate(dateStr) {
@@ -5894,6 +5921,7 @@
 
         // Render Agenda Timeline View
         function renderAgendaTimeline() {
+            hideLoading('agenda');
             const container = document.getElementById('agenda');
             const EVENT_HEIGHT = 18; // Height per event row in pixels
 
@@ -5917,7 +5945,6 @@
 
             if (eventDates.length === 0) {
                 container.innerHTML = '<p style="text-align: center; color: #6b7280; padding: 40px;">Sem eventos agendados</p>';
-                container.classList.remove('loading');
                 return;
             }
 
@@ -6065,7 +6092,6 @@
 
             html += '</div></div>';
             container.innerHTML = html;
-            container.classList.remove('loading');
         }
 
         // Agenda Event Modal Functions
