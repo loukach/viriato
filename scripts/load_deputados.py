@@ -30,7 +30,7 @@ if sys.platform == 'win32':
     sys.stderr = codecs.getwriter('utf-8')(sys.stderr.buffer, 'strict')
 
 import psycopg2
-from psycopg2.extras import execute_values, Json
+from psycopg2.extras import execute_values
 
 # Try to load .env file
 try:
@@ -171,7 +171,7 @@ def insert_deputados(conn, deputados):
             dep['situation'],
             dep['situation_start'],
             dep['situation_end'],
-            Json(dep['raw_data'])
+            json.dumps(dep['raw_data'])
         ))
 
     # Bulk insert using execute_values
@@ -229,16 +229,24 @@ def load_bio_from_file(filepath):
         if not cad_id:
             continue
 
+        # Helper to convert lists to newline-separated strings
+        def to_text(val):
+            if val is None:
+                return None
+            if isinstance(val, list):
+                return '\n'.join(str(item) for item in val if item)
+            return str(val) if val else None
+
         bio = {
             'cad_id': int(cad_id),
             'full_name': record.get('CadNomeCompleto'),
             'gender': record.get('CadSexo'),
             'birth_date': parse_date(record.get('CadDtNascimento')),
-            'profession': record.get('CadProfissao'),
-            'education': record.get('CadHabilitacoes'),
-            'published_works': record.get('CadObrasPublicadas'),
-            'awards': record.get('CadCondecoracoes'),
-            'titles': record.get('CadTitulos'),
+            'profession': to_text(record.get('CadProfissao')),
+            'education': to_text(record.get('CadHabilitacoes')),
+            'published_works': to_text(record.get('CadObrasPublicadas')),
+            'awards': to_text(record.get('CadCondecoracoes')),
+            'titles': to_text(record.get('CadTitulos')),
             'raw_data': record
         }
         bio_records.append(bio)
@@ -269,7 +277,7 @@ def insert_bio(conn, bio_records):
             bio['published_works'],
             bio['awards'],
             bio['titles'],
-            Json(bio['raw_data'])
+            json.dumps(bio['raw_data'])
         ))
 
     # Bulk insert using execute_values
