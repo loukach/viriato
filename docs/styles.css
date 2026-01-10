@@ -37,6 +37,15 @@
     --transition-fast: 0.15s ease;
     --transition-normal: 0.3s ease;
     --transition-slow: 0.5s ease;
+
+    /* Initiative status colors */
+    --status-submitted: #9ca3af;
+    --status-announced: #38bdf8;
+    --status-discussion: #3b82f6;
+    --status-voting: #f97316;
+    --status-finalizing: #8b5cf6;
+    --status-approved: #10b981;
+    --status-rejected: #ef4444;
 }
 
 * {
@@ -74,12 +83,6 @@ body {
 
 /* Focus styles for accessibility */
 *:focus-visible {
-    outline: 2px solid #667eea;
-    outline-offset: 2px;
-}
-
-button:focus-visible,
-a:focus-visible {
     outline: 2px solid #667eea;
     outline-offset: 2px;
 }
@@ -775,14 +778,6 @@ a:focus-visible {
     text-shadow: 0 1px 2px rgba(0,0,0,0.2);
 }
 
-.bar-value-outside {
-    position: absolute;
-    right: -35px;
-    font-size: 0.8rem;
-    font-weight: 600;
-    color: var(--text-muted);
-}
-
 /* Party Colors - Official colors
    Updated: 2026-01-08 */
 .party-PS { background: linear-gradient(135deg, #FF66FF, #E44DE4); }     /* Pink */
@@ -972,49 +967,49 @@ a:focus-visible {
     color: #6b7280;
 }
 .initiative-status.status-submitted::before {
-    background: #9ca3af;
+    background: var(--status-submitted);
 }
 
 .initiative-status.status-announced {
     color: #0284c7;
 }
 .initiative-status.status-announced::before {
-    background: #38bdf8;
+    background: var(--status-announced);
 }
 
 .initiative-status.status-discussion {
     color: #2563eb;
 }
 .initiative-status.status-discussion::before {
-    background: #3b82f6;
+    background: var(--status-discussion);
 }
 
 .initiative-status.status-voting {
     color: #ea580c;
 }
 .initiative-status.status-voting::before {
-    background: #f97316;
+    background: var(--status-voting);
 }
 
 .initiative-status.status-finalizing {
     color: #7c3aed;
 }
 .initiative-status.status-finalizing::before {
-    background: #8b5cf6;
+    background: var(--status-finalizing);
 }
 
 .initiative-status.status-approved {
     color: #059669;
 }
 .initiative-status.status-approved::before {
-    background: #10b981;
+    background: var(--status-approved);
 }
 
 .initiative-status.status-rejected {
     color: #dc2626;
 }
 .initiative-status.status-rejected::before {
-    background: #ef4444;
+    background: var(--status-rejected);
 }
 
 .status-category-label {
@@ -1251,13 +1246,13 @@ a:focus-visible {
     transform: scale(1.3);
 }
 
-.timeline-event-dot.status-submitted { background: #9ca3af; }
-.timeline-event-dot.status-announced { background: #38bdf8; }
-.timeline-event-dot.status-discussion { background: #3b82f6; }
-.timeline-event-dot.status-voting { background: #f97316; }
-.timeline-event-dot.status-finalizing { background: #8b5cf6; }
-.timeline-event-dot.status-approved { background: #10b981; }
-.timeline-event-dot.status-rejected { background: #ef4444; }
+.timeline-event-dot.status-submitted { background: var(--status-submitted); }
+.timeline-event-dot.status-announced { background: var(--status-announced); }
+.timeline-event-dot.status-discussion { background: var(--status-discussion); }
+.timeline-event-dot.status-voting { background: var(--status-voting); }
+.timeline-event-dot.status-finalizing { background: var(--status-finalizing); }
+.timeline-event-dot.status-approved { background: var(--status-approved); }
+.timeline-event-dot.status-rejected { background: var(--status-rejected); }
 
 .timeline-event-label {
     position: absolute;
@@ -1918,12 +1913,6 @@ a:focus-visible {
     border: 1px solid var(--border-light);
 }
 
-.legend-item {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
-
 .legend-color {
     width: 16px;
     height: 16px;
@@ -1949,6 +1938,7 @@ a:focus-visible {
     border: 1px solid var(--border-light);
     box-shadow: var(--shadow-sm);
     transition: all 0.2s ease;
+    cursor: pointer;
 }
 
 .comissao-card:hover {
@@ -2006,11 +1996,6 @@ a:focus-visible {
 .party-count {
     font-size: 0.75rem;
     font-weight: 600;
-}
-
-/* Clickable committee card */
-.comissao-card {
-    cursor: pointer;
 }
 
 /* Committee card header with stats */
@@ -2359,13 +2344,13 @@ a:focus-visible {
     line-height: 1.2;
 }
 
-.committee-status-bar-fill.status-submitted { background: #9ca3af; }
-.committee-status-bar-fill.status-announced { background: #38bdf8; }
-.committee-status-bar-fill.status-discussion { background: #3b82f6; }
-.committee-status-bar-fill.status-voting { background: #f97316; }
-.committee-status-bar-fill.status-finalizing { background: #8b5cf6; }
-.committee-status-bar-fill.status-approved { background: #10b981; }
-.committee-status-bar-fill.status-rejected { background: #ef4444; }
+.committee-status-bar-fill.status-submitted { background: var(--status-submitted); }
+.committee-status-bar-fill.status-announced { background: var(--status-announced); }
+.committee-status-bar-fill.status-discussion { background: var(--status-discussion); }
+.committee-status-bar-fill.status-voting { background: var(--status-voting); }
+.committee-status-bar-fill.status-finalizing { background: var(--status-finalizing); }
+.committee-status-bar-fill.status-approved { background: var(--status-approved); }
+.committee-status-bar-fill.status-rejected { background: var(--status-rejected); }
 
 @media (max-width: 768px) {
     .comissoes-grid {
