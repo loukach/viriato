@@ -45,7 +45,7 @@ export function CommitteeCard({ committee, onClick }: CommitteeCardProps) {
       <p className="text-xs text-gray-500 mb-3">{committee.total_members} membros</p>
 
       {/* Mini Hemicycle */}
-      <div className="relative h-16">
+      <div className="relative w-full aspect-[2/1] overflow-hidden">
         <Hemicycle
           partyComposition={committee.parties}
           total={committee.total_members}
