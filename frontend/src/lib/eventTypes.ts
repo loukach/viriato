@@ -33,43 +33,60 @@ export const EVENT_TYPES: EventTypeConfig[] = [
  */
 export function getEventTypeKey(eventType: string): EventType {
   const typeMap: Record<string, EventType> = {
-    // Plenary sessions
+    // Plenary sessions - raw API values
+    'Plenário': 'plenario',
+    'Reunião Plenária': 'plenario',
+    'Sessão Plenária': 'plenario',
+    'Reuniões Plenárias': 'plenario',
+    'Plenario': 'plenario',
     'Reuniao Plenaria': 'plenario',
     'Sessao Plenaria': 'plenario',
-    'Reuniões Plenárias': 'plenario',
-    Plenario: 'plenario',
 
-    // Committee meetings
-    'Reuniao de Comissao': 'comissoes',
-    Comissao: 'comissoes',
-    Comissoes: 'comissoes',
+    // Committee meetings - raw API values
     'Comissões Parlamentares': 'comissoes',
+    'Comissão Parlamentar': 'comissoes',
+    'Reuniao de Comissao': 'comissoes',
+    'Comissao': 'comissoes',
+    'Comissoes': 'comissoes',
 
-    // Parliamentary groups
-    'Reuniao GP': 'grupos',
-    'Grupo Parlamentar': 'grupos',
+    // Parliamentary groups - raw API value
+    'Grupos Parlamentares / Partidos / DURP / Ninsc': 'grupos',
     'Grupos Parlamentares': 'grupos',
+    'Grupo Parlamentar': 'grupos',
+    'Reuniao GP': 'grupos',
 
     // Leaders conference
+    'Conferência de Líderes': 'lideres',
     'Conferencia de Lideres': 'lideres',
     'Conf. Lideres': 'lideres',
-    'Conferência de Líderes': 'lideres',
 
     // Working groups
     'Grupo de Trabalho': 'trabalho',
     'Grupos de Trabalho': 'trabalho',
     'GT': 'trabalho',
 
-    // Visits
-    Visita: 'visitas',
+    // Visits - raw API value
+    'Visitas ao Palácio de S. Bento': 'visitas',
+    'Visitas ao Palacio de S. Bento': 'visitas',
+    'Visitas Escolares': 'visitas',
     'Visita de Estudo': 'visitas',
     'Visita Escola': 'visitas',
-    'Visitas Escolares': 'visitas',
+    'Visita': 'visitas',
 
-    // Assistances (non-legislative plenary)
-    Assistencia: 'assistencias',
-    'Assistencia Plenario': 'assistencias',
+    // Assistances - raw API value
+    'Assistências ao Plenário': 'assistencias',
+    'Assistencias ao Plenario': 'assistencias',
     'Assistências em Plenário': 'assistencias',
+    'Assistencia Plenario': 'assistencias',
+    'Assistencia': 'assistencias',
+
+    // President's agenda - map to plenario (official acts)
+    'Agenda do Presidente da Assembleia da República': 'plenario',
+    'Agenda do Presidente da Assembleia da Republica': 'plenario',
+
+    // Calendar summary - map to comissoes as fallback
+    'Resumo da Calendarização': 'comissoes',
+    'Resumo da Calendarizacao': 'comissoes',
   }
 
   return typeMap[eventType] || 'comissoes'
