@@ -37,6 +37,14 @@ Track issues found and fixed during development. Helps prevent regressions.
 - **Fix**: Added explicit height container (`style={{ height: '128px' }}`) and restructured flex layout
 - **Files**: `frontend/src/components/MonthWidget.tsx`
 
+### Comissões page hemicycle overflow
+- **Issue**: Hemicycle visualizations were overflowing outside their respective cards
+- **Cause**: Container had fixed `h-16` (64px) but SVG with 2:1 aspect ratio needed more height when scaled to full width
+- **Fix**: Changed container from `h-16` to `aspect-[2/1] overflow-hidden` for proper responsive sizing
+- **Files**: `frontend/src/components/CommitteeCard.tsx`
+- **Before**: `<div className="relative h-16">` - fixed height caused overflow
+- **After**: `<div className="relative w-full aspect-[2/1] overflow-hidden">` - maintains SVG aspect ratio
+
 ## Design Decisions Log
 
 ### Funnel colors (2026-01-11)
