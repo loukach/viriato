@@ -5,9 +5,10 @@ import type { Initiative } from '../lib/api'
 interface LifecycleFunnelProps {
   initiatives: Initiative[]
   title: string
+  color?: string // Single color for all phases
 }
 
-export function LifecycleFunnel({ initiatives, title }: LifecycleFunnelProps) {
+export function LifecycleFunnel({ initiatives, title, color = '#2563eb' }: LifecycleFunnelProps) {
   // Compute counts by status category
   const phaseCounts = useMemo(() => {
     const counts: Record<StatusCategory, number> = {
@@ -37,7 +38,7 @@ export function LifecycleFunnel({ initiatives, title }: LifecycleFunnelProps) {
       <h3 className="text-lg font-bold text-gray-800 mb-4">{title}</h3>
 
       <div className="flex items-end justify-between gap-2 h-48">
-        {categories.map(({ category, label, color }) => {
+        {categories.map(({ category, label }) => {
           const count = phaseCounts[category]
           const heightPercent = (count / maxCount) * 100
           const minHeight = count > 0 ? Math.max(heightPercent, 10) : 5

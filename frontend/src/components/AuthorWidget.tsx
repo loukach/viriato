@@ -10,11 +10,15 @@ export function AuthorWidget({ initiatives }: AuthorWidgetProps) {
   const authors = useMemo(() => {
     // Count government initiatives
     let governmentCount = 0
+    let outrosCount = 0
     const partyCounts: Record<string, number> = {}
 
     initiatives.forEach((ini) => {
+      let hasAuthor = false
+
       if (ini.IniAutorOutros?.nome === 'Governo') {
         governmentCount++
+        hasAuthor = true
       }
 
       if (ini.IniAutorGruposParlamentares) {
@@ -25,24 +29,33 @@ export function AuthorWidget({ initiatives }: AuthorWidgetProps) {
         groups.forEach((g) => {
           if (g.GP) {
             partyCounts[g.GP] = (partyCounts[g.GP] || 0) + 1
+            hasAuthor = true
           }
         })
       }
+
+      // Count "Outros" for initiatives without Government or party authors
+      if (!hasAuthor) {
+        outrosCount++
+      }
     })
 
-    // Build combined list: Government first, then parties
-    const result: { name: string; count: number; isGovernment: boolean }[] = []
+    // Build combined list: Government first, then all parties sorted by count, then Outros
+    const result: { name: string; count: number; isGovernment: boolean; isOutros: boolean }[] = []
 
     if (governmentCount > 0) {
-      result.push({ name: 'Governo', count: governmentCount, isGovernment: true })
+      result.push({ name: 'Governo', count: governmentCount, isGovernment: true, isOutros: false })
     }
 
     Object.entries(partyCounts)
       .sort((a, b) => b[1] - a[1])
-      .slice(0, 8)
       .forEach(([party, count]) => {
-        result.push({ name: party, count, isGovernment: false })
+        result.push({ name: party, count, isGovernment: false, isOutros: false })
       })
+
+    if (outrosCount > 0) {
+      result.push({ name: 'Outros', count: outrosCount, isGovernment: false, isOutros: true })
+    }
 
     return result
   }, [initiatives])
@@ -54,9 +67,9 @@ export function AuthorWidget({ initiatives }: AuthorWidgetProps) {
       <h3 className="text-lg font-bold text-gray-800 mb-4">Por Autor</h3>
 
       <div className="space-y-2">
-        {authors.map(({ name, count, isGovernment }) => {
+        {authors.map(({ name, count, isGovernment, isOutros }) => {
           const widthPercent = (count / maxCount) * 100
-          const color = isGovernment ? '#6b7280' : getPartyColor(name)
+          const color = isGovernment || isOutros ? '#6b7280' : getPartyColor(name)
 
           return (
             <div key={name} className="flex items-center gap-2">

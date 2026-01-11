@@ -7,6 +7,7 @@ import { AuthorWidget } from '../components/AuthorWidget'
 import { InitiativeCard } from '../components/InitiativeCard'
 import { LoadingSpinner } from '../components/LoadingSpinner'
 import { ErrorState } from '../components/ErrorState'
+import { getStatusCategory } from '../lib/statusCategories'
 
 const LEGISLATURES = [
   { value: 'XVII', label: 'XVII (2025-presente)' },
@@ -25,9 +26,27 @@ const TYPE_FILTERS = [
   { value: 'A', label: 'Apreciacoes' },
 ]
 
+const SORT_OPTIONS = [
+  { value: 'date-newest', label: 'Data (mais recentes)' },
+  { value: 'date-oldest', label: 'Data (mais antigas)' },
+  { value: 'phase', label: 'Fase do processo' },
+]
+
+// Phase order for sorting (progress in the legislative process)
+const PHASE_ORDER: Record<string, number> = {
+  submitted: 0,
+  announced: 1,
+  discussion: 2,
+  voting: 3,
+  finalizing: 4,
+  approved: 5,
+  rejected: 6,
+}
+
 export function IniciativasPage() {
   const [legislature, setLegislature] = useState('XVII')
   const [typeFilter, setTypeFilter] = useState('all')
+  const [sortBy, setSortBy] = useState('date-newest')
   const [searchQuery, setSearchQuery] = useState('')
   const [searchInput, setSearchInput] = useState('')
 
@@ -37,15 +56,48 @@ export function IniciativasPage() {
   // Use search results if searching, otherwise use all initiatives
   const displayData = searchQuery ? searchResults : initiatives
 
-  // Filter by type
+  // Filter by type and sort
   const filteredInitiatives = useMemo(() => {
     if (!displayData) return []
 
-    if (typeFilter === 'all') return displayData
+    // Filter by type
+    let filtered = displayData
+    if (typeFilter !== 'all') {
+      const types = typeFilter.split(',')
+      filtered = displayData.filter((ini) => types.includes(ini.IniTipo))
+    }
 
-    const types = typeFilter.split(',')
-    return displayData.filter((ini) => types.includes(ini.IniTipo))
-  }, [displayData, typeFilter])
+    // Sort
+    const sorted = [...filtered].sort((a, b) => {
+      if (sortBy === 'date-newest' || sortBy === 'date-oldest') {
+        // Get first event date (Entrada) for each initiative
+        const getFirstDate = (ini: typeof a) => {
+          const events = ini.IniEventos || []
+          if (events.length === 0) return ''
+          const sorted = [...events].sort((e1, e2) =>
+            (e1.DataFase || '').localeCompare(e2.DataFase || '')
+          )
+          return sorted[0].DataFase || ''
+        }
+        const dateA = getFirstDate(a)
+        const dateB = getFirstDate(b)
+        return sortBy === 'date-newest'
+          ? dateB.localeCompare(dateA)
+          : dateA.localeCompare(dateB)
+      }
+
+      if (sortBy === 'phase') {
+        // Sort by phase order (most progressed first)
+        const phaseA = PHASE_ORDER[getStatusCategory(a._currentStatus).category] ?? 0
+        const phaseB = PHASE_ORDER[getStatusCategory(b._currentStatus).category] ?? 0
+        return phaseB - phaseA
+      }
+
+      return 0
+    })
+
+    return sorted
+  }, [displayData, typeFilter, sortBy])
 
   // Split initiatives for funnels
   const lawsInitiatives = useMemo(() => {
@@ -106,8 +158,8 @@ export function IniciativasPage() {
 
       {/* Lifecycle Funnels */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-        <LifecycleFunnel initiatives={lawsInitiatives} title="Leis (Projetos e Propostas)" />
-        <LifecycleFunnel initiatives={resolutionsInitiatives} title="Resolucoes" />
+        <LifecycleFunnel initiatives={lawsInitiatives} title="Leis (Projetos e Propostas)" color="#2563eb" />
+        <LifecycleFunnel initiatives={resolutionsInitiatives} title="Resoluções (Projetos e Propostas)" color="#16a34a" />
       </div>
 
       {/* Analytics Widgets */}
@@ -163,6 +215,19 @@ export function IniciativasPage() {
               </button>
             ))}
           </div>
+
+          {/* Sort dropdown */}
+          <select
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value)}
+            className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:border-transparent"
+          >
+            {SORT_OPTIONS.map((opt) => (
+              <option key={opt.value} value={opt.value}>
+                {opt.label}
+              </option>
+            ))}
+          </select>
         </div>
 
         {searchQuery && (

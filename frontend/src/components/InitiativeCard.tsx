@@ -60,7 +60,7 @@ export function InitiativeCard({ initiative }: InitiativeCardProps) {
         {/* Expand indicator */}
         <div className="flex items-center justify-center gap-2 mt-3 text-gray-400 text-sm">
           <span className={`transition-transform ${isExpanded ? 'rotate-180' : ''}`}>▼</span>
-          <span>{isExpanded ? 'Ver menos' : 'Ver ciclo de vida'}</span>
+          <span>{isExpanded ? 'Ver menos' : 'Ver mais'}</span>
         </div>
       </div>
 
