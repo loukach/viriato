@@ -145,6 +145,26 @@ Build settings:
 
 ## Component Reference
 
+### InitiativeCard
+
+Expandable card showing initiative details with lifecycle timeline.
+
+**Features (DO NOT REMOVE):**
+- **Date displayed**: Entry date from first event (`IniEventos[0].DataFase`), NOT `DataInicioleg`
+- **Title**: Truncated to 2 lines when collapsed, full title when expanded
+- **Authors section**: Shows in expanded view (Governo, party acronyms, or other authors)
+- **Lifecycle timeline**: Shows all events with phase name and date
+- **Link to Parliament**: Direct link to parlamento.pt initiative page
+
+**Data fields used:**
+| Field | Purpose |
+|-------|---------|
+| `IniEventos[0].DataFase` | Entry date (displayed with 📅) |
+| `IniEventos` | Lifecycle events for timeline |
+| `IniAutorGruposParlamentares` | Party authors (GP field) |
+| `IniAutorOutros.nome` | Government or other authors |
+| `_currentStatus` | Simplified status badge |
+
 ### FilterPills
 
 Displays active filters as colored pills.

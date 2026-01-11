@@ -12,6 +12,13 @@ Track issues found and fixed during development. Helps prevent regressions.
 - **Before**: `formatDate(initiative.DataInicioleg)` - same date for ALL XVII initiatives
 - **After**: `formatDate(entryDate)` where entryDate is the first event's date
 
+### Initiative card missing features restored
+- **Issue**: Expanded card was missing authors section and title stayed truncated
+- **Fix**:
+  - Title now shows full text when expanded (removes `line-clamp-2`)
+  - Authors section added back showing: Governo, party acronyms (GP), or other authors
+- **Files**: `frontend/src/components/InitiativeCard.tsx`
+
 ### Agenda event type labeling
 - **Issue**: All agenda events showing as "Comissão" regardless of actual type
 - **Cause**: String matching fragile (encoding issues, spelling variations)

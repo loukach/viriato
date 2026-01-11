@@ -22,6 +22,38 @@ export function InitiativeCard({ initiative }: InitiativeCardProps) {
   // Get the initiative entry date (first event, typically "Entrada")
   const entryDate = sortedEvents.length > 0 ? sortedEvents[0].DataFase : null
 
+  // Get authors (parties and/or government/other)
+  const getAuthors = (): string[] => {
+    const authors: string[] = []
+
+    // Check for Government or other special authors
+    if (initiative.IniAutorOutros?.nome === 'Governo') {
+      authors.push('Governo')
+    }
+
+    // Check for parliamentary groups (parties)
+    if (initiative.IniAutorGruposParlamentares) {
+      const groups = Array.isArray(initiative.IniAutorGruposParlamentares)
+        ? initiative.IniAutorGruposParlamentares
+        : [initiative.IniAutorGruposParlamentares]
+
+      groups.forEach((g) => {
+        if (g.GP && !authors.includes(g.GP)) {
+          authors.push(g.GP)
+        }
+      })
+    }
+
+    // If no specific author found, show "Outros"
+    if (authors.length === 0 && initiative.IniAutorOutros?.nome) {
+      authors.push(initiative.IniAutorOutros.nome)
+    }
+
+    return authors
+  }
+
+  const authors = getAuthors()
+
   return (
     <article
       className={`bg-white rounded-lg shadow-md overflow-hidden transition-all cursor-pointer hover:shadow-lg ${
@@ -48,8 +80,10 @@ export function InitiativeCard({ initiative }: InitiativeCardProps) {
           </span>
         </div>
 
-        {/* Title */}
-        <h3 className="font-semibold text-gray-800 mb-2 line-clamp-2">{initiative.IniTitulo}</h3>
+        {/* Title - expands when card is expanded */}
+        <h3 className={`font-semibold text-gray-800 mb-2 ${isExpanded ? '' : 'line-clamp-2'}`}>
+          {initiative.IniTitulo}
+        </h3>
 
         {/* Meta */}
         <div className="flex items-center gap-4 text-sm text-gray-500 mb-3">
@@ -67,9 +101,26 @@ export function InitiativeCard({ initiative }: InitiativeCardProps) {
         </div>
       </div>
 
-      {/* Expanded content - Timeline */}
+      {/* Expanded content - Authors and Timeline */}
       {isExpanded && (
         <div className="border-t bg-gray-50 p-4">
+          {/* Authors */}
+          {authors.length > 0 && (
+            <div className="mb-4">
+              <h4 className="text-sm font-semibold text-gray-700 mb-2">Autores</h4>
+              <div className="flex flex-wrap gap-2">
+                {authors.map((author) => (
+                  <span
+                    key={author}
+                    className="px-2 py-1 bg-gray-200 text-gray-700 rounded text-sm"
+                  >
+                    {author}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
           <h4 className="text-sm font-semibold text-gray-700 mb-3">Ciclo de Vida</h4>
 
           {sortedEvents.length === 0 ? (
