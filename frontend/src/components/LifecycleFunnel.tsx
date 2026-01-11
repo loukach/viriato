@@ -6,9 +6,17 @@ interface LifecycleFunnelProps {
   initiatives: Initiative[]
   title: string
   color?: string // Single color for all phases
+  selectedPhases?: StatusCategory[]
+  onTogglePhase?: (phase: StatusCategory) => void
 }
 
-export function LifecycleFunnel({ initiatives, title, color = '#2563eb' }: LifecycleFunnelProps) {
+export function LifecycleFunnel({
+  initiatives,
+  title,
+  color = '#2563eb',
+  selectedPhases = [],
+  onTogglePhase,
+}: LifecycleFunnelProps) {
   // Compute counts by status category
   const phaseCounts = useMemo(() => {
     const counts: Record<StatusCategory, number> = {
@@ -32,6 +40,7 @@ export function LifecycleFunnel({ initiatives, title, color = '#2563eb' }: Lifec
 
   const categories = getStatusCategoriesInOrder()
   const maxCount = Math.max(...Object.values(phaseCounts), 1)
+  const hasSelection = selectedPhases.length > 0
 
   return (
     <div className="bg-white rounded-xl shadow-md p-6">
@@ -42,13 +51,23 @@ export function LifecycleFunnel({ initiatives, title, color = '#2563eb' }: Lifec
           const count = phaseCounts[category]
           const heightPercent = (count / maxCount) * 100
           const minHeight = count > 0 ? Math.max(heightPercent, 10) : 5
+          const isSelected = selectedPhases.includes(category)
+          const dimmed = hasSelection && !isSelected
 
           return (
-            <div key={category} className="flex-1 flex flex-col items-center">
+            <div
+              key={category}
+              onClick={() => onTogglePhase?.(category)}
+              className={`flex-1 flex flex-col items-center transition-all ${
+                onTogglePhase ? 'cursor-pointer' : ''
+              } ${dimmed ? 'opacity-40' : ''}`}
+            >
               {/* Bar */}
               <div className="w-full flex flex-col items-center justify-end h-40">
                 <div
-                  className="w-full rounded-t-md transition-all duration-300"
+                  className={`w-full rounded-t-md transition-all duration-300 ${
+                    onTogglePhase ? 'hover:opacity-80' : ''
+                  } ${isSelected ? 'ring-2 ring-gray-800' : ''}`}
                   style={{
                     height: `${minHeight}%`,
                     backgroundColor: color,

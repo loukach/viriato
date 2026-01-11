@@ -4,9 +4,11 @@ import type { Initiative } from '../lib/api'
 
 interface AuthorWidgetProps {
   initiatives: Initiative[]
+  selectedAuthors?: string[]
+  onToggleAuthor?: (author: string) => void
 }
 
-export function AuthorWidget({ initiatives }: AuthorWidgetProps) {
+export function AuthorWidget({ initiatives, selectedAuthors = [], onToggleAuthor }: AuthorWidgetProps) {
   const authors = useMemo(() => {
     // Count government initiatives
     let governmentCount = 0
@@ -61,6 +63,7 @@ export function AuthorWidget({ initiatives }: AuthorWidgetProps) {
   }, [initiatives])
 
   const maxCount = Math.max(...authors.map((a) => a.count), 1)
+  const hasSelection = selectedAuthors.length > 0
 
   return (
     <div className="bg-white rounded-xl shadow-md p-6">
@@ -70,13 +73,23 @@ export function AuthorWidget({ initiatives }: AuthorWidgetProps) {
         {authors.map(({ name, count, isGovernment, isOutros }) => {
           const widthPercent = (count / maxCount) * 100
           const color = isGovernment || isOutros ? '#6b7280' : getPartyColor(name)
+          const isSelected = selectedAuthors.includes(name)
+          const dimmed = hasSelection && !isSelected
 
           return (
-            <div key={name} className="flex items-center gap-2">
+            <div
+              key={name}
+              onClick={() => onToggleAuthor?.(name)}
+              className={`flex items-center gap-2 transition-all ${
+                onToggleAuthor ? 'cursor-pointer hover:bg-gray-50 rounded -mx-1 px-1' : ''
+              } ${dimmed ? 'opacity-40' : ''}`}
+            >
               <span className="text-sm text-gray-700 w-20 truncate">{name}</span>
               <div className="flex-1 h-6 bg-gray-100 rounded overflow-hidden">
                 <div
-                  className="h-full rounded flex items-center justify-end px-2"
+                  className={`h-full rounded flex items-center justify-end px-2 transition-all ${
+                    isSelected ? 'ring-2 ring-inset ring-gray-800' : ''
+                  }`}
                   style={{
                     width: `${widthPercent}%`,
                     backgroundColor: color,

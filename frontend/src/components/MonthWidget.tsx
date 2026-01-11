@@ -4,9 +4,11 @@ import type { Initiative } from '../lib/api'
 
 interface MonthWidgetProps {
   initiatives: Initiative[]
+  selectedMonths?: string[]
+  onToggleMonth?: (month: string) => void
 }
 
-export function MonthWidget({ initiatives }: MonthWidgetProps) {
+export function MonthWidget({ initiatives, selectedMonths = [], onToggleMonth }: MonthWidgetProps) {
   const monthCounts = useMemo(() => {
     const counts: Record<string, number> = {}
 
@@ -30,6 +32,7 @@ export function MonthWidget({ initiatives }: MonthWidgetProps) {
 
   const sortedMonths = Object.keys(monthCounts).sort()
   const maxCount = Math.max(...Object.values(monthCounts), 1)
+  const hasSelection = selectedMonths.length > 0
 
   return (
     <div className="bg-white rounded-xl shadow-md p-6">
@@ -41,17 +44,24 @@ export function MonthWidget({ initiatives }: MonthWidgetProps) {
           const heightPercent = (count / maxCount) * 100
           const [year, month] = monthKey.split('-')
           const monthName = getMonthName(parseInt(month))
+          const isSelected = selectedMonths.includes(monthKey)
+          const dimmed = hasSelection && !isSelected
 
           return (
             <div
               key={monthKey}
-              className="flex-1 flex flex-col items-center h-full"
+              onClick={() => onToggleMonth?.(monthKey)}
+              className={`flex-1 flex flex-col items-center h-full transition-all ${
+                onToggleMonth ? 'cursor-pointer hover:bg-gray-50 rounded' : ''
+              } ${dimmed ? 'opacity-40' : ''}`}
               title={`${count} iniciativas em ${monthName} ${year}`}
             >
               {/* Bar container with explicit height for percentage to work */}
               <div className="flex-1 w-full flex items-end">
                 <div
-                  className="w-full bg-[var(--primary)] rounded-t-sm min-h-[4px]"
+                  className={`w-full bg-[var(--primary)] rounded-t-sm min-h-[4px] transition-all ${
+                    isSelected ? 'ring-2 ring-gray-800' : ''
+                  }`}
                   style={{ height: `${heightPercent}%` }}
                 />
               </div>

@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useCallback } from 'react'
 import { useInitiatives, useSearch } from '../hooks/useInitiatives'
 import { LifecycleFunnel } from '../components/LifecycleFunnel'
 import { TypeWidget } from '../components/TypeWidget'
@@ -7,7 +7,9 @@ import { AuthorWidget } from '../components/AuthorWidget'
 import { InitiativeCard } from '../components/InitiativeCard'
 import { LoadingSpinner } from '../components/LoadingSpinner'
 import { ErrorState } from '../components/ErrorState'
-import { getStatusCategory } from '../lib/statusCategories'
+import { FilterPills } from '../components/FilterPills'
+import { getStatusCategory, type StatusCategory } from '../lib/statusCategories'
+import { getMonthKey } from '../lib/formatDate'
 
 const LEGISLATURES = [
   { value: 'XVII', label: 'XVII (2025-presente)' },
@@ -15,15 +17,6 @@ const LEGISLATURES = [
   { value: 'XV', label: 'XV (2022-2024)' },
   { value: 'XIV', label: 'XIV (2019-2022)' },
   { value: 'all', label: 'Todas' },
-]
-
-const TYPE_FILTERS = [
-  { value: 'all', label: 'Todas' },
-  { value: 'J,P', label: 'Leis' },
-  { value: 'R,S', label: 'Resolucoes' },
-  { value: 'D', label: 'Deliberacoes' },
-  { value: 'I', label: 'Inqueritos' },
-  { value: 'A', label: 'Apreciacoes' },
 ]
 
 const SORT_OPTIONS = [
@@ -43,9 +36,23 @@ const PHASE_ORDER: Record<string, number> = {
   rejected: 6,
 }
 
+interface Filters {
+  types: string[]
+  authors: string[]
+  months: string[]
+  phases: StatusCategory[]
+}
+
+const EMPTY_FILTERS: Filters = {
+  types: [],
+  authors: [],
+  months: [],
+  phases: [],
+}
+
 export function IniciativasPage() {
   const [legislature, setLegislature] = useState('XVII')
-  const [typeFilter, setTypeFilter] = useState('all')
+  const [filters, setFilters] = useState<Filters>(EMPTY_FILTERS)
   const [sortBy, setSortBy] = useState('date-newest')
   const [searchQuery, setSearchQuery] = useState('')
   const [searchInput, setSearchInput] = useState('')
@@ -53,24 +60,141 @@ export function IniciativasPage() {
   const { data: initiatives, isLoading, isError, refetch } = useInitiatives(legislature)
   const { data: searchResults, isLoading: isSearching } = useSearch(searchQuery, legislature)
 
+  // Toggle helpers for each filter category
+  const toggleType = useCallback((type: string) => {
+    setFilters((prev) => ({
+      ...prev,
+      types: prev.types.includes(type)
+        ? prev.types.filter((t) => t !== type)
+        : [...prev.types, type],
+    }))
+  }, [])
+
+  const toggleAuthor = useCallback((author: string) => {
+    setFilters((prev) => ({
+      ...prev,
+      authors: prev.authors.includes(author)
+        ? prev.authors.filter((a) => a !== author)
+        : [...prev.authors, author],
+    }))
+  }, [])
+
+  const toggleMonth = useCallback((month: string) => {
+    setFilters((prev) => ({
+      ...prev,
+      months: prev.months.includes(month)
+        ? prev.months.filter((m) => m !== month)
+        : [...prev.months, month],
+    }))
+  }, [])
+
+  const togglePhase = useCallback((phase: StatusCategory) => {
+    setFilters((prev) => ({
+      ...prev,
+      phases: prev.phases.includes(phase)
+        ? prev.phases.filter((p) => p !== phase)
+        : [...prev.phases, phase],
+    }))
+  }, [])
+
+  const removeFilter = useCallback((category: keyof Filters, value: string) => {
+    setFilters((prev) => ({
+      ...prev,
+      [category]: (prev[category] as string[]).filter((v) => v !== value),
+    }))
+  }, [])
+
+  const clearAllFilters = useCallback(() => {
+    setFilters(EMPTY_FILTERS)
+  }, [])
+
   // Use search results if searching, otherwise use all initiatives
   const displayData = searchQuery ? searchResults : initiatives
 
-  // Filter by type and sort
+  // Helper to get initiative month key
+  const getInitiativeMonth = useCallback((ini: NonNullable<typeof initiatives>[number]) => {
+    const events = ini.IniEventos || []
+    if (events.length === 0) return null
+    const sortedEvents = [...events].sort((a, b) =>
+      (a.DataFase || '').localeCompare(b.DataFase || '')
+    )
+    const firstDate = sortedEvents[0].DataFase
+    return firstDate ? getMonthKey(firstDate) : null
+  }, [])
+
+  // Helper to check if initiative matches author filter
+  const matchesAuthorFilter = useCallback((ini: NonNullable<typeof initiatives>[number], authorFilters: string[]) => {
+    if (authorFilters.length === 0) return true
+
+    // Check Government
+    if (authorFilters.includes('Governo') && ini.IniAutorOutros?.nome === 'Governo') {
+      return true
+    }
+
+    // Check parties
+    if (ini.IniAutorGruposParlamentares) {
+      const groups = Array.isArray(ini.IniAutorGruposParlamentares)
+        ? ini.IniAutorGruposParlamentares
+        : [ini.IniAutorGruposParlamentares]
+
+      for (const g of groups) {
+        if (g.GP && authorFilters.includes(g.GP)) {
+          return true
+        }
+      }
+    }
+
+    // Check "Outros" - initiative has no Government or party author
+    if (authorFilters.includes('Outros')) {
+      const hasGovernment = ini.IniAutorOutros?.nome === 'Governo'
+      const hasParty = ini.IniAutorGruposParlamentares && (
+        Array.isArray(ini.IniAutorGruposParlamentares)
+          ? ini.IniAutorGruposParlamentares.some((g) => g.GP)
+          : ini.IniAutorGruposParlamentares.GP
+      )
+      if (!hasGovernment && !hasParty) {
+        return true
+      }
+    }
+
+    return false
+  }, [])
+
+  // Filter and sort initiatives
   const filteredInitiatives = useMemo(() => {
     if (!displayData) return []
 
-    // Filter by type
     let filtered = displayData
-    if (typeFilter !== 'all') {
-      const types = typeFilter.split(',')
-      filtered = displayData.filter((ini) => types.includes(ini.IniTipo))
+
+    // Filter by type
+    if (filters.types.length > 0) {
+      filtered = filtered.filter((ini) => filters.types.includes(ini.IniTipo))
+    }
+
+    // Filter by author
+    if (filters.authors.length > 0) {
+      filtered = filtered.filter((ini) => matchesAuthorFilter(ini, filters.authors))
+    }
+
+    // Filter by month
+    if (filters.months.length > 0) {
+      filtered = filtered.filter((ini) => {
+        const monthKey = getInitiativeMonth(ini)
+        return monthKey && filters.months.includes(monthKey)
+      })
+    }
+
+    // Filter by phase
+    if (filters.phases.length > 0) {
+      filtered = filtered.filter((ini) => {
+        const { category } = getStatusCategory(ini._currentStatus)
+        return filters.phases.includes(category)
+      })
     }
 
     // Sort
     const sorted = [...filtered].sort((a, b) => {
       if (sortBy === 'date-newest' || sortBy === 'date-oldest') {
-        // Get first event date (Entrada) for each initiative
         const getFirstDate = (ini: typeof a) => {
           const events = ini.IniEventos || []
           if (events.length === 0) return ''
@@ -87,7 +211,6 @@ export function IniciativasPage() {
       }
 
       if (sortBy === 'phase') {
-        // Sort by phase order (most progressed first)
         const phaseA = PHASE_ORDER[getStatusCategory(a._currentStatus).category] ?? 0
         const phaseB = PHASE_ORDER[getStatusCategory(b._currentStatus).category] ?? 0
         return phaseB - phaseA
@@ -97,7 +220,7 @@ export function IniciativasPage() {
     })
 
     return sorted
-  }, [displayData, typeFilter, sortBy])
+  }, [displayData, filters, sortBy, matchesAuthorFilter, getInitiativeMonth])
 
   // Split initiatives for funnels
   const lawsInitiatives = useMemo(() => {
@@ -158,20 +281,44 @@ export function IniciativasPage() {
 
       {/* Lifecycle Funnels */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-        <LifecycleFunnel initiatives={lawsInitiatives} title="Leis (Projetos e Propostas)" color="#2563eb" />
-        <LifecycleFunnel initiatives={resolutionsInitiatives} title="Resoluções (Projetos e Propostas)" color="#16a34a" />
+        <LifecycleFunnel
+          initiatives={lawsInitiatives}
+          title="Leis (Projetos e Propostas)"
+          color="#2563eb"
+          selectedPhases={filters.phases}
+          onTogglePhase={togglePhase}
+        />
+        <LifecycleFunnel
+          initiatives={resolutionsInitiatives}
+          title="Resoluções (Projetos e Propostas)"
+          color="#16a34a"
+          selectedPhases={filters.phases}
+          onTogglePhase={togglePhase}
+        />
       </div>
 
       {/* Analytics Widgets */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <TypeWidget initiatives={initiatives || []} />
-        <MonthWidget initiatives={initiatives || []} />
-        <AuthorWidget initiatives={initiatives || []} />
+        <TypeWidget
+          initiatives={initiatives || []}
+          selectedTypes={filters.types}
+          onToggleType={toggleType}
+        />
+        <MonthWidget
+          initiatives={initiatives || []}
+          selectedMonths={filters.months}
+          onToggleMonth={toggleMonth}
+        />
+        <AuthorWidget
+          initiatives={initiatives || []}
+          selectedAuthors={filters.authors}
+          onToggleAuthor={toggleAuthor}
+        />
       </div>
 
-      {/* Search and Filters */}
+      {/* Search, Filters, and Sort */}
       <div className="bg-white rounded-xl shadow-md p-4 mb-6">
-        <div className="flex flex-col sm:flex-row gap-4">
+        <div className="flex flex-col sm:flex-row gap-4 mb-4">
           {/* Search */}
           <div className="flex-1 flex gap-2">
             <input
@@ -199,28 +346,11 @@ export function IniciativasPage() {
             )}
           </div>
 
-          {/* Type filter */}
-          <div className="flex flex-wrap gap-2">
-            {TYPE_FILTERS.map((f) => (
-              <button
-                key={f.value}
-                onClick={() => setTypeFilter(f.value)}
-                className={`px-3 py-1.5 rounded-full text-sm transition-colors ${
-                  typeFilter === f.value
-                    ? 'bg-[var(--primary)] text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
-              >
-                {f.label}
-              </button>
-            ))}
-          </div>
-
           {/* Sort dropdown */}
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value)}
-            className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:border-transparent"
+            className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:border-transparent"
           >
             {SORT_OPTIONS.map((opt) => (
               <option key={opt.value} value={opt.value}>
@@ -230,12 +360,26 @@ export function IniciativasPage() {
           </select>
         </div>
 
+        {/* Filter Pills */}
+        <FilterPills
+          filters={filters}
+          onRemove={removeFilter}
+          onClearAll={clearAllFilters}
+        />
+
         {searchQuery && (
           <p className="text-sm text-gray-500 mt-2">
             Resultados para "{searchQuery}": {filteredInitiatives.length} iniciativas
           </p>
         )}
       </div>
+
+      {/* Results count when filtered */}
+      {(filters.types.length > 0 || filters.authors.length > 0 || filters.months.length > 0 || filters.phases.length > 0) && (
+        <p className="text-sm text-gray-600 mb-4">
+          A mostrar {filteredInitiatives.length} de {totalCount} iniciativas
+        </p>
+      )}
 
       {/* Initiative Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">

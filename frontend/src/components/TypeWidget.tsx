@@ -4,9 +4,11 @@ import type { Initiative } from '../lib/api'
 
 interface TypeWidgetProps {
   initiatives: Initiative[]
+  selectedTypes?: string[]
+  onToggleType?: (type: string) => void
 }
 
-export function TypeWidget({ initiatives }: TypeWidgetProps) {
+export function TypeWidget({ initiatives, selectedTypes = [], onToggleType }: TypeWidgetProps) {
   const typeCounts = useMemo(() => {
     const counts: Record<string, number> = {}
     initiatives.forEach((ini) => {
@@ -16,6 +18,8 @@ export function TypeWidget({ initiatives }: TypeWidgetProps) {
     return Object.entries(counts).sort((a, b) => b[1] - a[1])
   }, [initiatives])
 
+  const hasSelection = selectedTypes.length > 0
+
   return (
     <div className="bg-white rounded-xl shadow-md p-6">
       <h3 className="text-lg font-bold text-gray-800 mb-4">Por Tipo</h3>
@@ -24,11 +28,16 @@ export function TypeWidget({ initiatives }: TypeWidgetProps) {
         {typeCounts.map(([type, count]) => {
           const name = getTypeFullName(type)
           const color = getTypeColor(type)
+          const isSelected = selectedTypes.includes(type)
+          const dimmed = hasSelection && !isSelected
 
           return (
             <div
               key={type}
-              className="rounded-lg p-4 text-white text-center"
+              onClick={() => onToggleType?.(type)}
+              className={`rounded-lg p-4 text-white text-center transition-all ${
+                onToggleType ? 'cursor-pointer hover:scale-105' : ''
+              } ${dimmed ? 'opacity-40' : ''} ${isSelected ? 'ring-2 ring-offset-2 ring-gray-800' : ''}`}
               style={{ background: color }}
             >
               <div className="text-2xl font-bold">{count}</div>
