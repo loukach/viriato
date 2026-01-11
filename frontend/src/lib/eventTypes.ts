@@ -36,33 +36,40 @@ export function getEventTypeKey(eventType: string): EventType {
     // Plenary sessions
     'Reuniao Plenaria': 'plenario',
     'Sessao Plenaria': 'plenario',
+    'Reuniões Plenárias': 'plenario',
     Plenario: 'plenario',
 
     // Committee meetings
     'Reuniao de Comissao': 'comissoes',
     Comissao: 'comissoes',
     Comissoes: 'comissoes',
+    'Comissões Parlamentares': 'comissoes',
 
     // Parliamentary groups
     'Reuniao GP': 'grupos',
     'Grupo Parlamentar': 'grupos',
+    'Grupos Parlamentares': 'grupos',
 
     // Leaders conference
     'Conferencia de Lideres': 'lideres',
     'Conf. Lideres': 'lideres',
+    'Conferência de Líderes': 'lideres',
 
     // Working groups
     'Grupo de Trabalho': 'trabalho',
+    'Grupos de Trabalho': 'trabalho',
     'GT': 'trabalho',
 
     // Visits
     Visita: 'visitas',
     'Visita de Estudo': 'visitas',
     'Visita Escola': 'visitas',
+    'Visitas Escolares': 'visitas',
 
     // Assistances (non-legislative plenary)
     Assistencia: 'assistencias',
     'Assistencia Plenario': 'assistencias',
+    'Assistências em Plenário': 'assistencias',
   }
 
   return typeMap[eventType] || 'comissoes'
