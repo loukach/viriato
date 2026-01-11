@@ -30,66 +30,30 @@ export const EVENT_TYPES: EventTypeConfig[] = [
 
 /**
  * Map event_type from API to internal type key
+ *
+ * Note: The useAgenda hook normalizes ThemeId -> consistent strings,
+ * so this mapping only needs the normalized values.
+ * Unknown types will log a warning in the console.
  */
 export function getEventTypeKey(eventType: string): EventType {
   const typeMap: Record<string, EventType> = {
-    // Plenary sessions - raw API values
+    // Primary mappings (from useAgenda ThemeId normalization)
     'Plenário': 'plenario',
-    'Reunião Plenária': 'plenario',
-    'Sessão Plenária': 'plenario',
-    'Reuniões Plenárias': 'plenario',
-    'Plenario': 'plenario',
-    'Reuniao Plenaria': 'plenario',
-    'Sessao Plenaria': 'plenario',
-
-    // Committee meetings - raw API values
     'Comissões Parlamentares': 'comissoes',
-    'Comissão Parlamentar': 'comissoes',
-    'Reuniao de Comissao': 'comissoes',
-    'Comissao': 'comissoes',
-    'Comissoes': 'comissoes',
-
-    // Parliamentary groups - raw API value
-    'Grupos Parlamentares / Partidos / DURP / Ninsc': 'grupos',
     'Grupos Parlamentares': 'grupos',
-    'Grupo Parlamentar': 'grupos',
-    'Reuniao GP': 'grupos',
+    'Visitas': 'visitas',
+    'Assistências': 'assistencias',
 
-    // Leaders conference
+    // Fallback mappings for edge cases or direct API usage
     'Conferência de Líderes': 'lideres',
-    'Conferencia de Lideres': 'lideres',
-    'Conf. Lideres': 'lideres',
-
-    // Working groups
     'Grupo de Trabalho': 'trabalho',
-    'Grupos de Trabalho': 'trabalho',
-    'GT': 'trabalho',
-
-    // Visits - raw API value
-    'Visitas ao Palácio de S. Bento': 'visitas',
-    'Visitas ao Palacio de S. Bento': 'visitas',
-    'Visitas Escolares': 'visitas',
-    'Visita de Estudo': 'visitas',
-    'Visita Escola': 'visitas',
-    'Visita': 'visitas',
-
-    // Assistances - raw API value
-    'Assistências ao Plenário': 'assistencias',
-    'Assistencias ao Plenario': 'assistencias',
-    'Assistências em Plenário': 'assistencias',
-    'Assistencia Plenario': 'assistencias',
-    'Assistencia': 'assistencias',
-
-    // President's agenda - map to plenario (official acts)
-    'Agenda do Presidente da Assembleia da República': 'plenario',
-    'Agenda do Presidente da Assembleia da Republica': 'plenario',
-
-    // Calendar summary - map to comissoes as fallback
-    'Resumo da Calendarização': 'comissoes',
-    'Resumo da Calendarizacao': 'comissoes',
   }
 
-  return typeMap[eventType] || 'comissoes'
+  const mapped = typeMap[eventType]
+  if (!mapped) {
+    console.warn(`Unknown event type: "${eventType}" - defaulting to comissoes`)
+  }
+  return mapped || 'comissoes'
 }
 
 /**

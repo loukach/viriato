@@ -12,8 +12,21 @@ interface RawAgendaEvent {
   EventEndTime: string
   Local: string
   Theme: string
+  ThemeId: number
   Section: string
+  SectionId: number
   OrgDes?: string
+}
+
+// Map ThemeId to event type - IDs are stable, strings can have encoding issues
+const THEME_ID_MAP: Record<number, string> = {
+  7: 'Plenário',
+  2: 'Comissões Parlamentares',
+  14: 'Grupos Parlamentares',
+  15: 'Visitas',
+  16: 'Assistências',
+  8: 'Plenário', // Agenda do Presidente -> treat as Plenário
+  13: 'Comissões Parlamentares', // Resumo da Calendarização -> fallback
 }
 
 // Convert DD/MM/YYYY to YYYY-MM-DD (Portuguese date format)
@@ -25,15 +38,24 @@ function parseDate(dateStr: string): string {
 
 // Transform raw API data to expected format
 function transformAgendaEvent(raw: RawAgendaEvent): AgendaEvent {
+  // Use ThemeId (stable) to determine event type, fallback to Theme string
+  let eventType = THEME_ID_MAP[raw.ThemeId]
+
+  if (!eventType) {
+    // Log unknown ThemeId for monitoring - helps catch new event types
+    console.warn(`Unknown ThemeId: ${raw.ThemeId} for event "${raw.Title}" - using Theme string: "${raw.Theme}"`)
+    eventType = raw.Theme || raw.Section || 'Comissões Parlamentares'
+  }
+
   return {
     event_id: raw.Id,
-    event_type: raw.Theme || raw.Section || 'Comissões Parlamentares',
+    event_type: eventType,
     title: raw.Title || '',
     subtitle: raw.Subtitle || '',
     start_date: parseDate(raw.EventStartDate),
     end_date: parseDate(raw.EventEndDate),
     room: raw.Local || '',
-    committee_id: null, // Could be extracted from OrgDes if needed
+    committee_id: null,
   }
 }
 
