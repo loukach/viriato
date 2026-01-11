@@ -17,20 +17,27 @@ export async function fetchApi<T>(endpoint: string): Promise<T> {
 
 // API Types
 
+export interface OrgaoMembership {
+  name: string
+  acronym: string
+  role: string | null
+  member_type: string | null
+}
+
 export interface Deputy {
   dep_id: number
   name: string
+  full_name?: string
   party: string
   circulo: string
   gender: 'M' | 'F' | null
   age: number | null
+  profession: string | null
+  education: string | null
   situation: string
   replaces?: string | string[]
-  comissoes: {
-    name: string
-    acronym: string
-    role: string
-  }[]
+  comissoes: OrgaoMembership[]
+  grupos_trabalho: OrgaoMembership[]
 }
 
 export interface DeputadosResponse {
