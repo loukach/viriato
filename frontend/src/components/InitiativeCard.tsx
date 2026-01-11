@@ -19,6 +19,9 @@ export function InitiativeCard({ initiative }: InitiativeCardProps) {
     (a.DataFase || '').localeCompare(b.DataFase || '')
   )
 
+  // Get the initiative entry date (first event, typically "Entrada")
+  const entryDate = sortedEvents.length > 0 ? sortedEvents[0].DataFase : null
+
   return (
     <article
       className={`bg-white rounded-lg shadow-md overflow-hidden transition-all cursor-pointer hover:shadow-lg ${
@@ -50,7 +53,7 @@ export function InitiativeCard({ initiative }: InitiativeCardProps) {
 
         {/* Meta */}
         <div className="flex items-center gap-4 text-sm text-gray-500 mb-3">
-          <span>📅 {formatDate(initiative.DataInicioleg)}</span>
+          {entryDate && <span>📅 {formatDate(entryDate)}</span>}
           <span>📊 {events.length} fases</span>
         </div>
 

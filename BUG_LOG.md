@@ -4,6 +4,14 @@ Track issues found and fixed during development. Helps prevent regressions.
 
 ## 2026-01-11
 
+### Initiative card showing wrong date (DataInicioleg vs entry date)
+- **Issue**: All initiative cards showed "03/06/2025" regardless of when the initiative was submitted
+- **Cause**: Card displayed `DataInicioleg` (Legislature XVII start date) instead of the initiative's actual entry date
+- **Fix**: Changed to display first event date (`IniEventos[0].DataFase`) which is the actual "Entrada" date
+- **Files**: `frontend/src/components/InitiativeCard.tsx`
+- **Before**: `formatDate(initiative.DataInicioleg)` - same date for ALL XVII initiatives
+- **After**: `formatDate(entryDate)` where entryDate is the first event's date
+
 ### Agenda event type labeling
 - **Issue**: All agenda events showing as "Comissão" regardless of actual type
 - **Cause**: String matching fragile (encoding issues, spelling variations)
