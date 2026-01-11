@@ -25,10 +25,10 @@ Complete inventory of features to port from vanilla JS to React.
 
 | Feature | Status | Complexity |
 |---------|--------|------------|
-| Large hemicycle SVG (party composition) | Pending | High |
-| Interactive party legend (click to filter) | Pending | Medium |
-| Stats cards (parties, gender %, circles) | Pending | Low |
-| Deputy cards grid | Pending | Medium |
+| Large hemicycle SVG (party composition) | Done | High |
+| Interactive party legend (click to filter) | Done | Medium |
+| Stats cards (parties, gender %, circles) | Removed | - |
+| Deputy cards grid (expandable with details) | Done | Medium |
 | Search by name | Pending | Low |
 | Filter by circle (dropdown) | Pending | Low |
 | Filter by gender (dropdown) | Pending | Low |
@@ -159,7 +159,7 @@ Complete inventory of features to port from vanilla JS to React.
 | `LoadingSpinner.tsx` | All | Pending |
 | `ErrorState.tsx` | All | Pending |
 | `Modal.tsx` | Agenda, Comissoes | Pending |
-| `StatCard.tsx` | Home, Assembleia | Pending |
+| `StatCard.tsx` | (unused) | Removed |
 | `StatusBadge.tsx` | Iniciativas, Agenda | Pending |
 
 ---
