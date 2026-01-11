@@ -25,6 +25,7 @@ const THEME_ID_MAP: Record<number, string> = {
   14: 'Grupos Parlamentares',
   15: 'Visitas',
   16: 'Assistências',
+  5: 'Conferência de Líderes',
   8: 'Plenário', // Agenda do Presidente -> treat as Plenário
   13: 'Comissões Parlamentares', // Resumo da Calendarização -> fallback
 }

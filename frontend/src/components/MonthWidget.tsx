@@ -35,7 +35,7 @@ export function MonthWidget({ initiatives }: MonthWidgetProps) {
     <div className="bg-white rounded-xl shadow-md p-6">
       <h3 className="text-lg font-bold text-gray-800 mb-4">Por Mes</h3>
 
-      <div className="flex items-end gap-1 h-32">
+      <div className="flex items-end gap-1" style={{ height: '128px' }}>
         {sortedMonths.map((monthKey) => {
           const count = monthCounts[monthKey]
           const heightPercent = (count / maxCount) * 100
@@ -45,14 +45,17 @@ export function MonthWidget({ initiatives }: MonthWidgetProps) {
           return (
             <div
               key={monthKey}
-              className="flex-1 flex flex-col items-center"
+              className="flex-1 flex flex-col items-center h-full"
               title={`${count} iniciativas em ${monthName} ${year}`}
             >
-              <div
-                className="w-full bg-[var(--primary)] rounded-t-sm min-h-[4px]"
-                style={{ height: `${heightPercent}%` }}
-              />
-              <span className="text-xs text-gray-500 mt-1 truncate w-full text-center">
+              {/* Bar container with explicit height for percentage to work */}
+              <div className="flex-1 w-full flex items-end">
+                <div
+                  className="w-full bg-[var(--primary)] rounded-t-sm min-h-[4px]"
+                  style={{ height: `${heightPercent}%` }}
+                />
+              </div>
+              <span className="text-xs text-gray-500 mt-1 truncate w-full text-center flex-shrink-0">
                 {monthName}
               </span>
             </div>
