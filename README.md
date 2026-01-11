@@ -19,23 +19,26 @@ Quatro ferramentas interativas construídas com dados abertos do Parlamento Port
 
 ## Current Status
 
-**Phase:** Production (Phase 3)
+**Phase:** Production (React Migration - January 2026)
 
 **Completed:**
 - ✅ Data discovery (17 datasets mapped and documented)
 - ✅ Legislative process analysis (60 phases documented)
 - ✅ PostgreSQL database backend deployed on Render.com
 - ✅ REST API with 10+ endpoints
-- ✅ Single Page Application (SPA) with hash routing
-- ✅ Full production deployment on Render.com (Static Site + Web Service + PostgreSQL)
+- ✅ **React + TypeScript + Tailwind frontend** (NEW)
+- ✅ Full production deployment on Render.com
 - ✅ Committee composition and initiative tracking
 - ✅ Simplified status categories (60+ phases → 7 labels)
+- ✅ **Interactive widget filtering** (click widgets to filter)
+- ✅ **Filter pills system** with remove functionality
+- ✅ **Sorting** by date and legislative phase
 
 **Built:**
-- Single Page Application with five views (Home, Assembleia, Iniciativas, Agenda, Comissões)
+- React SPA with five views (Home, Assembleia, Iniciativas, Agenda, Comissões)
 - PostgreSQL database with 6,748 iniciativas (XIV-XVII), 57,078 events, 69 agenda items
 - Flask REST API backend with multi-legislature support
-- Automatic data loading from API
+- Automatic data loading with React Query caching
 - Responsive design for all screen sizes
 - Committee-initiative relationships with status tracking
 
@@ -61,22 +64,22 @@ https://viriato-api.onrender.com/api/orgaos/{id}   # Committee details
 
 **Local development:**
 ```bash
-# Open the SPA
-open docs/index.html
+# Frontend (React)
+cd frontend
+npm install
+npm run dev          # http://localhost:5173
 
-# Or run the API locally
+# API (optional, uses production API by default)
 pip install -r requirements.txt
 export DATABASE_URL="postgresql://..."
-python api/app.py
+python api/app.py    # http://localhost:5000
 ```
-
-No build process needed - Single Page Application with API data loading.
 
 ## Architecture
 
 ```
 ┌─────────────────┐
-│  Render.com     │  Single Page App (docs/index.html)
+│  Render.com     │  React + Vite + TypeScript (frontend/)
 │  (Static Site)  │  5 views: Home, Assembleia, Iniciativas, Agenda, Comissões
 └────────┬────────┘
          │
@@ -97,27 +100,27 @@ No build process needed - Single Page Application with API data loading.
 
 ```
 viriato/
-├── docs/                     # Frontend source (SPA)
-│   ├── index.html           # Single Page Application
-│   └── archive/             # Legacy standalone pages
+├── frontend/                 # React frontend (NEW)
+│   ├── src/
+│   │   ├── components/      # UI components (widgets, cards, etc.)
+│   │   ├── pages/           # Route-level views
+│   │   ├── hooks/           # Data fetching hooks
+│   │   └── lib/             # Utilities (statusCategories, etc.)
+│   └── package.json
+├── docs/                     # Legacy frontend (deprecated)
+│   ├── index.html           # Old vanilla JS SPA
+│   └── archive/             # Standalone pages
 ├── api/                      # Flask REST API
 │   └── app.py               # 10+ endpoints for data access
-├── scripts/                  # Database & data utilities
+├── pipeline/                 # Data pipeline scripts
 │   ├── download_datasets.py # Fetch from parlamento.pt
-│   ├── load_to_postgres.py  # ETL: JSON → PostgreSQL (initiatives)
-│   ├── load_orgaos.py       # ETL: Committee composition data
-│   ├── load_comissao_links.py # Committee-initiative relationships
-│   ├── load_authors.py      # Initiative authorship (deputies, parties)
-│   ├── schema.sql           # Database schema
-│   └── apply_schema.py      # Schema deployment
+│   ├── load_to_postgres.py  # ETL: JSON → PostgreSQL
+│   └── schema.sql           # Database schema
 ├── data/                     # Source data
 │   ├── raw/                 # 17 downloaded datasets (JSON)
 │   └── schemas/             # Extracted schemas
-├── docs/ (markdown)          # Documentation
-│   ├── iniciativas-lifecycle.md      # 60 phases explained
-│   ├── database-implementation-plan.md  # DB design
-│   ├── deployment-guide.md           # Render.com deployment
-│   └── feature-requests.md           # Community feature requests
+├── PROJECT_STATUS.md         # Current status and features
+├── BUG_LOG.md               # Bug fixes and design decisions
 ├── requirements.txt          # Python dependencies
 └── render.yaml              # Render.com configuration
 ```
@@ -140,13 +143,30 @@ viriato/
 
 ### Legislative Initiatives
 - Two lifecycle funnels showing progression:
-  - **Laws** (blue): 11 phases from submission to presidential promulgation
-  - **Resolutions** (green): 9 phases from submission to parliamentary approval
-- 808 initiatives across 7 types
-- Full lifecycle timeline for each initiative
-- Filter by type (laws, resolutions, deliberations, etc.)
-- **Simplified status categories** - 60+ legislative phases mapped to 7 user-friendly labels:
-  - Submetida, Anunciada, Em discussão, Em votação, A finalizar, Aprovada, Rejeitada
+  - **Leis** (blue #2563eb): Projetos + Propostas de Lei
+  - **Resoluções** (green #16a34a): Projetos + Propostas de Resolução
+- 808 initiatives across 7 types in XVII legislature
+- Full lifecycle timeline for each initiative (click "Ver mais")
+
+**Interactive Filtering (NEW):**
+- Click any widget element to filter the initiatives list
+- Click again to remove filter (toggle behavior)
+- Multiple filters: OR within category, AND across categories
+- Visual feedback: selected items highlighted, others dimmed
+
+**Filter by:**
+- **Type** - Click TypeWidget cards (J, P, R, S, D, I, A)
+- **Author** - Click AuthorWidget bars (Governo, parties, Outros)
+- **Month** - Click MonthWidget bars (entry month)
+- **Phase** - Click LifecycleFunnel bars (current status)
+
+**Sorting Options:**
+- Data (mais recentes) - Newest first (DEFAULT)
+- Data (mais antigas) - Oldest first
+- Fase do processo - By legislative progress
+
+**Simplified status categories** - 60+ phases mapped to 7 labels:
+- Submetida, Anunciada, Em discussão, Em votação, A finalizar, Aprovada, Rejeitada
 
 **Design principle:** "It's important to not hide the complexity of running a democracy" - all 60 phases are visible and explained.
 
@@ -177,10 +197,11 @@ Based on ideas from [adamastor](https://github.com/bcamarneiro/adamastor).
 
 ## Technology Stack
 
-**Frontend:**
-- Single Page Application (vanilla JavaScript, no frameworks)
-- Hash-based routing for bookmarkable views
-- Responsive CSS with mobile support
+**Frontend (NEW - January 2026):**
+- React 18 + TypeScript + Vite
+- Tailwind CSS for styling
+- React Query for data fetching and caching
+- React Router for client-side routing
 - Hosted on Render.com (Static Site)
 
 **Backend:**
