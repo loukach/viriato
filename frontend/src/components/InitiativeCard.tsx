@@ -1,0 +1,113 @@
+import { useState } from 'react'
+import { TypeBadge } from './TypeBadge'
+import { StatusBadge } from './StatusBadge'
+import { formatDate } from '../lib/formatDate'
+import type { Initiative } from '../lib/api'
+
+interface InitiativeCardProps {
+  initiative: Initiative
+}
+
+export function InitiativeCard({ initiative }: InitiativeCardProps) {
+  const [isExpanded, setIsExpanded] = useState(false)
+
+  const events = initiative.IniEventos || []
+  const status = initiative._currentStatus || 'Desconhecido'
+
+  // Sort events by date for timeline
+  const sortedEvents = [...events].sort((a, b) =>
+    (a.DataFase || '').localeCompare(b.DataFase || '')
+  )
+
+  return (
+    <article
+      className={`bg-white rounded-lg shadow-md overflow-hidden transition-all cursor-pointer hover:shadow-lg ${
+        isExpanded ? 'ring-2 ring-[var(--primary)]' : ''
+      }`}
+      onClick={() => setIsExpanded(!isExpanded)}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          setIsExpanded(!isExpanded)
+        }
+      }}
+      tabIndex={0}
+      role="button"
+      aria-expanded={isExpanded}
+      aria-label={initiative.IniTitulo}
+    >
+      <div className="p-4">
+        {/* Header */}
+        <div className="flex items-center gap-2 mb-2">
+          <TypeBadge typeCode={initiative.IniTipo} typeDesc={initiative.IniDescTipo} />
+          <span className="text-sm text-gray-500">
+            {initiative.IniNr}/{initiative.IniTipo}
+          </span>
+        </div>
+
+        {/* Title */}
+        <h3 className="font-semibold text-gray-800 mb-2 line-clamp-2">{initiative.IniTitulo}</h3>
+
+        {/* Meta */}
+        <div className="flex items-center gap-4 text-sm text-gray-500 mb-3">
+          <span>📅 {formatDate(initiative.DataInicioleg)}</span>
+          <span>📊 {events.length} fases</span>
+        </div>
+
+        {/* Status */}
+        <StatusBadge status={status} />
+
+        {/* Expand indicator */}
+        <div className="flex items-center justify-center gap-2 mt-3 text-gray-400 text-sm">
+          <span className={`transition-transform ${isExpanded ? 'rotate-180' : ''}`}>▼</span>
+          <span>{isExpanded ? 'Ver menos' : 'Ver ciclo de vida'}</span>
+        </div>
+      </div>
+
+      {/* Expanded content - Timeline */}
+      {isExpanded && (
+        <div className="border-t bg-gray-50 p-4">
+          <h4 className="text-sm font-semibold text-gray-700 mb-3">Ciclo de Vida</h4>
+
+          {sortedEvents.length === 0 ? (
+            <p className="text-sm text-gray-500">Sem eventos registados.</p>
+          ) : (
+            <div className="relative">
+              {/* Timeline line */}
+              <div className="absolute left-3 top-2 bottom-2 w-0.5 bg-gray-200" />
+
+              {/* Events */}
+              <div className="space-y-3">
+                {sortedEvents.map((event, i) => (
+                  <div key={i} className="flex items-start gap-3 relative">
+                    {/* Dot */}
+                    <div className="w-6 h-6 rounded-full bg-[var(--primary)] flex items-center justify-center flex-shrink-0 z-10">
+                      <div className="w-2 h-2 rounded-full bg-white" />
+                    </div>
+
+                    {/* Content */}
+                    <div className="flex-1 min-w-0">
+                      <div className="text-sm font-medium text-gray-800">{event.Fase}</div>
+                      <div className="text-xs text-gray-500">{formatDate(event.DataFase)}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Link to Parliament */}
+          <a
+            href={`https://www.parlamento.pt/ActividadeParlamentar/Paginas/DetalheIniciativa.aspx?BID=${initiative.IniId}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-block mt-4 text-sm text-[var(--primary)] hover:underline"
+            onClick={(e) => e.stopPropagation()}
+          >
+            Ver no Parlamento.pt →
+          </a>
+        </div>
+      )}
+    </article>
+  )
+}
