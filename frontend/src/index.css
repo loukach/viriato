@@ -1,0 +1,67 @@
+@import "tailwindcss";
+
+/**
+ * Viriato - CSS Custom Properties
+ * Ported from the original styles.css
+ */
+:root {
+    /* Brand colors - Parlamento.pt teal */
+    --primary: #00828A;
+    --primary-dark: #006d74;
+    --secondary: #005f66;
+    --accent: #ed64a6;
+
+    /* Semantic colors */
+    --success: #48bb78;
+    --success-dark: #38a169;
+    --info: #4299e1;
+    --info-dark: #3182ce;
+    --warning: #ed8936;
+    --danger: #f56565;
+
+    /* Text colors */
+    --text-primary: #1a202c;
+    --text-secondary: #4a5568;
+    --text-muted: #718096;
+
+    /* Background colors */
+    --bg-primary: #f7fafc;
+    --bg-card: #ffffff;
+    --border-light: #e2e8f0;
+
+    /* Shadows */
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    --shadow-glow: 0 0 20px rgba(0, 130, 138, 0.3);
+
+    /* Border radius */
+    --radius-sm: 6px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --radius-xl: 16px;
+
+    /* Transitions */
+    --transition-fast: 0.15s ease;
+    --transition-normal: 0.3s ease;
+    --transition-slow: 0.5s ease;
+
+    /* Initiative status colors */
+    --status-submitted: #9ca3af;
+    --status-announced: #38bdf8;
+    --status-discussion: #3b82f6;
+    --status-voting: #f97316;
+    --status-finalizing: #8b5cf6;
+    --status-approved: #10b981;
+    --status-rejected: #ef4444;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}

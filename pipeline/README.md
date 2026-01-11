@@ -1,6 +1,10 @@
-# Viriato Scripts - Database Setup & Data Loading
+# Viriato Data Pipeline
 
-Scripts for managing Portuguese Parliament data in PostgreSQL.
+Scripts for downloading, transforming, and loading Portuguese Parliament data into PostgreSQL.
+
+## Overview
+
+The pipeline transforms raw JSON data from parlamento.pt into a structured PostgreSQL database that powers the Viriato web and mobile apps.
 
 ## Quick Start
 
@@ -53,21 +57,21 @@ DATABASE_URL=postgresql://localhost/viriato
 
 ```bash
 # Apply schema (creates tables and indexes)
-psql $DATABASE_URL -f scripts/schema.sql
+psql $DATABASE_URL -f pipeline/schema.sql
 ```
 
 Or if using `.env`:
 
 ```bash
 source .env
-psql $DATABASE_URL -f scripts/schema.sql
+psql $DATABASE_URL -f pipeline/schema.sql
 ```
 
 ### 4. Download Latest Data
 
 ```bash
 # Downloads all 17 datasets from parlamento.pt
-python scripts/download_datasets.py
+python pipeline/download_datasets.py
 ```
 
 This creates/updates files in `data/raw/`:
@@ -79,7 +83,7 @@ This creates/updates files in `data/raw/`:
 
 ```bash
 # Load iniciativas, events, and agenda
-python scripts/load_to_postgres.py
+python pipeline/load_to_postgres.py
 ```
 
 Expected output:
@@ -107,47 +111,61 @@ Agenda: 34
 
 ## Scripts Overview
 
-### `schema.sql`
-
-Creates database schema with 3 core tables:
-
-1. **`iniciativas`** - Legislative initiatives (laws, resolutions)
-2. **`iniciativa_events`** - Lifecycle events for each initiative
-3. **`agenda_events`** - Parliamentary calendar
-
-Features:
-- JSONB columns for raw data (future-proofing)
-- Full-text search indexes (Portuguese language)
-- Automatic trigger to update `current_status`
-- ON DELETE CASCADE for referential integrity
-
-### `load_to_postgres.py`
-
-Loads data from JSON files into PostgreSQL.
-
-**What it does:**
-- Reads `IniciativasXVII_json.txt` and `AgendaParlamentar_json.txt`
-- Transforms nested JSON to flat table structure
-- Uses UPSERT (INSERT ... ON CONFLICT UPDATE) for safe re-runs
-- Handles complex author extraction (Government, Deputies, Parties)
-- Preserves event order with `order_index`
-
-**UPSERT behavior:**
-- Safe to run multiple times
-- Updates existing records
-- Inserts new records
-- Keeps database in sync with source files
+| Script | Purpose | Input | Output |
+|--------|---------|-------|--------|
+| `download_datasets.py` | Fetch raw data | parlamento.pt API | `data/raw/*.txt` |
+| `load_to_postgres.py` | Load initiatives + agenda | JSON files | `iniciativas`, `iniciativa_events`, `agenda_events` |
+| `load_deputados.py` | Load deputies | JSON files | `deputados`, `deputados_bio` |
+| `load_orgaos.py` | Load committees | JSON files | `orgaos`, `orgao_membros` |
+| `load_committee_links.py` | Link initiatives to committees | DB queries | `comissao_iniciativa_links` |
+| `load_authors.py` | Link initiatives to authors | DB queries | `iniciativa_autores` |
+| `schema.sql` | Database schema | - | All tables |
 
 ### `download_datasets.py`
 
 Downloads all 17 datasets from Portuguese Parliament open data portal.
 
-**Usage:**
 ```bash
-python scripts/download_datasets.py
+python pipeline/download_datasets.py
 ```
 
 Saves to `data/raw/` directory.
+
+### `load_to_postgres.py`
+
+Loads initiatives and agenda from JSON into PostgreSQL.
+
+**What it does:**
+- Reads `IniciativasXVII_json.txt` and `AgendaParlamentar_json.txt`
+- Transforms nested JSON to flat table structure
+- Uses UPSERT for safe re-runs
+- Extracts 60+ legislative phases into `iniciativa_events`
+
+### `load_deputados.py`
+
+Loads deputy data into two tables:
+- `deputados` - Core identity (name, party, district)
+- `deputados_bio` - Biographical data (gender, age, profession)
+
+### `load_orgaos.py`
+
+Loads parliamentary committees:
+- `orgaos` - Committee info (name, type, legislature)
+- `orgao_membros` - Committee membership with roles
+
+### `load_committee_links.py`
+
+Creates links between initiatives and committees based on:
+- Direct committee assignments in initiative data
+- Phase events mentioning committee names
+
+### `schema.sql`
+
+Creates all database tables with:
+- JSONB columns for raw data preservation
+- Full-text search indexes (Portuguese)
+- Foreign key relationships
+- Triggers for computed fields
 
 ## Update Workflow
 
@@ -155,10 +173,10 @@ Saves to `data/raw/` directory.
 
 ```bash
 # 1. Download latest data
-python scripts/download_datasets.py
+python pipeline/download_datasets.py
 
 # 2. Load into database (UPSERT mode)
-python scripts/load_to_postgres.py
+python pipeline/load_to_postgres.py
 ```
 
 ### Future: Automated Daily Updates
@@ -182,8 +200,8 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v4
       - run: pip install -r requirements.txt
-      - run: python scripts/download_datasets.py
-      - run: python scripts/load_to_postgres.py
+      - run: python pipeline/download_datasets.py
+      - run: python pipeline/load_to_postgres.py
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
 ```
@@ -191,7 +209,7 @@ jobs:
 **Option B: Cron job (if hosting on server)**
 
 ```cron
-0 2 * * * cd /path/to/viriato && python scripts/download_datasets.py && python scripts/load_to_postgres.py
+0 2 * * * cd /path/to/viriato && python pipeline/download_datasets.py && python pipeline/load_to_postgres.py
 ```
 
 ## Testing Queries
@@ -256,14 +274,14 @@ echo 'DATABASE_URL=postgresql://localhost/viriato' > .env
 
 ```bash
 # Download data first
-python scripts/download_datasets.py
+python pipeline/download_datasets.py
 ```
 
 ### "relation 'iniciativas' does not exist"
 
 ```bash
 # Create schema first
-psql $DATABASE_URL -f scripts/schema.sql
+psql $DATABASE_URL -f pipeline/schema.sql
 ```
 
 ### psycopg2 installation fails
@@ -307,26 +325,31 @@ Well under Render.com's 1 GB free tier limit.
 |----------|----------|-------------|---------|
 | `DATABASE_URL` | Yes | PostgreSQL connection string | `postgresql://user:pass@host:5432/dbname` |
 
-## Next Steps
+## Domain Knowledge
 
-After Phase 1 is complete:
+Understanding the raw data requires knowledge of the Portuguese legislative process:
 
-1. **Phase 1.5**: Integrate web app with PostgreSQL
-   - Update frontend to query database instead of embedded data.js
-   - Add API layer (Flask, FastAPI, or direct queries)
+- **60+ legislative phases** - Mapped to 7 simplified statuses in the frontend
+- **7 initiative types** - P (Proposta de Lei), J (Projeto de Lei), R (Resolução), etc.
+- **Party spectrum** - Left-to-right ordering for hemicycle visualizations
 
-2. **Phase 2**: Add remaining tables
-   - `deputies` - Parliament members (330 records)
-   - `anexos` - Document attachments
-   - `phase_definitions` - Reference data
+See documentation:
+- `docs/iniciativas-lifecycle.md` - All 60 phases explained
+- `docs/data-entity-relationships.md` - Database entity relationships
+- `data/schemas/` - JSON schemas for raw Parliament data
 
-3. **Phase 3**: Advanced features
-   - Historical change tracking
-   - Voting records
-   - Deputy activity tracking
+## Full Pipeline Run
 
-## Related Documentation
+To refresh all data:
 
-- `docs/database-implementation-plan.md` - Full implementation plan
-- `docs/iniciativas-lifecycle.md` - Legislative process explained
-- `data/schemas/` - JSON schemas for all datasets
+```bash
+# 1. Download fresh data
+python pipeline/download_datasets.py
+
+# 2. Load in order (dependencies matter)
+python pipeline/load_to_postgres.py      # Initiatives + agenda
+python pipeline/load_deputados.py        # Deputies
+python pipeline/load_orgaos.py           # Committees
+python pipeline/load_committee_links.py  # Committee-initiative links
+python pipeline/load_authors.py          # Author links
+```
