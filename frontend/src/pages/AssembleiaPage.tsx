@@ -5,7 +5,6 @@ import { PartyLegend } from '../components/PartyLegend'
 import { DeputyCard } from '../components/DeputyCard'
 import { LoadingSpinner } from '../components/LoadingSpinner'
 import { ErrorState } from '../components/ErrorState'
-import { StatCard } from '../components/StatCard'
 
 export function AssembleiaPage() {
   const { data, isLoading, isError, refetch } = useDeputados()
@@ -52,11 +51,7 @@ export function AssembleiaPage() {
   }
 
   const { summary } = data
-  const { total, party_composition, gender_breakdown } = summary
-
-  // Calculate gender percentage
-  const femaleCount = gender_breakdown['F'] || 0
-  const femalePercentage = total > 0 ? Math.round((femaleCount / total) * 100) : 0
+  const { total, party_composition } = summary
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
@@ -84,13 +79,6 @@ export function AssembleiaPage() {
           selectedParty={selectedParty}
           onPartyClick={setSelectedParty}
         />
-      </div>
-
-      {/* Stats Row */}
-      <div className="grid grid-cols-3 gap-4 mb-8">
-        <StatCard value={Object.keys(party_composition).length} label="Partidos" />
-        <StatCard value={`${femalePercentage}%`} label="Mulheres" />
-        <StatCard value={circulos.length} label="Circulos" />
       </div>
 
       {/* Deputies Section */}
