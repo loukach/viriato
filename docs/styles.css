@@ -161,7 +161,8 @@ body {
     width: 20px;
     height: 20px;
     stroke: currentColor;
-    fill: currentColor;
+    fill: none;
+    stroke-width: 2;
     flex-shrink: 0;
 }
 
@@ -2777,10 +2778,9 @@ footer a:hover {
 
     /* Larger, higher contrast icons on mobile */
     .nav-icon {
-        width: 30px;
-        height: 30px;
-        opacity: 1;
-        filter: brightness(1.2);
+        width: 28px;
+        height: 28px;
+        stroke-width: 2.5;
     }
 
     /* Hide labels on mobile, show icons only */
