@@ -20,12 +20,13 @@ services:
         value: production
     healthCheckPath: /api/health
 
-  # Static Frontend
+  # Static Frontend (React + Vite)
   - type: web
     name: viriato-frontend
     runtime: static
     region: frankfurt
     branch: master
+    rootDir: frontend
     buildCommand: npm install && npm run build
     staticPublishPath: ./dist
     envVars:

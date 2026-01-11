@@ -900,7 +900,7 @@ def get_deputados():
                 SELECT
                     d.id, d.dep_id, d.dep_cad_id, d.legislature,
                     d.name, d.full_name, d.party, d.circulo_id, d.circulo,
-                    b.gender, b.birth_date, b.profession,
+                    b.gender, b.birth_date, b.profession, b.education,
                     d.situation, d.situation_start, d.situation_end
                 FROM deputados d
                 LEFT JOIN deputados_bio b ON d.dep_cad_id = b.cad_id
@@ -954,16 +954,19 @@ def get_deputados():
                     'gender': row['gender'],
                     'age': age,
                     'profession': row['profession'],
+                    'education': row['education'],
                     'situation': row['situation'],
-                    'comissoes': []  # Will be filled below
+                    'comissoes': [],  # Will be filled below
+                    'grupos_trabalho': []  # Will be filled below
                 })
 
-            # Get committee memberships for all deputies
+            # Get committee and working group memberships for all deputies
             if dep_ids:
+                # Fetch comissões
                 cur.execute("""
                     SELECT
                         m.dep_cad_id,
-                        o.name as comissao_name,
+                        o.name as orgao_name,
                         o.acronym,
                         m.role,
                         m.member_type
@@ -981,15 +984,44 @@ def get_deputados():
                     if dep_cad_id not in comissoes_by_dep:
                         comissoes_by_dep[dep_cad_id] = []
                     comissoes_by_dep[dep_cad_id].append({
-                        'name': row['comissao_name'],
+                        'name': row['orgao_name'],
                         'acronym': row['acronym'],
                         'role': row['role'],
                         'member_type': row['member_type']
                     })
 
-                # Add committees to each deputy
+                # Fetch grupos de trabalho
+                cur.execute("""
+                    SELECT
+                        m.dep_cad_id,
+                        o.name as orgao_name,
+                        o.acronym,
+                        m.role,
+                        m.member_type
+                    FROM orgao_membros m
+                    JOIN orgaos o ON m.orgao_id = o.id
+                    WHERE m.dep_cad_id = ANY(%s)
+                      AND o.org_type = 'grupo_trabalho'
+                    ORDER BY m.dep_cad_id, o.name
+                """, (dep_ids,))
+
+                # Group working groups by deputy
+                grupos_by_dep = {}
+                for row in cur.fetchall():
+                    dep_cad_id = row['dep_cad_id']
+                    if dep_cad_id not in grupos_by_dep:
+                        grupos_by_dep[dep_cad_id] = []
+                    grupos_by_dep[dep_cad_id].append({
+                        'name': row['orgao_name'],
+                        'acronym': row['acronym'],
+                        'role': row['role'],
+                        'member_type': row['member_type']
+                    })
+
+                # Add committees and working groups to each deputy
                 for dep in deputados:
                     dep['comissoes'] = comissoes_by_dep.get(dep['dep_cad_id'], [])
+                    dep['grupos_trabalho'] = grupos_by_dep.get(dep['dep_cad_id'], [])
 
             # Find who Efetivo Temporário deputies are replacing
             # They replace Suspenso(Eleito) deputies from same circulo and party
