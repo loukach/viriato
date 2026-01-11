@@ -1,6 +1,5 @@
 import { useState, useMemo } from 'react'
 import { useAgenda } from '../hooks/useAgenda'
-import { EventCard } from '../components/EventCard'
 import { EventTypeFilters } from '../components/EventTypeFilters'
 import { EventModal } from '../components/EventModal'
 import { LoadingSpinner } from '../components/LoadingSpinner'
@@ -9,12 +8,9 @@ import { EVENT_TYPES, getEventTypeKey, type EventType } from '../lib/eventTypes'
 import { formatDateShort, isWeekend } from '../lib/formatDate'
 import type { AgendaEvent } from '../lib/api'
 
-type ViewMode = 'grid' | 'timeline'
-
 export function AgendaPage() {
   const { data: events, isLoading, isError, refetch } = useAgenda()
 
-  const [viewMode, setViewMode] = useState<ViewMode>('timeline')
   const [activeTypes, setActiveTypes] = useState<Set<EventType>>(
     new Set(EVENT_TYPES.map((t) => t.key))
   )
@@ -77,35 +73,9 @@ export function AgendaPage() {
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-800">Agenda Parlamentar</h1>
-          <p className="text-gray-600">{filteredEvents.length} eventos</p>
-        </div>
-
-        {/* View toggle */}
-        <div className="flex bg-gray-100 rounded-lg p-1">
-          <button
-            onClick={() => setViewMode('timeline')}
-            className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-              viewMode === 'timeline'
-                ? 'bg-white text-gray-800 shadow-sm'
-                : 'text-gray-600 hover:text-gray-800'
-            }`}
-          >
-            Cronograma
-          </button>
-          <button
-            onClick={() => setViewMode('grid')}
-            className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-              viewMode === 'grid'
-                ? 'bg-white text-gray-800 shadow-sm'
-                : 'text-gray-600 hover:text-gray-800'
-            }`}
-          >
-            Grelha
-          </button>
-        </div>
+      <div className="mb-6">
+        <h1 className="text-3xl font-bold text-gray-800">Agenda Parlamentar</h1>
+        <p className="text-gray-600">{filteredEvents.length} eventos</p>
       </div>
 
       {/* Type filters */}
@@ -114,8 +84,7 @@ export function AgendaPage() {
       </div>
 
       {/* Timeline View */}
-      {viewMode === 'timeline' && (
-        <div className="bg-white rounded-xl shadow-md overflow-hidden">
+      <div className="bg-white rounded-xl shadow-md overflow-hidden">
           {eventsByDate.map(({ date, events: dayEvents, isWeekend: weekend }) => (
             <div
               key={date}
@@ -171,24 +140,6 @@ export function AgendaPage() {
             <div className="p-8 text-center text-gray-500">Nenhum evento encontrado.</div>
           )}
         </div>
-      )}
-
-      {/* Grid View */}
-      {viewMode === 'grid' && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filteredEvents.map((event) => (
-            <EventCard
-              key={event.event_id}
-              event={event}
-              onClick={() => setSelectedEvent(event)}
-            />
-          ))}
-        </div>
-      )}
-
-      {viewMode === 'grid' && filteredEvents.length === 0 && (
-        <div className="text-center py-12 text-gray-500">Nenhum evento encontrado.</div>
-      )}
 
       {/* Event Modal */}
       <EventModal event={selectedEvent} onClose={() => setSelectedEvent(null)} />
