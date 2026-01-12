@@ -504,23 +504,20 @@ def search_iniciativas():
             return jsonify([])
 
         with db_connection() as (conn, cur):
-            # Search in both title (weight A) and summary (weight B)
-            # Return full initiative data for frontend compatibility
+            # Search in both title and summary using OR (allows index usage)
+            # Title matches ranked 2x higher than summary matches
             sql_query = """
                 SELECT
                     id, ini_id, legislature, title, type, type_description, number,
                     text_link, start_date, current_status, is_completed, summary, raw_data,
-                    ts_rank(
-                        setweight(to_tsvector('portuguese', COALESCE(title, '')), 'A') ||
-                        setweight(to_tsvector('portuguese', COALESCE(summary, '')), 'B'),
-                        query
+                    GREATEST(
+                        ts_rank(to_tsvector('portuguese', COALESCE(title, '')), query) * 2,
+                        ts_rank(to_tsvector('portuguese', COALESCE(summary, '')), query)
                     ) as rank
                 FROM iniciativas,
                      to_tsquery('portuguese', %s) as query
-                WHERE (
-                    to_tsvector('portuguese', COALESCE(title, '')) ||
-                    to_tsvector('portuguese', COALESCE(summary, ''))
-                ) @@ query
+                WHERE (to_tsvector('portuguese', title) @@ query
+                   OR to_tsvector('portuguese', COALESCE(summary, '')) @@ query)
             """
             params = [query]
 
