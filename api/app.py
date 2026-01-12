@@ -488,6 +488,7 @@ def get_stats():
 def search_iniciativas():
     """
     Full-text search on iniciativas titles and summaries.
+    Returns full initiative data in same format as /api/iniciativas.
 
     Query params:
         q - search query
@@ -503,11 +504,12 @@ def search_iniciativas():
             return jsonify([])
 
         with db_connection() as (conn, cur):
-            # Build query with optional legislature filter
             # Search in both title (weight A) and summary (weight B)
+            # Return full initiative data for frontend compatibility
             sql_query = """
                 SELECT
-                    ini_id, legislature, title, type_description, current_status, start_date,
+                    id, ini_id, legislature, title, type, type_description, number,
+                    text_link, start_date, current_status, is_completed, summary, raw_data,
                     ts_rank(
                         setweight(to_tsvector('portuguese', COALESCE(title, '')), 'A') ||
                         setweight(to_tsvector('portuguese', COALESCE(summary, '')), 'B'),
@@ -533,20 +535,63 @@ def search_iniciativas():
             params.append(limit)
 
             cur.execute(sql_query, params)
+            iniciativas = cur.fetchall()
 
-            results = []
-            for row in cur.fetchall():
-                results.append({
-                    'ini_id': row['ini_id'],
-                    'legislature': row['legislature'],
-                    'title': row['title'],
-                    'type': row['type_description'],
-                    'status': row['current_status'],
-                    'date': row['start_date'].isoformat() if row['start_date'] else None,
-                    'relevance': float(row['rank'])
+            if not iniciativas:
+                return jsonify([])
+
+            # Get all initiative database IDs for batch event query
+            ini_db_ids = [ini['id'] for ini in iniciativas]
+
+            # Batch fetch all events
+            events_query = """
+                SELECT iniciativa_id, phase_name, event_date, observations
+                FROM iniciativa_events
+                WHERE iniciativa_id = ANY(%s)
+                ORDER BY iniciativa_id, event_date
+            """
+            cur.execute(events_query, (ini_db_ids,))
+            all_events = cur.fetchall()
+
+            # Group events by initiative database ID
+            events_by_ini_db_id = {}
+            for event in all_events:
+                ini_db_id = event['iniciativa_id']
+                if ini_db_id not in events_by_ini_db_id:
+                    events_by_ini_db_id[ini_db_id] = []
+                events_by_ini_db_id[ini_db_id].append({
+                    'Fase': event['phase_name'],
+                    'DataFase': event['event_date'].isoformat() if event['event_date'] else None,
+                    'DescFase': event['observations']
                 })
 
-            return jsonify(results)
+            # Build response in same format as /api/iniciativas
+            result = []
+            for ini in iniciativas:
+                try:
+                    raw_data = ini['raw_data'] or {}
+                    minimal_data = {
+                        'IniId': ini['ini_id'],
+                        'IniTitulo': ini['title'],
+                        'IniTipo': ini['type'],
+                        'IniDescTipo': ini['type_description'],
+                        'IniNr': ini['number'],
+                        'IniLeg': ini['legislature'],
+                        'IniLinkTexto': ini['text_link'],
+                        'IniEventos': events_by_ini_db_id.get(ini['id'], []),
+                        'IniAutorGruposParlamentares': raw_data.get('IniAutorGruposParlamentares'),
+                        'IniAutorOutros': raw_data.get('IniAutorOutros'),
+                        'DataInicioleg': ini['start_date'].isoformat() if ini['start_date'] else None,
+                        '_currentStatus': ini['current_status'],
+                        '_isCompleted': ini['is_completed'],
+                        '_summary': ini['summary']
+                    }
+                    result.append(minimal_data)
+                except Exception as e:
+                    logger.warning("Error processing search result %s: %s", ini['ini_id'], e)
+                    continue
+
+            return jsonify(result)
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
