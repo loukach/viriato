@@ -487,7 +487,7 @@ def get_stats():
 @app.route('/api/search', methods=['GET'])
 def search_iniciativas():
     """
-    Full-text search on iniciativas titles.
+    Full-text search on iniciativas titles and summaries.
 
     Query params:
         q - search query
@@ -504,13 +504,21 @@ def search_iniciativas():
 
         with db_connection() as (conn, cur):
             # Build query with optional legislature filter
+            # Search in both title (weight A) and summary (weight B)
             sql_query = """
                 SELECT
                     ini_id, legislature, title, type_description, current_status, start_date,
-                    ts_rank(to_tsvector('portuguese', title), query) as rank
+                    ts_rank(
+                        setweight(to_tsvector('portuguese', COALESCE(title, '')), 'A') ||
+                        setweight(to_tsvector('portuguese', COALESCE(summary, '')), 'B'),
+                        query
+                    ) as rank
                 FROM iniciativas,
                      to_tsquery('portuguese', %s) as query
-                WHERE to_tsvector('portuguese', title) @@ query
+                WHERE (
+                    to_tsvector('portuguese', COALESCE(title, '')) ||
+                    to_tsvector('portuguese', COALESCE(summary, ''))
+                ) @@ query
             """
             params = [query]
 
