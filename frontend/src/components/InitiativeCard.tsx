@@ -101,9 +101,19 @@ export function InitiativeCard({ initiative }: InitiativeCardProps) {
         </div>
       </div>
 
-      {/* Expanded content - Authors and Timeline */}
+      {/* Expanded content - Summary, Authors and Timeline */}
       {isExpanded && (
         <div className="border-t bg-gray-50 p-4">
+          {/* Summary */}
+          {initiative._summary && !initiative._summary.startsWith('[Extracao nao disponivel]') && (
+            <div className="mb-4">
+              <h4 className="text-sm font-semibold text-gray-700 mb-2">Resumo</h4>
+              <p className="text-sm text-gray-600 whitespace-pre-line leading-relaxed max-h-48 overflow-y-auto">
+                {initiative._summary}
+              </p>
+            </div>
+          )}
+
           {/* Authors */}
           {authors.length > 0 && (
             <div className="mb-4">

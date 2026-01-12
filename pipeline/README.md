@@ -119,6 +119,7 @@ Agenda: 34
 | `load_orgaos.py` | Load committees | JSON files | `orgaos`, `orgao_membros` |
 | `load_committee_links.py` | Link initiatives to committees | DB queries | `comissao_iniciativa_links` |
 | `load_authors.py` | Link initiatives to authors | DB queries | `iniciativa_autores` |
+| `extract_summaries.py` | Extract PDF summaries | PDF downloads | `iniciativas.summary` |
 | `schema.sql` | Database schema | - | All tables |
 
 ### `download_datasets.py`
@@ -158,6 +159,38 @@ Loads parliamentary committees:
 Creates links between initiatives and committees based on:
 - Direct committee assignments in initiative data
 - Phase events mentioning committee names
+
+### `extract_summaries.py`
+
+Extracts "Exposicao de Motivos" (Statement of Reasons) from initiative PDF documents.
+
+**What it does:**
+- Downloads PDF documents from `text_link` URLs
+- Extracts text using PyMuPDF
+- Finds the "Exposicao de Motivos" section (author's summary of the initiative)
+- Stores extracted summary in `iniciativas.summary` column
+- Creates FTS index for searching summaries
+
+**Usage:**
+```bash
+# Extract summaries for XVII legislature
+python pipeline/extract_summaries.py --legislature XVII
+
+# Dry run (show what would be done)
+python pipeline/extract_summaries.py --legislature XVII --dry-run
+
+# Limit to first 50 for testing
+python pipeline/extract_summaries.py --legislature XVII --limit 50 --verbose
+```
+
+**Dependencies:** Requires `pymupdf` (install with `pip install pymupdf`)
+
+**Runtime:** ~7-10 minutes for 808 initiatives (network-bound, 0.5s rate limiting)
+
+**Failure handling:** If PDF extraction fails (expired URL, scanned image), stores placeholder:
+`"[Extracao nao disponivel] - consulte o link para o documento oficial abaixo."`
+
+**Idempotent:** Only processes initiatives where `summary IS NULL`. Safe to re-run.
 
 ### `schema.sql`
 
@@ -352,4 +385,36 @@ python pipeline/load_deputados.py        # Deputies
 python pipeline/load_orgaos.py           # Committees
 python pipeline/load_committee_links.py  # Committee-initiative links
 python pipeline/load_authors.py          # Author links
+
+# 3. Extract PDF summaries (optional, but recommended)
+python pipeline/extract_summaries.py --legislature XVII
 ```
+
+### Pipeline Dependency Graph
+
+```
+download_datasets.py
+        |
+        v
+load_to_postgres.py -----> extract_summaries.py
+        |                         |
+        v                         |
+load_deputados.py                 |
+        |                         |
+        v                         |
+load_orgaos.py                    |
+        |                         |
+        v                         |
+load_committee_links.py           |
+        |                         |
+        v                         |
+load_authors.py                   |
+        |                         |
+        +-------------------------+
+                  |
+                  v
+           [Data Ready]
+```
+
+Note: `extract_summaries.py` can run in parallel with the other load scripts
+after `load_to_postgres.py` completes, as it only needs `iniciativas` table.

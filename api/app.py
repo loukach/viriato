@@ -122,7 +122,7 @@ def get_iniciativas():
                 SELECT
                     id, ini_id, legislature, number, type, type_description,
                     title, author_type, author_name, start_date, end_date,
-                    current_status, is_completed, text_link, raw_data
+                    current_status, is_completed, text_link, raw_data, summary
                 FROM iniciativas
             """
             params = []
@@ -181,7 +181,8 @@ def get_iniciativas():
                         'IniAutorOutros': raw_data.get('IniAutorOutros'),
                         'DataInicioleg': ini['start_date'].isoformat() if ini['start_date'] else None,
                         '_currentStatus': ini['current_status'],
-                        '_isCompleted': ini['is_completed']
+                        '_isCompleted': ini['is_completed'],
+                        '_summary': ini['summary']
                     }
 
                     result.append(minimal_data)

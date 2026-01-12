@@ -56,12 +56,14 @@ export interface Initiative {
   IniTipo: string
   IniDescTipo: string
   IniTitulo: string
+  IniLinkTexto?: string
   DataInicioleg: string
   IniEventos: InitiativeEvent[]
   IniAutorGruposParlamentares?: { GP: string }[] | { GP: string }
   IniAutorOutros?: { nome: string }
   _currentStatus: string
   _isCompleted: boolean
+  _summary?: string
 }
 
 export interface InitiativeEvent {
